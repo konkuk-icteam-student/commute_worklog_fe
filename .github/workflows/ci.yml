@@ -1,0 +1,35 @@
+name: CI (develop)
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10 # 무한 대기 방지
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false # install 단계에서 직접 캐시 사용
+
+      # 의존성 캐싱
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install deps
+        run: pnpm install
+
+      # 타입체크 + 번들
+      - run: pnpm run build
+
+      # ESLint (선택 항목)
+      - run: pnpm run lint
