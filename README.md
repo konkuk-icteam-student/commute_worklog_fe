@@ -1,69 +1,65 @@
-# React + TypeScript + Vite
+# 📌협업 컨벤션 (필독)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🪾깃 브랜치 전략 (Git Flow 사용)
 
-Currently, two official plugins are available:
+1. **feat** 브랜치에서 기능개발
+2. **develop** (default 브랜치, 이 브랜치가 원격의 origin)으로 코드 merge
+3. **main** 에 배포
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🌐push, pull, merge 및 배포 도메인으로 배포 방법
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1.작업할 땐 항상 local의 **develop 브랜치**에서
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+git pull origin develop
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+
+으로 최신사항 반영해주시고, feat 브랜치를 파서 작업 진행해주세요.
+
+---
+
+2.작업 후
+
+```
+git push origin [feat브랜치명]
+```
+
+을 통해 원격의 develop 브랜치로 push 해주세요.
+
+---
+
+3.merge 되었다면 **CI 테스트**가 돌아갈 것입니다.
+
+---
+
+4.이후 배포 서버에 올리고 싶다면, 로컬 환경에서 develop 브랜치로 돌아온 다음,
+
+```
+git pull origin develop
+```
+
+으로 최신사항 받아와주세요.
+
+---
+
+5.main 브랜치로 branch switch 해주신 다음,
+
+```
+git merge develop
+```
+
+으로 로컬의 develop 브랜치 내용과 싱크를 맞춰주세요.
+
+---
+
+6.5번의 작업으로 main에 merge 커밋이 생기게 됩니다. 이 상태로
+
+```
+git push origin main
+```
+
+해주시고, 레포 들어가주시면 CI, CD, Prettier까지 3개의 테스트가 돌아가는 것을 확인하실 수 있으며테스트가 성공적으로 통과되었다면 배포 도메인에 (약간의 시간차 발생 가능) 정상적으로 적용되는 것을 확인할 수 있습니다.
