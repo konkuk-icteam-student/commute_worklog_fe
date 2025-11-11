@@ -13,7 +13,7 @@ export default function Button({
   type = 'button',
   variant = 'primary'
 }: ButtonProps) {
-  const baseClasses = "box-border content-stretch flex flex-col h-[55.982px] items-start rounded-[46px] w-full transition-colors duration-200";
+  const baseClasses = "box-border content-stretch flex flex-col h-[55.982px] items-start rounded-[4.6rem] w-full transition-colors duration-200";
   const variantClasses = disabled
     ? "bg-[#eaeaea] cursor-not-allowed"
     : variant === 'primary'

@@ -79,28 +79,28 @@ export default function AuthPage() {
   return (
     <div className="bg-white relative min-h-screen w-full" data-name="auth">
       {/* Header */}
-      <div className="bg-[#51a8ff] box-border content-stretch flex flex-col gap-[23.998px] items-start pb-0 pt-[31.992px] px-[23.998px] w-full" data-name="Header">
-        <div className="h-[23.99px] relative shrink-0 w-full" data-name="Heading 1">
-          <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[24px] text-center not-italic text-[16px] text-nowrap text-white whitespace-pre">출근부</p>
+      <div className="bg-[#51a8ff] box-border content-stretch flex flex-col gap-[2.4rem] items-start pb-0 pt-[3.2rem] px-[2.4rem] w-full h-[15.7rem]" data-name="Header">
+        <div className="relative shrink-0 w-full" data-name="Heading 1">
+          <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[2.4rem] text-center not-italic text-[1.6rem] text-nowrap text-white whitespace-pre">출근부</p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-[#f1f8ff] h-[52.984px] relative rounded-[20px] shrink-0 w-full" data-name="Container">
+        <div className="bg-[#f1f8ff] h-[5.3rem] relative rounded-[1.6rem] shrink-0 w-full" data-name="Container">
           <div className="size-full">
-            <div className="box-border content-stretch flex gap-[3.997px] h-[52.984px] items-start pb-0 pt-[3.997px] px-[3.997px] relative w-full">
+            <div className="box-border content-stretch flex gap-[0.4rem] h-[5.3rem] items-start pb-0 pt-[0.4rem] px-[0.4rem] relative w-full">
               {/* Login Tab */}
               <button
                 onClick={() => handleTabChange('login')}
-                className={`basis-0 grow h-[44.99px] min-h-px min-w-px relative rounded-[16px] shrink-0 ${
+                className={`basis-0 grow h-[4.5rem] min-h-px min-w-px relative rounded-[1.6rem] shrink-0 ${
                   activeTab === 'login' ? 'bg-white' : 'opacity-70'
                 }`}
                 data-name="Button"
               >
                 {activeTab === 'login' && (
-                  <div aria-hidden="true" className="absolute border border-[#f1f8ff] border-solid inset-0 pointer-events-none rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]" />
+                  <div aria-hidden="true" className="absolute border border-[#f1f8ff] border-solid inset-0 pointer-events-none rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)]" />
                 )}
-                <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[44.99px] relative w-full flex items-center justify-center">
-                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[21px] not-italic text-[14px] text-center text-nowrap tracking-[0.21px] whitespace-pre ${
+                <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[4.5rem] relative w-full flex items-center justify-center">
+                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[2.1rem] not-italic text-[1.4rem] text-center text-nowrap tracking-[0.0rem] whitespace-pre ${
                     activeTab === 'login' ? 'text-[#51a8ff]' : 'text-[#cdcdcd]'
                   }`}>로그인</p>
                 </div>
@@ -109,16 +109,16 @@ export default function AuthPage() {
               {/* Signup Tab */}
               <button
                 onClick={() => handleTabChange('signup')}
-                className={`basis-0 grow h-[44.99px] min-h-px min-w-px relative rounded-[16px] shrink-0 ${
+                className={`basis-0 grow h-[4.5rem] min-h-px min-w-px relative rounded-[1.6rem] shrink-0 ${
                   activeTab === 'signup' ? 'bg-white' : 'opacity-70'
                 }`}
                 data-name="Button"
               >
                 {activeTab === 'signup' && (
-                  <div aria-hidden="true" className="absolute border border-[#f1f8ff] border-solid inset-0 pointer-events-none rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]" />
+                  <div aria-hidden="true" className="absolute border border-[#f1f8ff] border-solid inset-0 pointer-events-none rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)]" />
                 )}
-                <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[44.99px] relative w-full flex items-center justify-center">
-                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[21px] not-italic text-[14px] text-center text-nowrap tracking-[0.21px] whitespace-pre ${
+                <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[4.5rem] relative w-full flex items-center justify-center">
+                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[2.1rem] not-italic text-[1.4rem] text-center text-nowrap tracking-[0.0rem] whitespace-pre ${
                     activeTab === 'signup' ? 'text-[#51a8ff]' : 'text-[#cdcdcd]'
                   }`}>회원가입</p>
                 </div>
@@ -129,10 +129,10 @@ export default function AuthPage() {
       </div>
 
       {/* Content Area */}
-      <div className="box-border px-[24px] pt-[35px] w-full">
+      <div className="box-border px-[2.4rem] pt-[3.5rem] w-full h-[42.7rem]">
         {activeTab === 'login' ? (
           // Login Form
-          <div className="flex flex-col gap-[16px]">
+          <div className="flex flex-col gap-[1.6rem]">
             <InputField
               type="email"
               placeholder="이메일"
@@ -145,7 +145,7 @@ export default function AuthPage() {
               value={loginPassword}
               onChange={setLoginPassword}
             />
-            <div className="mt-[229px]">
+            <div className="mt-[22.9rem]">
               <Button disabled={!isLoginFormValid} onClick={handleLogin}>
                 로그인
               </Button>
@@ -153,7 +153,7 @@ export default function AuthPage() {
           </div>
         ) : (
           // Signup Form
-          <div className="flex flex-col gap-[16px]">
+          <div className="flex flex-col gap-[2rem]">
             {/* 부서 선택 */}
             <DepartmentSelect
               value={department}
@@ -202,7 +202,7 @@ export default function AuthPage() {
               onChange={setSignupPassword}
             />
 
-            <div className="mt-[20px]">
+            <div className="mt-[1.5rem]">
               <Button disabled={!isSignupFormValid} onClick={handleSignup}>
                 가입하기
               </Button>
