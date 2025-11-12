@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Button from '../shared/components/Button';
 import InputField from '../shared/components/InputField';
-import DepartmentSelect from '../shared/components/DepartmentSelect';
 import VerificationCodeField from '../shared/components/VerificationCodeField';
 import VerificationButton from '../shared/components/VerificationButton';
 
@@ -13,7 +12,6 @@ export default function AuthPage() {
   const [loginPassword, setLoginPassword] = useState('');
 
   // Signup state
-  const [department, setDepartment] = useState('');
   const [name, setName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
@@ -30,7 +28,7 @@ export default function AuthPage() {
   };
 
   const isLoginFormValid = isValidEmail(loginEmail) && loginPassword.length > 0;
-  const isSignupFormValid = department && name && isEmailVerified && signupPassword;
+  const isSignupFormValid = name && isEmailVerified && signupPassword;
   const canRequestVerification = isValidEmail(signupEmail) && !isEmailVerified;
 
   const handleLogin = () => {
@@ -41,7 +39,7 @@ export default function AuthPage() {
 
   const handleSignup = () => {
     if (isSignupFormValid) {
-      console.log('회원가입:', { department, name, email: signupEmail, password: signupPassword });
+      console.log('회원가입:', { name, email: signupEmail, password: signupPassword });
     }
   };
 
@@ -66,7 +64,6 @@ export default function AuthPage() {
       setLoginEmail('');
       setLoginPassword('');
     } else {
-      setDepartment('');
       setName('');
       setSignupEmail('');
       setSignupPassword('');
@@ -154,12 +151,6 @@ export default function AuthPage() {
         ) : (
           // Signup Form
           <div className="flex flex-col gap-[2rem]">
-            {/* 부서 선택 */}
-            <DepartmentSelect
-              value={department}
-              onChange={setDepartment}
-            />
-
             {/* 이름 */}
             <InputField
               type="text"
