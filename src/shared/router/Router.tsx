@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Test from '../../pages/Test';
 import AuthPage from '../../commute/pages/AuthPage';
+import HomePage from '../../commute/pages/HomePage';
+import MyPage from '../../commute/pages/MyPage';
 
 const router = createBrowserRouter([
   {
@@ -10,6 +12,14 @@ const router = createBrowserRouter([
   {
     path: '/auth',
     element: <AuthPage />,
+  },
+  {
+    path: '/home',
+    element: <HomePage />,
+  },
+  {
+    path: '/mypage',
+    element: <MyPage />,
   },
 ]);
 
