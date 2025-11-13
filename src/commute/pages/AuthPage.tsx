@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../shared/components/Button';
 import InputField from '../shared/components/InputField';
 import VerificationCodeField from '../shared/components/VerificationCodeField';
 import VerificationButton from '../shared/components/VerificationButton';
 
 export default function AuthPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
 
   // Login state
@@ -34,12 +36,16 @@ export default function AuthPage() {
   const handleLogin = () => {
     if (isLoginFormValid) {
       console.log('로그인:', { email: loginEmail, password: loginPassword });
+      // TODO: 실제 로그인 API 호출 후 성공 시 이동
+      navigate('/home');
     }
   };
 
   const handleSignup = () => {
     if (isSignupFormValid) {
       console.log('회원가입:', { name, email: signupEmail, password: signupPassword });
+      // TODO: 실제 회원가입 API 호출 후 성공 시 이동
+      navigate('/home');
     }
   };
 
