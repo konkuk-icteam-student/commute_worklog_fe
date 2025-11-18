@@ -25,8 +25,7 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
         navigate('/home');
         break;
       case 'calendar':
-        // TODO: 캘린더 페이지 구현 시 추가
-        console.log('Calendar page - 준비 중');
+        navigate('/schedule');
         break;
       case 'message':
         // TODO: 메시지 페이지 구현 시 추가
