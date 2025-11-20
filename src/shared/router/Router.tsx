@@ -4,6 +4,7 @@ import AuthPage from '../../commute/pages/AuthPage';
 import HomePage from '../../commute/pages/HomePage';
 import MyPage from '../../commute/pages/MyPage';
 import SchedulePage from '../../commute/pages/SchedulePage';
+import TasksPage from '../../commute/pages/TasksPage';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/schedule',
     element: <SchedulePage />,
+  },
+  {
+    path: '/tasks',
+    element: <TasksPage />,
   },
 ]);
 

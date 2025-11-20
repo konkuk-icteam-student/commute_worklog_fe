@@ -10,7 +10,7 @@ import SelectedMessageButton from '../../../shared/assets/SelectedMessageButton.
 import ProfileButton from '../../../shared/assets/ProfileButton.svg';
 import SelectedProfileButton from '../../../shared/assets/SelectedProfileButton.svg';
 
-type NavigationPage = 'home' | 'calendar' | 'message' | 'mypage';
+type NavigationPage = 'home' | 'calendar' | 'tasks' | 'mypage';
 
 interface BottomNavigationProps {
   activePage: NavigationPage;
@@ -27,9 +27,8 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
       case 'calendar':
         navigate('/schedule');
         break;
-      case 'message':
-        // TODO: 메시지 페이지 구현 시 추가
-        console.log('Message page - 준비 중');
+      case 'tasks':
+        navigate('/tasks');
         break;
       case 'mypage':
         navigate('/mypage');
@@ -74,17 +73,17 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
             />
           </button>
 
-          {/* Message Button */}
+          {/* Tasks Button */}
           <button
-            onClick={() => handleNavigation('message')}
+            onClick={() => handleNavigation('tasks')}
             className={`flex items-center justify-center rounded-full size-[4rem] transition-all ${
-              activePage === 'message' ? 'bg-[rgba(81,168,255,0.1)]' : 'hover:bg-gray-50'
+              activePage === 'tasks' ? 'bg-[rgba(81,168,255,0.1)]' : 'hover:bg-gray-50'
             }`}
             data-name="Button"
           >
             <img
-              src={activePage === 'message' ? SelectedMessageButton : MessageButton}
-              alt="Message"
+              src={activePage === 'tasks' ? SelectedMessageButton : MessageButton}
+              alt="Tasks"
               className="w-[2.4rem] h-[2.4rem]"
             />
           </button>
