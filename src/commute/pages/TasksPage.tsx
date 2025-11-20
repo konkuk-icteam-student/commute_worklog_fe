@@ -171,7 +171,7 @@ export default function TasksPage() {
 
         {/* Edit Button */}
         <button
-          onClick={() => console.log('편집 모드')}
+          onClick={() => navigate('/tasks/today/modify')}
           className="bg-[#51a8ff] h-[5.6rem] rounded-full shadow-[0rem_0.1rem_0.3rem_0rem_rgba(0,0,0,0.1),0rem_0.1rem_0.2rem_-0.1rem_rgba(0,0,0,0.1)] w-full flex items-center justify-center"
           data-name="Button"
         >

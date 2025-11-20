@@ -5,6 +5,7 @@ import HomePage from '../../commute/pages/HomePage';
 import MyPage from '../../commute/pages/MyPage';
 import SchedulePage from '../../commute/pages/SchedulePage';
 import TasksPage from '../../commute/pages/TasksPage';
+import TasksEditPage from '../../commute/pages/TasksEditPage';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: '/tasks',
     element: <TasksPage />,
+  },
+  {
+    path: '/tasks/today/modify',
+    element: <TasksEditPage />,
   },
 ]);
 
