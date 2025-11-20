@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../shared/components/BottomNavigation';
+import ClockIcon from '../shared/assets/clock.svg';
+import MenuIcon from '../shared/assets/menu.svg';
 
 interface Task {
   id: number;
@@ -93,12 +95,7 @@ export default function TasksPage() {
         <div className="flex flex-col gap-[1.6rem] items-start w-full" data-name="Container">
           {/* Section Header */}
           <div className="flex gap-[0.8rem] h-[3.2rem] items-center w-full" data-name="Container">
-            <div className="bg-[rgba(81,168,255,0.1)] rounded-[1rem] shrink-0 size-[3.2rem] flex items-center justify-center" data-name="Container">
-              <svg className="size-[1.6rem]" fill="none" viewBox="0 0 16 16">
-                <path d="M13.333 4L6 11.333 2.667 8" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-                <path d="M13.333 8.667V13.333C13.333 13.687 13.193 14.026 12.943 14.276C12.693 14.526 12.354 14.667 12 14.667H2.667C2.313 14.667 1.974 14.526 1.724 14.276C1.474 14.026 1.333 13.687 1.333 13.333V4C1.333 3.646 1.474 3.307 1.724 3.057C1.974 2.807 2.313 2.667 2.667 2.667H10" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-              </svg>
-            </div>
+            <img src={ClockIcon} alt="정기 업무" className="size-[3.2rem]" />
             <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[2.4rem] text-[#09121c] text-[1.6rem]">
               정기 업무
             </p>
@@ -151,15 +148,7 @@ export default function TasksPage() {
         <div className="flex flex-col gap-[1.6rem] items-start w-full" data-name="Container">
           {/* Section Header */}
           <div className="flex gap-[0.8rem] h-[3.2rem] items-center w-full" data-name="Container">
-            <div className="bg-[rgba(156,163,175,0.1)] rounded-[1rem] shrink-0 size-[3.2rem] flex items-center justify-center" data-name="Container">
-              <svg className="size-[1.6rem]" fill="none" viewBox="0 0 16 16">
-                <path d="M8.6645 3.3325H13.9965" stroke="#6B7280" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-                <path d="M8.6645 7.998H13.9965" stroke="#6B7280" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-                <path d="M8.6645 12.6635H13.9965" stroke="#6B7280" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-                <path d="M2 3.333L3.333 4.666L6 2" stroke="#6B7280" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-                <path d="M2 12.664L3.333 13.997L6 10.331" stroke="#6B7280" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-              </svg>
-            </div>
+            <img src={MenuIcon} alt="비정기 업무" className="size-[3.2rem]" />
             <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[2.4rem] text-[#09121c] text-[1.6rem]">
               비정기 업무
             </p>
