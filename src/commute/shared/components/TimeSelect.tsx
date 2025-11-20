@@ -77,7 +77,7 @@ export default function TimeSelect({ value, onChange }: TimeSelectProps) {
                   <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] not-italic text-[#51a8ff] text-[14px] text-nowrap tracking-[0.18px] whitespace-pre">시</p>
                 </div>
               </div>
-              <div className="max-h-[200px] overflow-y-auto relative shrink-0 w-full">
+              <div className="max-h-[200px] overflow-y-auto relative shrink-0 w-full scrollbar-hide">
                 {hours.map((h) => (
                   <button
                     key={h}
@@ -107,7 +107,7 @@ export default function TimeSelect({ value, onChange }: TimeSelectProps) {
                   <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] not-italic text-[#51a8ff] text-[14px] text-nowrap tracking-[0.18px] whitespace-pre">분</p>
                 </div>
               </div>
-              <div className="max-h-[200px] overflow-y-auto relative shrink-0 w-full">
+              <div className="max-h-[200px] overflow-y-auto relative shrink-0 w-full scrollbar-hide">
                 {minutes.map((m) => (
                   <button
                     key={m}
@@ -129,6 +129,16 @@ export default function TimeSelect({ value, onChange }: TimeSelectProps) {
           </div>
         </div>
       )}
+
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }

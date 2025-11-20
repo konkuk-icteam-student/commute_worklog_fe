@@ -13,12 +13,20 @@ interface UserSelectProps {
 
 export default function UserSelect({ value, onChange, options }: UserSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Filter options based on search text
+  const filteredOptions = searchText
+    ? options.filter(option => option.includes(searchText))
+    : options;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setSearchText('');
       }
     };
 
@@ -30,6 +38,19 @@ export default function UserSelect({ value, onChange, options }: UserSelectProps
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
+
+  // Focus input when dropdown opens
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  const handleSelect = (option: string) => {
+    onChange(option);
+    setIsOpen(false);
+    setSearchText('');
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -60,36 +81,58 @@ export default function UserSelect({ value, onChange, options }: UserSelectProps
       {isOpen && (
         <div className="absolute bg-white left-0 mt-[4px] rounded-[10px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.15)] top-full w-[143.871px] z-50" data-name="Dropdown">
           <div className="content-stretch flex flex-col items-start p-[8px] relative w-full">
-            {/* Header */}
-            <div className="h-[32px] relative shrink-0 w-full" data-name="Header">
-              <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[32px] items-center px-[12px] py-[4px] relative w-full">
-                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] not-italic text-[#51a8ff] text-[14px] text-nowrap tracking-[0.18px] whitespace-pre">담당자 선택</p>
-              </div>
+            {/* Search Input */}
+            <div className="h-[40px] relative shrink-0 w-full" data-name="SearchInput">
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="이름 검색"
+                className="w-full h-full px-[12px] py-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#09121c] placeholder-gray-400 border-b border-gray-100 outline-none"
+              />
             </div>
 
             {/* Options */}
-            {options.map((option) => (
-              <button
-                key={option}
-                onClick={() => {
-                  onChange(option);
-                  setIsOpen(false);
-                }}
-                className={`h-[40px] relative shrink-0 w-full hover:bg-gray-50 ${
-                  value === option ? 'bg-[#f1f8ff]' : ''
-                }`}
-                data-name="Option"
-              >
-                <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[40px] items-center px-[12px] py-[8px] relative w-full">
-                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] not-italic text-[16px] text-nowrap tracking-[0.18px] whitespace-pre ${
-                    value === option ? 'text-[#51a8ff]' : 'text-[#09121c]'
-                  }`}>{option}</p>
+            <div className="max-h-[160px] overflow-y-auto w-full scrollbar-hide">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => handleSelect(option)}
+                    className={`h-[40px] relative shrink-0 w-full hover:bg-gray-50 ${
+                      value === option ? 'bg-[#f1f8ff]' : ''
+                    }`}
+                    data-name="Option"
+                  >
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[40px] items-center px-[12px] py-[8px] relative w-full">
+                      <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] not-italic text-[16px] text-nowrap tracking-[0.18px] whitespace-pre ${
+                        value === option ? 'text-[#51a8ff]' : 'text-[#09121c]'
+                      }`}>{option}</p>
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <div className="h-[40px] flex items-center justify-center">
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-gray-400">
+                    결과 없음
+                  </p>
                 </div>
-              </button>
-            ))}
+              )}
+            </div>
           </div>
         </div>
       )}
+
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }
