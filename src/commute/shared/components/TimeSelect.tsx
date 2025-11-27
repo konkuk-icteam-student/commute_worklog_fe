@@ -15,9 +15,11 @@ export default function TimeSelect({ value, onChange }: TimeSelectProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Parse current time
-  const [hour, minute] = value.split(':');
+  const [hourRaw, minuteRaw] = value.split(':');
+  const hour = hourRaw || '09';
+  const minute = minuteRaw || '00';
 
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+  const hours = Array.from({ length: 15 }, (_, i) => (i + 9).toString().padStart(2, '0'));
   const minutes = ['00', '15', '30', '45'];
 
   useEffect(() => {
