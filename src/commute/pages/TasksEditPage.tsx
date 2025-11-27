@@ -31,6 +31,8 @@ export default function TasksEditPage() {
     { id: 9, title: '기록물 정리', assignee: '홍길동', time: '16:00', completed: true, type: 'irregular', period: 'afternoon' },
   ]);
 
+  const [newTaskInput, setNewTaskInput] = useState('');
+
   const toggleTaskComplete = (id: number) => {
     setTasks(tasks.map(task =>
       task.id === id ? { ...task, completed: !task.completed } : task
@@ -213,6 +215,60 @@ export default function TasksEditPage() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Add New Task Section */}
+          <div className="content-stretch flex gap-[11.992px] h-[51.982px] items-center relative shrink-0 w-full" data-name="AddTaskContainer">
+            {/* Text Input */}
+            <div className="basis-0 grow bg-white relative rounded-[10px] h-full">
+              <div className="flex flex-row items-center size-full">
+                <div className="box-border content-stretch flex items-center overflow-clip px-[16px] py-[12px] relative size-full">
+                  <input
+                    type="text"
+                    value={newTaskInput}
+                    onChange={(e) => setNewTaskInput(e.target.value)}
+                    placeholder="새 업무 추가(최대 16자)"
+                    maxLength={16}
+                    className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[normal] not-italic w-full text-[16px] outline-none placeholder:text-[#cdcdcd] text-[#09121c]"
+                  />
+                </div>
+              </div>
+              <div aria-hidden="true" className="absolute border-[#e0e0e0] border-[0.542px] border-solid inset-0 pointer-events-none rounded-[10px]" />
+            </div>
+
+            {/* Add Button */}
+            <button
+              onClick={() => {
+                if (newTaskInput.trim()) {
+                  const newTask = {
+                    id: tasks.length + 1,
+                    title: newTaskInput,
+                    assignee: '',
+                    time: '',
+                    completed: false,
+                    type: 'irregular' as const,
+                    period: 'afternoon' as const
+                  };
+                  setTasks([...tasks, newTask]);
+                  setNewTaskInput('');
+                }
+              }}
+              className="bg-[#51a8ff] relative rounded-[10px] shrink-0 size-[51.982px]"
+              data-name="AddButton"
+            >
+              <div className="flex flex-row items-center justify-center size-full">
+                <div className="box-border content-stretch flex items-center justify-center pl-0 pr-[0.008px] py-0 relative size-full">
+                  <div className="relative shrink-0 size-[19.993px]">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
+                      <g>
+                        <path d="M4.16518 9.99644H15.8277" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66607" />
+                        <path d="M9.99644 4.16518V15.8277" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66607" />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </button>
           </div>
 
           {/* Bottom Buttons */}
