@@ -11,8 +11,7 @@ export default function SchedulePage() {
 
   const handleApply = () => {
     setSelectedCard('apply');
-    // TODO: 근로시간 신청 페이지로 이동
-    console.log('근로시간 신청');
+    navigate('/schedule/apply');
   };
 
   const handleModify = () => {
