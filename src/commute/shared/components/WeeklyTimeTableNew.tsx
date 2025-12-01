@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 type SlotStatus = 'available' | 'selected' | 'full' | 'partial' | 'disabled';
 type RandomStyle = 'white' | 'pink' | 'blue';
@@ -16,6 +16,10 @@ export default function WeeklyTimeTableNew({
 }: WeeklyTimeTableNewProps) {
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
   const [randomStyleSlots, setRandomStyleSlots] = useState<Record<string, RandomStyle>>({});
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartSlot, setDragStartSlot] = useState<string | null>(null);
+  const [draggedSlots, setDraggedSlots] = useState<Set<string>>(new Set());
+  const [dragMode, setDragMode] = useState<'select' | 'deselect'>('select');
 
   // Calculate hours per day based on selected slots (0.5h per slot)
   const calculateDayHours = (dayIndex: number) => {
@@ -133,8 +137,78 @@ export default function WeeklyTimeTableNew({
     onSlotClick(dayIndex, time);
   };
 
+  const handleMouseDown = (dayIndex: number, time: string, status: SlotStatus) => {
+    // Disabled and full slots are not draggable
+    if (status === 'disabled' || status === 'full') {
+      return;
+    }
+
+    const slotKey = `${dayIndex}-${time}`;
+    const isCurrentlySelected = selectedSlots.includes(slotKey);
+
+    setIsDragging(true);
+    setDragStartSlot(slotKey);
+    setDraggedSlots(new Set([slotKey]));
+    setDragMode(isCurrentlySelected ? 'deselect' : 'select');
+  };
+
+  const handleMouseEnter = (dayIndex: number, time: string, status: SlotStatus) => {
+    if (!isDragging) return;
+
+    // Disabled and full slots cannot be dragged over
+    if (status === 'disabled' || status === 'full') {
+      return;
+    }
+
+    const slotKey = `${dayIndex}-${time}`;
+    setDraggedSlots(prev => new Set([...prev, slotKey]));
+  };
+
+  const handleMouseUp = useCallback(() => {
+    if (!isDragging) return;
+
+    // If only one slot was dragged, it's a simple click - just toggle it
+    if (draggedSlots.size === 1) {
+      const slotKey = Array.from(draggedSlots)[0];
+      const [dayStr, time] = slotKey.split('-');
+      const dayIndex = parseInt(dayStr);
+      onSlotClick(dayIndex, time);
+    } else {
+      // Multiple slots dragged - apply based on drag mode
+      draggedSlots.forEach(slotKey => {
+        const [dayStr, time] = slotKey.split('-');
+        const dayIndex = parseInt(dayStr);
+        const isCurrentlySelected = selectedSlots.includes(slotKey);
+
+        // Only toggle if needed based on drag mode
+        if (dragMode === 'select' && !isCurrentlySelected) {
+          onSlotClick(dayIndex, time);
+        } else if (dragMode === 'deselect' && isCurrentlySelected) {
+          onSlotClick(dayIndex, time);
+        }
+      });
+    }
+
+    // Reset drag state
+    setIsDragging(false);
+    setDragStartSlot(null);
+    setDraggedSlots(new Set());
+  }, [isDragging, draggedSlots, dragMode, selectedSlots, onSlotClick]);
+
+  // Add global mouseup listener to handle drag end anywhere
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      if (isDragging) {
+        handleMouseUp();
+      }
+    };
+
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+  }, [isDragging, handleMouseUp]);
+
   return (
-    <div className="w-full" data-name="WeeklyTimeTable">
+    <div className="w-full select-none" data-name="WeeklyTimeTable">
       <div className="bg-white rounded-[1.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] py-[1.6rem] pr-[1.6rem]">
         {/* Header - Week Days */}
         <div className="grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem] mb-[1.2rem]" data-name="WeekHeader">
@@ -183,13 +257,18 @@ export default function WeeklyTimeTableNew({
                 const isHovered = hoveredSlot === slotKey;
                 const capacity = slotCapacity[slotKey];
 
+                const isDraggedOver = draggedSlots.has(slotKey);
+
                 return (
                   <div key={slotKey} className="relative">
                     <div
-                      className={getSlotClasses(status, isHovered, slotKey)}
+                      className={`${getSlotClasses(status, isHovered, slotKey)} ${isDraggedOver ? 'ring-2 ring-[#51a8ff] ring-opacity-50' : ''}`}
                       style={status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined}
-                      onClick={() => handleSlotClick(dayIndex, time, status)}
-                      onMouseEnter={() => setHoveredSlot(slotKey)}
+                      onMouseDown={() => handleMouseDown(dayIndex, time, status)}
+                      onMouseEnter={() => {
+                        setHoveredSlot(slotKey);
+                        handleMouseEnter(dayIndex, time, status);
+                      }}
                       onMouseLeave={() => setHoveredSlot(null)}
                       title={
                         capacity
