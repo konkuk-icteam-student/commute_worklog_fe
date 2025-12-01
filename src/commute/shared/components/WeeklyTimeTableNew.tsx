@@ -17,12 +17,18 @@ export default function WeeklyTimeTableNew({
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
   const [randomStyleSlots, setRandomStyleSlots] = useState<Record<string, RandomStyle>>({});
 
+  // Calculate hours per day based on selected slots (0.5h per slot)
+  const calculateDayHours = (dayIndex: number) => {
+    const count = selectedSlots.filter(slot => slot.startsWith(`${dayIndex}-`)).length;
+    return count * 0.5;
+  };
+
   const weekDays = [
-    { day: '월', date: '11/1', hours: '1.5h', color: '#ff4444' },
-    { day: '화', date: '11/2', hours: '', color: '' },
-    { day: '수', date: '11/3', hours: '3h', color: '#51a8ff' },
-    { day: '목', date: '11/4', hours: '2h', color: '#51a8ff' },
-    { day: '금', date: '11/5', hours: '', color: '' },
+    { day: '월', date: '11/1', hours: calculateDayHours(0) > 0 ? `${calculateDayHours(0)}h` : '', color: calculateDayHours(0) > 0 ? '#51a8ff' : '' },
+    { day: '화', date: '11/2', hours: calculateDayHours(1) > 0 ? `${calculateDayHours(1)}h` : '', color: calculateDayHours(1) > 0 ? '#51a8ff' : '' },
+    { day: '수', date: '11/3', hours: calculateDayHours(2) > 0 ? `${calculateDayHours(2)}h` : '', color: calculateDayHours(2) > 0 ? '#51a8ff' : '' },
+    { day: '목', date: '11/4', hours: calculateDayHours(3) > 0 ? `${calculateDayHours(3)}h` : '', color: calculateDayHours(3) > 0 ? '#51a8ff' : '' },
+    { day: '금', date: '11/5', hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '', color: calculateDayHours(4) > 0 ? '#51a8ff' : '' },
   ];
 
   const times = [
@@ -34,7 +40,7 @@ export default function WeeklyTimeTableNew({
   // Generate random style slots on mount
   useEffect(() => {
     const slots: Record<string, RandomStyle> = {};
-    const styles: RandomStyle[] = ['white', 'pink', 'blue'];
+    const styles: RandomStyle[] = ['white']; // Only white for available slots
 
     // Generate all available slot keys (excluding lunch time)
     const allSlots: string[] = [];
@@ -50,10 +56,9 @@ export default function WeeklyTimeTableNew({
     const shuffled = allSlots.sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 10);
 
-    // Assign random styles
+    // Assign random styles (only white)
     selected.forEach(slot => {
-      const randomStyle = styles[Math.floor(Math.random() * styles.length)];
-      slots[slot] = randomStyle;
+      slots[slot] = 'white';
     });
 
     setRandomStyleSlots(slots);
@@ -85,26 +90,25 @@ export default function WeeklyTimeTableNew({
   };
 
   const getSlotClasses = (status: SlotStatus, isHovered: boolean, slotKey: string) => {
-    const baseClasses = 'absolute h-[17.996px] rounded-[3px] cursor-pointer transition-all duration-200';
+    const baseClasses = 'w-full h-[1.8rem] rounded-[0.3rem] transition-all duration-200';
 
     // Check for random style (only apply to available slots)
     const randomStyle = randomStyleSlots[slotKey];
     if (status === 'available' && randomStyle) {
-      // Don't apply border/background classes here - use inline styles instead
-      return `${baseClasses} ${isHovered ? 'shadow-sm' : ''}`;
+      return `${baseClasses} cursor-pointer ${isHovered ? 'shadow-sm' : ''}`;
     }
 
     switch (status) {
       case 'selected':
-        return `${baseClasses} bg-[#51a8ff] border-[0.558px] border-[#51a8ff]`;
+        return `${baseClasses} cursor-pointer bg-[#51a8ff] border border-[#51a8ff]`;
       case 'full':
-        return `${baseClasses} bg-[#FEF2F2] border-[0.558px] border-[#ffc9c9] opacity-60 cursor-not-allowed`;
+        return `${baseClasses} bg-[#FEF2F2] border border-[#ffc9c9] opacity-60 cursor-not-allowed`;
       case 'partial':
-        return `${baseClasses} bg-orange-50 border-[0.558px] border-[#ffd6a7] ${isHovered ? 'opacity-100' : 'opacity-80'}`;
+        return `${baseClasses} cursor-pointer bg-orange-50 border border-[#ffd6a7] ${isHovered ? 'opacity-100' : 'opacity-80'}`;
       case 'disabled':
-        return `${baseClasses} bg-[#f5f5f5] border-[0.558px] border-[#e0e0e0] cursor-not-allowed`;
+        return `${baseClasses} bg-[#f5f5f5] border border-[#e0e0e0] cursor-not-allowed`;
       default:
-        return `${baseClasses} bg-white border-[0.558px] border-[#e0e0e0] ${isHovered ? 'border-[#51a8ff] shadow-sm' : ''}`;
+        return `${baseClasses} cursor-pointer bg-white border border-[#e0e0e0] ${isHovered ? 'border-[#51a8ff] shadow-sm' : ''}`;
     }
   };
 
@@ -112,85 +116,64 @@ export default function WeeklyTimeTableNew({
     const randomStyle = randomStyleSlots[slotKey];
     if (!randomStyle) return undefined;
 
-    switch (randomStyle) {
-      case 'white':
-        return {
-          border: '0.558px solid #EAEAEA',
-          background: '#FFF',
-          borderColor: isHovered ? '#51a8ff' : '#EAEAEA'
-        };
-      case 'pink':
-        return {
-          border: '0.558px solid #FFC9C9',
-          background: '#FEF2F2',
-          opacity: isHovered ? 1 : 0.6
-        };
-      case 'blue':
-        return {
-          border: '0.558px solid #51A8FF',
-          background: '#51A8FF'
-        };
-    }
+    // Only white style for available slots
+    return {
+      border: '1px solid #EAEAEA',
+      background: '#FFF',
+      borderColor: isHovered ? '#51a8ff' : '#EAEAEA'
+    };
   };
 
   const handleSlotClick = (dayIndex: number, time: string, status: SlotStatus) => {
+    // Disabled and full slots are not clickable
     if (status === 'disabled' || status === 'full') {
       return;
     }
+
     onSlotClick(dayIndex, time);
   };
 
-  // 위치 및 너비 계산
-  const leftPositions = [0, 69.74, 141.77, 213.84, 286.16];
-  const widths = [59.75, 62.036, 62.079, 62.324, 61.596];
-
   return (
     <div className="w-full" data-name="WeeklyTimeTable">
-      <div className="bg-white rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] py-[16px] pl-[76px] pr-[16px]">
+      <div className="bg-white rounded-[1.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] py-[1.6rem] pr-[1.6rem]">
         {/* Header - Week Days */}
-        <div className="relative h-[60px] mb-[12px]" data-name="WeekHeader">
+        <div className="grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem] mb-[1.2rem]" data-name="WeekHeader">
+          <div></div>
           {weekDays.map((day, index) => (
-            <div
-              key={index}
-              className="absolute top-0"
-              style={{
-                left: `${leftPositions[index]}px`,
-                width: `${widths[index]}px`
-              }}
-            >
-              <div className="flex flex-col items-center gap-[4px]">
-                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[13px] text-[#09121c]">
-                  {day.day}
+            <div key={index} className="flex flex-col items-center gap-[0.4rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.3rem] text-[#09121c]">
+                {day.day}
+              </p>
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] text-[#9ca3af]">
+                {day.date}
+              </p>
+              {day.hours && (
+                <p
+                  className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1rem]"
+                  style={{ color: day.color }}
+                >
+                  {day.hours}
                 </p>
-                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[11px] text-[#9ca3af]">
-                  {day.date}
-                </p>
-                {day.hours && (
-                  <p
-                    className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[10px]"
-                    style={{ color: day.color }}
-                  >
-                    {day.hours}
-                  </p>
-                )}
-              </div>
+              )}
             </div>
           ))}
         </div>
 
         {/* Time Slots */}
-        <div className="relative">
-          {times.map((time, timeIndex) => (
+        <div className="flex flex-col gap-[0.4rem]">
+          {times.map((time) => (
             <div
               key={time}
-              className="relative h-[24px] mb-[4px]"
+              className="grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem] h-[2.4rem]"
               data-name={`TimeRow-${time}`}
             >
-              {/* Time Label */}
-              <div className="absolute left-[-60px] top-[3px]">
-                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[11px] text-[#9ca3af]">
-                  {time}
-                </p>
+              {/* Time Label - only show hourly times (not :30) */}
+              <div className="flex items-center justify-end pr-[1rem]">
+                {time.endsWith(':00') && (
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] text-[#9ca3af]">
+                    {time} -
+                  </p>
+                )}
               </div>
 
               {/* Day Slots */}
@@ -201,15 +184,7 @@ export default function WeeklyTimeTableNew({
                 const capacity = slotCapacity[slotKey];
 
                 return (
-                  <div
-                    key={slotKey}
-                    className="absolute"
-                    style={{
-                      left: `${leftPositions[dayIndex]}px`,
-                      width: `${widths[dayIndex]}px`,
-                      top: 0
-                    }}
-                  >
+                  <div key={slotKey} className="relative">
                     <div
                       className={getSlotClasses(status, isHovered, slotKey)}
                       style={status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined}
@@ -226,9 +201,13 @@ export default function WeeklyTimeTableNew({
                     >
                       {/* Tooltip on hover */}
                       {isHovered && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-[#09121c] text-white text-[10px] rounded whitespace-nowrap z-10">
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.2rem] py-[0.1rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">
                           {status === 'disabled'
                             ? '점심시간'
+                            : status === 'full'
+                            ? '5/5명'
+                            : status === 'partial'
+                            ? '4/5명'
                             : `${capacity?.current || 0}/${capacity?.max || 5}명`
                           }
                         </div>

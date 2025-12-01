@@ -97,8 +97,8 @@ export default function ScheduleApplyPage() {
       </div>
 
       {/* Content - Scrollable */}
-      <div className="w-full pb-[12rem]">
-        <div className="max-w-[39.3rem] mx-auto px-[2.4rem] pt-[3.2rem] flex flex-col gap-[2rem]">
+      <div className="w-full">
+        <div className="max-w-[39.3rem] mx-auto px-[2.4rem] pt-[3.2rem] pb-[3.2rem] flex flex-col gap-[2rem]">
           {/* Info Box */}
           <div className="w-full">
             <ScheduleInfoCard />
@@ -149,31 +149,29 @@ export default function ScheduleApplyPage() {
           <div className="w-full">
             <WeeklySummaryCard />
           </div>
-        </div>
-      </div>
 
-      {/* Submit Button - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white py-[2rem] px-[2rem] shadow-[0px_-4px_20px_0px_rgba(0,0,0,0.05)]">
-        <div className="max-w-[39.3rem] mx-auto">
-          <button
-            onClick={() => {
-              console.log('신청하기:', selectedSlots);
-              // Handle submit logic here
-            }}
-            disabled={selectedSlots.length === 0}
-            className={`w-full h-[5.6rem] rounded-[4.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] transition-all duration-200 ${
-              selectedSlots.length > 0
-                ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
-                : 'bg-[#eaeaea]'
-            }`}
-            data-name="Button"
-          >
-            <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
-              selectedSlots.length > 0 ? 'text-white' : 'text-[#cdcdcd]'
-            }`}>
-              신청하기
-            </p>
-          </button>
+          {/* Submit Button - At bottom of page */}
+          <div className="w-full bg-white py-[2rem]">
+            <button
+              onClick={() => {
+                console.log('신청하기:', selectedSlots);
+                // Handle submit logic here
+              }}
+              disabled={selectedSlots.length === 0}
+              className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
+                selectedSlots.length > 0
+                  ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
+                  : 'bg-[#eaeaea]'
+              }`}
+              data-name="Button"
+            >
+              <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
+                selectedSlots.length > 0 ? 'text-white' : 'text-[#cdcdcd]'
+              }`}>
+                신청하기
+              </p>
+            </button>
+          </div>
         </div>
       </div>
     </div>
