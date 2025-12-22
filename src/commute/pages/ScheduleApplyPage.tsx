@@ -5,11 +5,14 @@ import WeekTotalCard from '../shared/components/WeekTotalCard';
 import WeeklyTimeTableNew from '../shared/components/WeeklyTimeTableNew';
 import MonthlyHoursCard from '../shared/components/MonthlyHoursCard';
 import WeeklySummaryCard from '../shared/components/WeeklySummaryCard';
+import BottomNavigation from '../shared/components/BottomNavigation';
+import successIcon from '../shared/assets/success.svg';
 
 export default function ScheduleApplyPage() {
   const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Mock data for slot capacity (in real app, this would come from backend)
   // dayIndex: 0=월, 1=화, 2=수, 3=목, 4=금
@@ -63,6 +66,61 @@ export default function ScheduleApplyPage() {
 
   const currentWeekHours = calculateWeekHours(selectedWeek);
   const totalMonthHours = 0; // Sum of all weeks
+
+  const handleSubmit = () => {
+    console.log('신청하기:', selectedSlots);
+    setIsSubmitted(true);
+  };
+
+  // 신청 완료 화면
+  if (isSubmitted) {
+    return (
+      <div className="bg-white relative min-h-screen w-full" data-name="scheduleApplySuccess">
+        {/* Background Gradient */}
+        <div className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] inset-0 -z-10" data-name="Background" />
+
+        {/* Header */}
+        <div className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]" data-name="Container">
+          <div className="max-w-[39.3rem] mx-auto px-[3.2rem] py-[2.4rem]">
+            <div className="flex items-center gap-[1.6rem]">
+              {/* Back Button */}
+              <button
+                onClick={() => navigate('/schedule')}
+                className="shrink-0 size-[4rem] flex items-center justify-center"
+                data-name="Button"
+              >
+                <svg className="size-[2.4rem]" fill="none" viewBox="0 0 24 24">
+                  <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              <div className="flex flex-col gap-[0.4rem]">
+                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] text-white">
+                  근로 시간 신청
+                </p>
+                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
+                  10월
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Success Content */}
+        <div className="w-full flex items-center justify-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
+          <div className="flex flex-col items-center gap-[24px]">
+            <img src={successIcon} alt="success" className="w-[40px] h-[40px]" />
+            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[16px] tracking-[0.24px] text-[#09121c]">
+              신청이 완료되었습니다.
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom Navigation */}
+        <BottomNavigation activePage="schedule" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white relative min-h-screen w-full" data-name="scheduleApply">
@@ -154,10 +212,7 @@ export default function ScheduleApplyPage() {
           {/* Submit Button - At bottom of page */}
           <div className="w-full bg-white py-[2rem]">
             <button
-              onClick={() => {
-                console.log('신청하기:', selectedSlots);
-                // Handle submit logic here
-              }}
+              onClick={handleSubmit}
               disabled={selectedSlots.length === 0}
               className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
                 selectedSlots.length > 0
