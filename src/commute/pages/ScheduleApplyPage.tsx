@@ -135,6 +135,7 @@ export default function ScheduleApplyPage() {
 
           {/* Time Table */}
           <WeeklyTimeTableNew
+            selectedWeek={selectedWeek}
             selectedSlots={selectedSlots}
             onSlotClick={handleSlotClick}
             slotCapacity={slotCapacity}

@@ -1,15 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
+import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
 
 type SlotStatus = 'available' | 'selected' | 'full' | 'partial' | 'disabled';
 type RandomStyle = 'white' | 'pink' | 'blue';
 
 interface WeeklyTimeTableNewProps {
+  selectedWeek?: number;
   selectedSlots?: string[];
   onSlotClick?: (day: number, time: string) => void;
   slotCapacity?: { [key: string]: { current: number; max: number } };
 }
 
 export default function WeeklyTimeTableNew({
+  selectedWeek = 1,
   selectedSlots = [],
   onSlotClick = () => {},
   slotCapacity = {}
@@ -27,12 +30,26 @@ export default function WeeklyTimeTableNew({
     return count * 0.5;
   };
 
+  // Get dates for each week based on selectedWeek
+  const getWeekDates = (week: number) => {
+    // TODO: 현재는 2025년 1월 하드코딩, 나중에 동적으로 year/month 받아오기
+    const year = '2025';
+    const month = '1';
+
+    const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2025']];
+    if (!monthData) return ['-', '-', '-', '-', '-'];
+
+    const weekData = monthData.weeks.find(w => w.week === week);
+    return weekData?.dates || ['-', '-', '-', '-', '-'];
+  };
+
+  const dates = getWeekDates(selectedWeek);
   const weekDays = [
-    { day: '월', date: '11/1', hours: calculateDayHours(0) > 0 ? `${calculateDayHours(0)}h` : '', color: calculateDayHours(0) > 0 ? '#51a8ff' : '' },
-    { day: '화', date: '11/2', hours: calculateDayHours(1) > 0 ? `${calculateDayHours(1)}h` : '', color: calculateDayHours(1) > 0 ? '#51a8ff' : '' },
-    { day: '수', date: '11/3', hours: calculateDayHours(2) > 0 ? `${calculateDayHours(2)}h` : '', color: calculateDayHours(2) > 0 ? '#51a8ff' : '' },
-    { day: '목', date: '11/4', hours: calculateDayHours(3) > 0 ? `${calculateDayHours(3)}h` : '', color: calculateDayHours(3) > 0 ? '#51a8ff' : '' },
-    { day: '금', date: '11/5', hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '', color: calculateDayHours(4) > 0 ? '#51a8ff' : '' },
+    { day: '월', date: dates[0], hours: calculateDayHours(0) > 0 ? `${calculateDayHours(0)}h` : '', color: calculateDayHours(0) > 0 ? '#51a8ff' : '' },
+    { day: '화', date: dates[1], hours: calculateDayHours(1) > 0 ? `${calculateDayHours(1)}h` : '', color: calculateDayHours(1) > 0 ? '#51a8ff' : '' },
+    { day: '수', date: dates[2], hours: calculateDayHours(2) > 0 ? `${calculateDayHours(2)}h` : '', color: calculateDayHours(2) > 0 ? '#51a8ff' : '' },
+    { day: '목', date: dates[3], hours: calculateDayHours(3) > 0 ? `${calculateDayHours(3)}h` : '', color: calculateDayHours(3) > 0 ? '#51a8ff' : '' },
+    { day: '금', date: dates[4], hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '', color: calculateDayHours(4) > 0 ? '#51a8ff' : '' },
   ];
 
   const times = [
@@ -106,9 +123,9 @@ export default function WeeklyTimeTableNew({
       case 'selected':
         return `${baseClasses} cursor-pointer bg-[#51a8ff] border border-[#51a8ff]`;
       case 'full':
-        return `${baseClasses} bg-[#FEF2F2] border border-[#ffc9c9] opacity-60 cursor-not-allowed`;
+        return `${baseClasses} bg-[#FFE2E2] border border-[#FEC9C9] opacity-60 cursor-not-allowed`;
       case 'partial':
-        return `${baseClasses} cursor-pointer bg-orange-50 border border-[#ffd6a7] ${isHovered ? 'opacity-100' : 'opacity-80'}`;
+        return `${baseClasses} cursor-pointer bg-[#FEF2F2] border border-[#FFC9C9] ${isHovered ? 'opacity-100' : 'opacity-80'}`;
       case 'disabled':
         return `${baseClasses} bg-[#f5f5f5] border border-[#e0e0e0] cursor-not-allowed`;
       default:

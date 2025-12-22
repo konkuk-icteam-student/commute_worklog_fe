@@ -132,7 +132,7 @@ export default function ScheduleInfoCard() {
     <div className="bg-[rgba(81,168,255,0.05)] relative rounded-[10px] size-full" data-name="Container">
       <div aria-hidden="true" className="absolute border-[0.542px] border-[rgba(81,168,255,0.2)] border-solid inset-0 pointer-events-none rounded-[10px]" />
       <div className="flex flex-row items-center size-full">
-        <div className="box-border content-stretch flex items-center justify-between pl-[12.541px] pr-[157.911px] py-[0.542px] relative size-full">
+        <div className="box-border content-stretch flex items-center justify-between pl-[12.541px] pr-[157.911px] py-[8px] relative size-full">
           <Frame />
         </div>
       </div>

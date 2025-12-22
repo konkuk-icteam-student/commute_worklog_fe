@@ -1,11 +1,18 @@
+import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
+
 export default function WeeklySummaryCard() {
-  const weeklyData = [
-    { week: 1, hours: 0, status: '미신청' },
-    { week: 2, hours: 0, status: '미신청' },
-    { week: 3, hours: 0, status: '미신청' },
-    { week: 4, hours: 0, status: '미신청' },
-    { week: 5, hours: 0, status: '미신청' },
-  ];
+  // TODO: 현재는 2025년 1월 하드코딩, 나중에 동적으로 year/month 받아오기
+  const year = '2025';
+  const month = '1';
+
+  const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2025']];
+
+  const weeklyData = monthData?.weeks.map(weekInfo => ({
+    week: weekInfo.week,
+    hours: 0,
+    status: '미신청',
+    dateRange: weekInfo.dateRange
+  })) || [];
 
   return (
     <div className="bg-white relative rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] size-full p-[16px]" data-name="WeeklySummaryCard">
@@ -13,7 +20,7 @@ export default function WeeklySummaryCard() {
         {/* Header */}
         <div className="pb-[8px] border-b border-[#eaeaea]">
           <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] text-[#09121c]">
-            주차별 신청 현황
+            주차별 요약
           </p>
         </div>
 
@@ -26,7 +33,7 @@ export default function WeeklySummaryCard() {
             >
               <div className="flex items-center gap-[8px]">
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[13px] text-[#09121c]">
-                  {data.week}주차
+                  {data.week}주차 ({data.dateRange})
                 </p>
                 <span
                   className={`font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[12px] ${
