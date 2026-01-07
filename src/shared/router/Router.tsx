@@ -5,6 +5,8 @@ import HomePage from '../../commute/pages/HomePage';
 import MyPage from '../../commute/pages/MyPage';
 import SchedulePage from '../../commute/pages/SchedulePage';
 import ScheduleApplyPage from '../../commute/pages/ScheduleApplyPage';
+import ScheduleModifyPage from '../../commute/pages/ScheduleModifyPage';
+import ScheduleEditPage from '../../commute/pages/ScheduleEditPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
 
@@ -32,6 +34,14 @@ const router = createBrowserRouter([
   {
     path: '/schedule/apply',
     element: <ScheduleApplyPage />,
+  },
+  {
+    path: '/schedule/modify',
+    element: <ScheduleModifyPage />,
+  },
+  {
+    path: '/schedule/edit',
+    element: <ScheduleEditPage />,
   },
   {
     path: '/tasks',

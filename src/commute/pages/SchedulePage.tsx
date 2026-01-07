@@ -16,8 +16,7 @@ export default function SchedulePage() {
 
   const handleModify = () => {
     setSelectedCard('modify');
-    // TODO: 근로시간 수정 페이지로 이동
-    console.log('근로시간 수정');
+    navigate('/schedule/modify');
   };
 
   const handleView = () => {
