@@ -117,7 +117,7 @@ export default function ScheduleApplyPage() {
         </div>
 
         {/* Bottom Navigation */}
-        <BottomNavigation activePage="schedule" />
+        <BottomNavigation activePage="calendar" />
       </div>
     );
   }

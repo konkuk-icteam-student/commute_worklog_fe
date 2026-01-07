@@ -20,7 +20,6 @@ export default function WeeklyTimeTableNew({
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
   const [randomStyleSlots, setRandomStyleSlots] = useState<Record<string, RandomStyle>>({});
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStartSlot, setDragStartSlot] = useState<string | null>(null);
   const [draggedSlots, setDraggedSlots] = useState<Set<string>>(new Set());
   const [dragMode, setDragMode] = useState<'select' | 'deselect'>('select');
 
@@ -61,7 +60,6 @@ export default function WeeklyTimeTableNew({
   // Generate random style slots on mount
   useEffect(() => {
     const slots: Record<string, RandomStyle> = {};
-    const styles: RandomStyle[] = ['white']; // Only white for available slots
 
     // Generate all available slot keys (excluding lunch time)
     const allSlots: string[] = [];
@@ -145,15 +143,6 @@ export default function WeeklyTimeTableNew({
     };
   };
 
-  const handleSlotClick = (dayIndex: number, time: string, status: SlotStatus) => {
-    // Disabled and full slots are not clickable
-    if (status === 'disabled' || status === 'full') {
-      return;
-    }
-
-    onSlotClick(dayIndex, time);
-  };
-
   const handleMouseDown = (dayIndex: number, time: string, status: SlotStatus) => {
     // Disabled and full slots are not draggable
     if (status === 'disabled' || status === 'full') {
@@ -164,7 +153,6 @@ export default function WeeklyTimeTableNew({
     const isCurrentlySelected = selectedSlots.includes(slotKey);
 
     setIsDragging(true);
-    setDragStartSlot(slotKey);
     setDraggedSlots(new Set([slotKey]));
     setDragMode(isCurrentlySelected ? 'deselect' : 'select');
   };
@@ -208,7 +196,6 @@ export default function WeeklyTimeTableNew({
 
     // Reset drag state
     setIsDragging(false);
-    setDragStartSlot(null);
     setDraggedSlots(new Set());
   }, [isDragging, draggedSlots, dragMode, selectedSlots, onSlotClick]);
 
