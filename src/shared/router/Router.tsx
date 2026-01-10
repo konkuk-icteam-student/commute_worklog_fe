@@ -9,6 +9,7 @@ import ScheduleModifyPage from '../../commute/pages/ScheduleModifyPage';
 import ScheduleEditPage from '../../commute/pages/ScheduleEditPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
+import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,14 @@ const router = createBrowserRouter([
   {
     path: '/tasks/today/modify',
     element: <TasksEditPage />,
+  },
+  {
+    path: '/admin',
+    element: <AdminDashboardPage />,
+  },
+  {
+    path: '/admin/dashboard',
+    element: <AdminDashboardPage />,
   },
 ]);
 

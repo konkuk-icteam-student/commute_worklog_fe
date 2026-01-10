@@ -36,6 +36,14 @@ export default function AuthPage() {
   const handleLogin = () => {
     if (isLoginFormValid) {
       console.log('로그인:', { email: loginEmail, password: loginPassword });
+
+      // 관리자 로그인 체크 (임시 하드코딩)
+      if (loginEmail === 'admin1@gmail.com' && loginPassword === 'admin1') {
+        console.log('관리자 로그인 성공');
+        navigate('/admin/dashboard');
+        return;
+      }
+
       // TODO: 실제 로그인 API 호출 후 성공 시 이동
       navigate('/home');
     }
