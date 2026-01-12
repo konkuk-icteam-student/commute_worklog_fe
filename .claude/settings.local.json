@@ -3,6 +3,8 @@
     "allow": [
       "Bash(pnpm add:*)",
       "Bash(pnpm build:*)"
-    ]
+    ],
+    "deny": [],
+    "ask": []
   }
 }
