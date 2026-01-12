@@ -1,7 +1,7 @@
 import svgPaths from "../../imports/svg-366r4er6h5";
 import { useState } from "react";
 
-function Wrapper1({ children }: React.PropsWithChildren<Record<string, never>>) {
+function Wrapper1({ children }: React.PropsWithChildren) {
   return (
     <div className="content-stretch flex flex-col items-start relative shrink-0">
       <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[16.5px] not-italic relative shrink-0 text-[#09121c] text-[0px] text-[12px] w-[202px]">{children}</p>
@@ -20,7 +20,7 @@ function Container2({ children, additionalClassNames = "" }: React.PropsWithChil
   );
 }
 
-function Wrapper({ children }: React.PropsWithChildren<Record<string, never>>) {
+function Wrapper({ children }: React.PropsWithChildren) {
   return (
     <div className="basis-0 grow h-[14.5px] min-h-px min-w-px relative shrink-0">
       <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">{children}</div>

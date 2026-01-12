@@ -4,6 +4,12 @@ import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
 type SlotStatus = 'available' | 'selected' | 'full' | 'partial' | 'disabled';
 type RandomStyle = 'white' | 'pink' | 'blue';
 
+const TIMES = [
+  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+  '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+  '15:00', '15:30', '16:00', '16:30', '17:00'
+];
+
 interface WeeklyTimeTableNewProps {
   selectedWeek?: number;
   selectedSlots?: string[];
@@ -51,12 +57,6 @@ export default function WeeklyTimeTableNew({
     { day: '금', date: dates[4], hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '', color: calculateDayHours(4) > 0 ? '#51a8ff' : '' },
   ];
 
-  const times = [
-    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-    '15:00', '15:30', '16:00', '16:30', '17:00'
-  ];
-
   // Generate random style slots on mount
   useEffect(() => {
     const slots: Record<string, RandomStyle> = {};
@@ -64,7 +64,7 @@ export default function WeeklyTimeTableNew({
     // Generate all available slot keys (excluding lunch time)
     const allSlots: string[] = [];
     for (let day = 0; day < 5; day++) {
-      for (const time of times) {
+      for (const time of TIMES) {
         if (time < '12:00' || time >= '13:00') { // Skip lunch time
           allSlots.push(`${day}-${time}`);
         }
@@ -81,7 +81,7 @@ export default function WeeklyTimeTableNew({
     });
 
     setRandomStyleSlots(slots);
-  }, [times]);
+  }, []);
 
   const getSlotStatus = (dayIndex: number, time: string): SlotStatus => {
     const slotKey = `${dayIndex}-${time}`;
@@ -239,7 +239,7 @@ export default function WeeklyTimeTableNew({
 
         {/* Time Slots */}
         <div className="flex flex-col gap-[0.4rem]">
-          {times.map((time) => (
+          {TIMES.map((time) => (
             <div
               key={time}
               className="grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem] h-[2.4rem]"

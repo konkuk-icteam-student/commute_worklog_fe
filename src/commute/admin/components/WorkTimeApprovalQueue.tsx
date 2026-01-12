@@ -1,7 +1,7 @@
 import svgPaths from "../../imports/svg-aoy5qofihl";
 import { useState } from "react";
 
-function Wrapper({ children }: React.PropsWithChildren<Record<string, never>>) {
+function Wrapper({ children }: React.PropsWithChildren) {
   return (
     <div className="relative shrink-0 size-[14px]">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14 14">
