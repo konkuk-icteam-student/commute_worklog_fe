@@ -118,7 +118,7 @@ function Container({ additionalClassNames = "" }: ContainerProps) {
 export default function TodayWorkStudentList() {
   const [isSimpleView, setIsSimpleView] = useState(false);
   // 근무자 데이터 - 실제로는 props나 API에서 가져올 데이터
-  const [hasWorkers, setHasWorkers] = useState(true);
+  const [hasWorkers] = useState(true);
 
   // 근무자가 없을 때의 UI
   if (!hasWorkers) {

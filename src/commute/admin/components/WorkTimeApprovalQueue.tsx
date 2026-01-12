@@ -79,7 +79,7 @@ function ParagraphText({ text }: ParagraphTextProps) {
 
 export default function WorkTimeApprovalQueue() {
   // 대기 중인 요청 데이터 - 실제로는 props나 API에서 가져올 데이터
-  const [hasRequests, setHasRequests] = useState(true);
+  const [hasRequests] = useState(true);
 
   // 대기 중인 요청이 없을 때의 UI
   if (!hasRequests) {
