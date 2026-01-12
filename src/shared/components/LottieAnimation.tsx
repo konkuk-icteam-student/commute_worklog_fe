@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 
 interface LottieAnimationProps {
-  animationData: any;
+  animationData: unknown;
   width?: string | number;
   height?: string | number;
   loop?: boolean;

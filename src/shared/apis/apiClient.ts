@@ -62,7 +62,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     clearTokens();
     return null;
   }
