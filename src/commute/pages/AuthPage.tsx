@@ -4,6 +4,7 @@ import Button from '../shared/components/Button';
 import InputField from '../shared/components/InputField';
 import VerificationCodeField from '../shared/components/VerificationCodeField';
 import VerificationButton from '../shared/components/VerificationButton';
+import { sendVerificationCode, verifyCode, register, login } from '../../shared/apis/auth.api';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ export default function AuthPage() {
   const [showVerificationField, setShowVerificationField] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
+  // Loading and error states
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   // Email validation function
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,46 +38,133 @@ export default function AuthPage() {
   const isSignupFormValid = name && isEmailVerified && signupPassword;
   const canRequestVerification = isValidEmail(signupEmail) && !isEmailVerified;
 
-  const handleLogin = () => {
-    if (isLoginFormValid) {
-      console.log('로그인:', { email: loginEmail, password: loginPassword });
+  const handleLogin = async () => {
+    if (!isLoginFormValid) return;
 
-      // 관리자 로그인 체크 (임시 하드코딩)
-      if (loginEmail === 'admin1@gmail.com' && loginPassword === 'admin1') {
-        console.log('관리자 로그인 성공');
-        navigate('/admin/dashboard');
-        return;
+    try {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      const response = await login({
+        email: loginEmail,
+        password: loginPassword,
+      });
+
+      if (response.isSuccess) {
+        console.log('로그인 성공:', response.details);
+
+        // 관리자 로그인 체크 (임시 하드코딩)
+        if (loginEmail === 'admin1@gmail.com' && loginPassword === 'admin1') {
+          console.log('관리자 로그인 성공');
+          navigate('/admin/dashboard');
+          return;
+        }
+
+        navigate('/home');
+      } else {
+        setErrorMessage(response.message || '로그인에 실패했습니다.');
       }
-
-      // TODO: 실제 로그인 API 호출 후 성공 시 이동
-      navigate('/home');
+    } catch (error) {
+      console.error('로그인 에러:', error);
+      setErrorMessage('로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSignup = () => {
-    if (isSignupFormValid) {
-      console.log('회원가입:', { name, email: signupEmail, password: signupPassword });
-      // TODO: 실제 회원가입 API 호출 후 성공 시 이동
-      navigate('/home');
+  const handleSignup = async () => {
+    if (!isSignupFormValid) return;
+
+    try {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      const response = await register({
+        email: signupEmail,
+        password: signupPassword,
+        name: name,
+        roleCode: 'RL01', // 기본값: 학생/사원
+        organizationId: 1, // TODO: 추후 조직 선택 기능 추가
+      });
+
+      if (response.isSuccess) {
+        console.log('회원가입 성공:', response.details);
+        // 회원가입 성공 후 자동 로그인 처리
+        const loginResponse = await login({
+          email: signupEmail,
+          password: signupPassword,
+        });
+
+        if (loginResponse.isSuccess) {
+          navigate('/home');
+        } else {
+          // 로그인 실패 시 로그인 탭으로 이동
+          setActiveTab('login');
+          setLoginEmail(signupEmail);
+        }
+      } else {
+        setErrorMessage(response.message || '회원가입에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('회원가입 에러:', error);
+      setErrorMessage('회원가입 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleRequestVerification = () => {
-    setShowVerificationField(true);
-    console.log('인증번호 요청:', signupEmail);
+  const handleRequestVerification = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      const response = await sendVerificationCode({ email: signupEmail });
+
+      if (response.isSuccess) {
+        setShowVerificationField(true);
+        console.log('인증번호 발송 성공:', signupEmail);
+      } else {
+        setErrorMessage(response.message || '인증번호 발송에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('인증번호 발송 에러:', error);
+      setErrorMessage('인증번호 발송 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleVerifyCode = () => {
-    if (verificationCode) {
-      setIsEmailVerified(true);
-      setShowVerificationField(false);
-      setVerificationCode('');
-      console.log('인증 완료');
+  const handleVerifyCode = async () => {
+    if (!verificationCode) return;
+
+    try {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      const response = await verifyCode({
+        email: signupEmail,
+        code: verificationCode,
+      });
+
+      if (response.isSuccess) {
+        setIsEmailVerified(true);
+        setShowVerificationField(false);
+        setVerificationCode('');
+        console.log('이메일 인증 완료');
+      } else {
+        setErrorMessage(response.message || '인증번호가 올바르지 않습니다.');
+      }
+    } catch (error) {
+      console.error('인증번호 확인 에러:', error);
+      setErrorMessage('인증번호 확인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleTabChange = (tab: 'login' | 'signup') => {
     setActiveTab(tab);
+    setErrorMessage('');
     // Reset all states when switching tabs
     if (tab === 'login') {
       setLoginEmail('');
@@ -156,9 +248,12 @@ export default function AuthPage() {
               value={loginPassword}
               onChange={setLoginPassword}
             />
+            {errorMessage && (
+              <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+            )}
             <div className="mt-[22.9rem]">
-              <Button disabled={!isLoginFormValid} onClick={handleLogin}>
-                로그인
+              <Button disabled={!isLoginFormValid || isLoading} onClick={handleLogin}>
+                {isLoading ? '로그인 중...' : '로그인'}
               </Button>
             </div>
           </div>
@@ -185,7 +280,7 @@ export default function AuthPage() {
             {/* 인증번호 받기 버튼 */}
             {!isEmailVerified && !showVerificationField && (
               <VerificationButton
-                disabled={!canRequestVerification}
+                disabled={!canRequestVerification || isLoading}
                 onClick={handleRequestVerification}
               />
             )}
@@ -196,6 +291,7 @@ export default function AuthPage() {
                 value={verificationCode}
                 onChange={setVerificationCode}
                 onVerify={handleVerifyCode}
+                disabled={isLoading}
               />
             )}
 
@@ -207,9 +303,13 @@ export default function AuthPage() {
               onChange={setSignupPassword}
             />
 
+            {errorMessage && (
+              <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+            )}
+
             <div className="mt-[1.5rem]">
-              <Button disabled={!isSignupFormValid} onClick={handleSignup}>
-                가입하기
+              <Button disabled={!isSignupFormValid || isLoading} onClick={handleSignup}>
+                {isLoading ? '가입 중...' : '가입하기'}
               </Button>
             </div>
           </div>
