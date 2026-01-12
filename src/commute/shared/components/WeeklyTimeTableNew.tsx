@@ -81,7 +81,7 @@ export default function WeeklyTimeTableNew({
     });
 
     setRandomStyleSlots(slots);
-  }, []);
+  }, [times]);
 
   const getSlotStatus = (dayIndex: number, time: string): SlotStatus => {
     const slotKey = `${dayIndex}-${time}`;
