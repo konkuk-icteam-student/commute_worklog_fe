@@ -1,12 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/USER/Desktop/figmaMake/**)",
-      "Bash(npm run dev:*)",
-      "Bash(dir:*)",
-      "Bash(git reset:*)"
-    ],
-    "deny": [],
-    "ask": []
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)"
+    ]
   }
 }
