@@ -1,4 +1,6 @@
 import Lottie from 'lottie-react';
+import type { LottieRefCurrentProps } from 'lottie-react';
+import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 
 interface LottieAnimationProps {
@@ -33,6 +35,14 @@ const LottieAnimation = ({
   className,
   style,
 }: LottieAnimationProps) => {
+  const lottieRef = useRef<LottieRefCurrentProps>(null);
+
+  useEffect(() => {
+    if (lottieRef.current && speed !== 1) {
+      lottieRef.current.setSpeed(speed);
+    }
+  }, [speed]);
+
   const defaultStyle: CSSProperties = {
     width,
     height,
@@ -41,10 +51,10 @@ const LottieAnimation = ({
 
   return (
     <Lottie
+      lottieRef={lottieRef}
       animationData={animationData}
       loop={loop}
       autoplay={autoplay}
-      speed={speed}
       style={defaultStyle}
       className={className}
     />
