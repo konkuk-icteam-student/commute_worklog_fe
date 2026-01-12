@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(pnpm add:*)",
-      "Bash(pnpm build:*)"
-    ]
+      "Bash(pnpm build:*)",
+      "Read(//c/Users/USER/Desktop/figmaMake/**)",
+      "Bash(npm run dev:*)",
+      "Bash(dir:*)",
+      "Bash(git reset:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
   }
 }
