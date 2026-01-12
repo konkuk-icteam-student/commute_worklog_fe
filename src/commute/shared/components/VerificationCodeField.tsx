@@ -2,12 +2,14 @@ interface VerificationCodeFieldProps {
   value: string;
   onChange: (value: string) => void;
   onVerify: () => void;
+  disabled?: boolean;
 }
 
 export default function VerificationCodeField({
   value,
   onChange,
-  onVerify
+  onVerify,
+  disabled = false
 }: VerificationCodeFieldProps) {
   return (
     <div className="relative w-full h-[52.984px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]" data-name="verification-code-field">
@@ -33,17 +35,17 @@ export default function VerificationCodeField({
       <button
         type="button"
         onClick={onVerify}
-        disabled={!value}
+        disabled={!value || disabled}
         className={`absolute right-0 top-0 h-full w-[73.146px] rounded-[16px] transition-colors duration-200 ${
-          value
+          value && !disabled
             ? 'bg-[#51a8ff] hover:bg-[#3d8ee0] cursor-pointer'
             : 'bg-[#eaeaea] cursor-not-allowed'
         }`}
       >
         <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[21px] not-italic text-[14px] text-center text-nowrap tracking-[0.21px] ${
-          value ? 'text-white' : 'text-[#cdcdcd]'
+          value && !disabled ? 'text-white' : 'text-[#cdcdcd]'
         }`}>
-          확인
+          {disabled ? '확인 중...' : '확인'}
         </p>
       </button>
     </div>
