@@ -9,9 +9,10 @@ import {
 
 /**
  * API 베이스 URL
- * 환경변수로 관리 가능하도록 설정
+ * 개발 환경: 빈 문자열 (Vite 프록시 사용)
+ * 프로덕션: VITE_API_BASE_URL 환경변수 사용
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 /**
  * Axios 인스턴스 생성
@@ -51,7 +52,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/refresh-token`, {
+    const response = await axios.post('/api/v1/auth/refresh-token', {
       refreshToken,
     });
 
