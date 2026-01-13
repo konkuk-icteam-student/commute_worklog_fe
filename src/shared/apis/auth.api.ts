@@ -99,8 +99,13 @@ export const refreshToken = async (
   data: RefreshTokenRequest
 ): Promise<ApiResponse<RefreshTokenResponse>> => {
   const response = await apiClient.post<ApiResponse<RefreshTokenResponse>>(
-    '/api/v1/auth/refresh-token',
-    data
+    '/api/v1/auth/refresh',
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${data.refreshToken}`,
+      },
+    }
   );
 
   // 토큰 갱신 성공 시 새 토큰 저장
