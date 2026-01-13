@@ -7,12 +7,18 @@ import MonthlyHoursCard from '../shared/components/MonthlyHoursCard';
 import WeeklySummaryCard from '../shared/components/WeeklySummaryCard';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import successIcon from '../shared/assets/success.svg';
+import { applyWorkSchedule } from '../shared/apis/schedule.api';
+import { convertSlotsToTimeSlots } from '../shared/utils/scheduleUtils';
+import type { TimeSlot } from '../shared/types/schedule.types';
 
 export default function ScheduleApplyPage() {
   const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [failedSlots, setFailedSlots] = useState<TimeSlot[]>([]);
 
   // Mock data for slot capacity (in real app, this would come from backend)
   // dayIndex: 0=월, 1=화, 2=수, 3=목, 4=금
@@ -67,9 +73,43 @@ export default function ScheduleApplyPage() {
   const currentWeekHours = calculateWeekHours(selectedWeek);
   const totalMonthHours = 0; // Sum of all weeks
 
-  const handleSubmit = () => {
-    console.log('신청하기:', selectedSlots);
-    setIsSubmitted(true);
+  const handleSubmit = async () => {
+    if (selectedSlots.length === 0) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // 선택된 슬롯을 TimeSlot 배열로 변환
+      const timeSlots = convertSlotsToTimeSlots(selectedSlots, selectedWeek, 2025, 1);
+
+      if (timeSlots.length === 0) {
+        setError('유효한 일정이 없습니다.');
+        setIsLoading(false);
+        return;
+      }
+
+      // API 호출
+      const response = await applyWorkSchedule({ slots: timeSlots });
+
+      if (response.isSuccess) {
+        // 부분 실패가 있는 경우 (207 Multi-Status)
+        if (response.details?.fail && response.details.fail.length > 0) {
+          setFailedSlots(response.details.fail);
+          setError(`일부 일정 신청에 실패했습니다. (성공: ${response.details.success.length}개, 실패: ${response.details.fail.length}개)`);
+        }
+
+        // 성공한 경우 (전체 또는 부분)
+        setIsSubmitted(true);
+      } else {
+        setError(response.message || '일정 신청에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('일정 신청 에러:', err);
+      setError('일정 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 신청 완료 화면
@@ -108,11 +148,23 @@ export default function ScheduleApplyPage() {
 
         {/* Success Content */}
         <div className="w-full flex items-center justify-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
-          <div className="flex flex-col items-center gap-[24px]">
+          <div className="flex flex-col items-center gap-[24px] px-[32px]">
             <img src={successIcon} alt="success" className="w-[40px] h-[40px]" />
-            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[16px] tracking-[0.24px] text-[#09121c]">
-              신청이 완료되었습니다.
+            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[16px] tracking-[0.24px] text-[#09121c] text-center">
+              {failedSlots.length > 0 ? '일부 일정 신청이 완료되었습니다.' : '신청이 완료되었습니다.'}
             </p>
+            {failedSlots.length > 0 && (
+              <div className="w-full max-w-[300px] px-[16px] py-[12px] bg-yellow-50 border border-yellow-200 rounded-[12px]">
+                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[13px] text-yellow-800 mb-[8px]">
+                  ⚠ 일부 일정 신청 실패
+                </p>
+                {failedSlots.map((slot, index) => (
+                  <p key={index} className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[11px] text-yellow-700">
+                    • {slot.start.split('T')[1].slice(0, 5)} ~ {slot.end.split('T')[1].slice(0, 5)}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -209,22 +261,43 @@ export default function ScheduleApplyPage() {
             <WeeklySummaryCard />
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="w-full px-[1.6rem] py-[1.2rem] bg-red-50 border border-red-200 rounded-[1.2rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-red-600">
+                {error}
+              </p>
+              {failedSlots.length > 0 && (
+                <div className="mt-[0.8rem]">
+                  <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.2rem] text-red-700">
+                    실패한 일정:
+                  </p>
+                  {failedSlots.map((slot, index) => (
+                    <p key={index} className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] text-red-600">
+                      • {slot.start} ~ {slot.end}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Submit Button - At bottom of page */}
           <div className="w-full bg-white py-[2rem]">
             <button
               onClick={handleSubmit}
-              disabled={selectedSlots.length === 0}
+              disabled={selectedSlots.length === 0 || isLoading}
               className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
-                selectedSlots.length > 0
+                selectedSlots.length > 0 && !isLoading
                   ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
                   : 'bg-[#eaeaea]'
               }`}
               data-name="Button"
             >
               <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
-                selectedSlots.length > 0 ? 'text-white' : 'text-[#cdcdcd]'
+                selectedSlots.length > 0 && !isLoading ? 'text-white' : 'text-[#cdcdcd]'
               }`}>
-                신청하기
+                {isLoading ? '신청 중...' : '신청하기'}
               </p>
             </button>
           </div>
