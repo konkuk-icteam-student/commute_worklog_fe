@@ -230,7 +230,7 @@ export default function ScheduleApplyPage() {
                 근로 시간 신청
               </p>
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                10월
+                1월
               </p>
             </div>
           </div>
