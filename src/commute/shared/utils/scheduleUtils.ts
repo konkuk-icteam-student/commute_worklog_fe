@@ -55,20 +55,20 @@ export const getTimeSlotDiff = (time1: string, time2: string): number => {
  *
  * @param selectedSlots "0-10:00" 형식의 슬롯 배열
  * @param selectedWeek 선택된 주차 (1-5)
- * @param year 연도 (기본값: 2025)
+ * @param year 연도 (기본값: 2026)
  * @param month 월 (기본값: 1)
  * @returns TimeSlot 배열
  */
 export const convertSlotsToTimeSlots = (
   selectedSlots: string[],
   selectedWeek: number,
-  year: number = 2025,
+  year: number = 2026,
   month: number = 1
 ): TimeSlot[] => {
   // monthlyScheduleDates에서 날짜 정보 가져오기
   const monthData =
     monthlyScheduleDates[year.toString() as keyof typeof monthlyScheduleDates]?.[
-      month.toString() as keyof (typeof monthlyScheduleDates)['2025']
+      month.toString() as keyof (typeof monthlyScheduleDates)['2026']
     ];
 
   if (!monthData) {

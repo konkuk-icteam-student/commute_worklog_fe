@@ -78,10 +78,11 @@ export default function ScheduleApplyPage() {
 
     setIsLoading(true);
     setError(null);
+    setFailedSlots([]);
 
     try {
       // 선택된 슬롯을 TimeSlot 배열로 변환
-      const timeSlots = convertSlotsToTimeSlots(selectedSlots, selectedWeek, 2025, 1);
+      const timeSlots = convertSlotsToTimeSlots(selectedSlots, selectedWeek, 2026, 1);
 
       if (timeSlots.length === 0) {
         setError('유효한 일정이 없습니다.');
@@ -89,24 +90,44 @@ export default function ScheduleApplyPage() {
         return;
       }
 
+      console.log('신청할 일정:', timeSlots);
+
       // API 호출
       const response = await applyWorkSchedule({ slots: timeSlots });
 
       if (response.isSuccess) {
         // 부분 실패가 있는 경우 (207 Multi-Status)
-        if (response.details?.fail && response.details.fail.length > 0) {
-          setFailedSlots(response.details.fail);
-          setError(`일부 일정 신청에 실패했습니다. (성공: ${response.details.success.length}개, 실패: ${response.details.fail.length}개)`);
+        if (response.details?.failure && response.details.failure.length > 0) {
+          setFailedSlots(response.details.failure);
+          setError(`일부 일정 신청에 실패했습니다. (성공: ${response.details.success.length}개, 실패: ${response.details.failure.length}개)`);
         }
 
         // 성공한 경우 (전체 또는 부분)
         setIsSubmitted(true);
       } else {
+        // isSuccess: false인 경우 (422 등)
         setError(response.message || '일정 신청에 실패했습니다.');
+
+        // 실패한 슬롯 정보가 있으면 표시
+        if (response.details?.failure && response.details.failure.length > 0) {
+          setFailedSlots(response.details.failure);
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('일정 신청 에러:', err);
-      setError('일정 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+
+      // axios 에러에서 response.data 추출
+      if (err.response && err.response.data) {
+        const errorData = err.response.data;
+        setError(errorData.message || '일정 신청에 실패했습니다.');
+
+        // 실패한 슬롯 정보가 있으면 표시
+        if (errorData.details?.failure && errorData.details.failure.length > 0) {
+          setFailedSlots(errorData.details.failure);
+        }
+      } else {
+        setError('일정 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -139,7 +160,7 @@ export default function ScheduleApplyPage() {
                   근로 시간 신청
                 </p>
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                  10월
+                  2026년 1월
                 </p>
               </div>
             </div>

@@ -37,11 +37,11 @@ export default function WeeklyTimeTableNew({
 
   // Get dates for each week based on selectedWeek
   const getWeekDates = (week: number) => {
-    // TODO: 현재는 2025년 1월 하드코딩, 나중에 동적으로 year/month 받아오기
-    const year = '2025';
+    // TODO: 나중에 동적으로 year/month 받아오기
+    const year = '2026';
     const month = '1';
 
-    const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2025']];
+    const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2026']];
     if (!monthData) return ['-', '-', '-', '-', '-'];
 
     const weekData = monthData.weeks.find(w => w.week === week);

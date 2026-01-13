@@ -19,7 +19,11 @@ export const applyWorkSchedule = async (
 ): Promise<ApiResponse<ApplyWorkScheduleDetails>> => {
   const response = await apiClient.post<ApiResponse<ApplyWorkScheduleDetails>>(
     '/api/v1/work-schedules/apply',
-    data
+    data,
+    {
+      // 422 응답도 정상 응답으로 처리 (백엔드가 의도적으로 반환하는 응답)
+      validateStatus: (status) => status < 500,
+    }
   );
   return response.data;
 };

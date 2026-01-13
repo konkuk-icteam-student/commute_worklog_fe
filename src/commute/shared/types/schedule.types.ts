@@ -26,8 +26,8 @@ export interface ApplyWorkScheduleRequest {
  * 근무 일정 신청 응답 상세
  */
 export interface ApplyWorkScheduleDetails {
+  timestamp?: string;
   success: TimeSlot[];
-  fail: TimeSlot[];
 }
 
 /**
