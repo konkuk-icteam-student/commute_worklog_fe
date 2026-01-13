@@ -1,4 +1,4 @@
-import type { TimeSlot } from '../types/schedule.types';
+import type { TimeSlot, WorkSchedule } from '../types/schedule.types';
 import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
 
 /**
@@ -152,4 +152,67 @@ export const convertSlotsToTimeSlots = (
   });
 
   return timeSlots;
+};
+
+/**
+ * WorkSchedule 배열을 selectedSlots 형식으로 변환
+ *
+ * @param schedules WorkSchedule 배열
+ * @param selectedWeek 현재 선택된 주차
+ * @param year 연도
+ * @param month 월
+ * @returns selectedSlots 배열 ("0-10:00" 형식)
+ */
+export const convertSchedulesToSlots = (
+  schedules: WorkSchedule[],
+  selectedWeek: number,
+  year: number,
+  month: number
+): string[] => {
+  const slots: string[] = [];
+
+  // 해당 주차의 날짜 정보 가져오기
+  const monthData =
+    monthlyScheduleDates[year.toString() as keyof typeof monthlyScheduleDates]?.[
+      month.toString() as keyof (typeof monthlyScheduleDates)['2026']
+    ];
+
+  if (!monthData) return [];
+
+  const weekData = monthData.weeks.find((w) => w.week === selectedWeek);
+  if (!weekData) return [];
+
+  const weekDates = weekData.dates; // ["1/12", "1/13", "1/14", "1/15", "1/16"]
+
+  schedules.forEach((schedule) => {
+    // start: "2026-01-23T09:00:00"에서 날짜 추출
+    const [datePart, timePart] = schedule.start.split('T');
+    const [yearStr, monthStr, dayStr] = datePart.split('-');
+    const dateStr = `${parseInt(monthStr)}/${parseInt(dayStr)}`; // "1/23"
+
+    // 해당 날짜가 현재 주차에 있는지 확인
+    const dayIndex = weekDates.indexOf(dateStr);
+    if (dayIndex === -1) return; // 현재 주차가 아니면 건너뛰기
+
+    // start와 end에서 시간 추출
+    const startTime = schedule.start.split('T')[1].slice(0, 5); // "09:00:00" -> "09:00"
+    const endTime = schedule.end.split('T')[1].slice(0, 5); // "11:00:00" -> "11:00"
+
+    // startTime부터 endTime까지 30분 단위로 슬롯 생성
+    const [startHour, startMin] = startTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
+
+    const startTotalMin = startHour * 60 + startMin;
+    const endTotalMin = endHour * 60 + endMin;
+
+    for (let min = startTotalMin; min < endTotalMin; min += 30) {
+      const hour = Math.floor(min / 60);
+      const minute = min % 60;
+      const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+      slots.push(`${dayIndex}-${timeStr}`);
+    }
+  });
+
+  return slots;
 };

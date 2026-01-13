@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
 
-type SlotStatus = 'available' | 'selected' | 'full' | 'partial' | 'disabled';
+type SlotStatus = 'available' | 'selected' | 'disabled';
 type RandomStyle = 'white' | 'pink' | 'blue';
 
 const TIMES = [
@@ -14,14 +14,12 @@ interface WeeklyTimeTableNewProps {
   selectedWeek?: number;
   selectedSlots?: string[];
   onSlotClick?: (day: number, time: string) => void;
-  slotCapacity?: { [key: string]: { current: number; max: number } };
 }
 
 export default function WeeklyTimeTableNew({
   selectedWeek = 1,
   selectedSlots = [],
-  onSlotClick = () => {},
-  slotCapacity = {}
+  onSlotClick = () => {}
 }: WeeklyTimeTableNewProps) {
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
   const [randomStyleSlots, setRandomStyleSlots] = useState<Record<string, RandomStyle>>({});
@@ -85,7 +83,6 @@ export default function WeeklyTimeTableNew({
 
   const getSlotStatus = (dayIndex: number, time: string): SlotStatus => {
     const slotKey = `${dayIndex}-${time}`;
-    const capacity = slotCapacity[slotKey];
 
     // 12:00 ~ 13:00 시간대는 disabled
     if (time >= '12:00' && time < '13:00') {
@@ -94,15 +91,6 @@ export default function WeeklyTimeTableNew({
 
     if (selectedSlots.includes(slotKey)) {
       return 'selected';
-    }
-
-    if (capacity) {
-      if (capacity.current >= capacity.max) {
-        return 'full';
-      }
-      if (capacity.current > 0) {
-        return 'partial';
-      }
     }
 
     return 'available';
@@ -120,10 +108,6 @@ export default function WeeklyTimeTableNew({
     switch (status) {
       case 'selected':
         return `${baseClasses} cursor-pointer bg-[#51a8ff] border border-[#51a8ff]`;
-      case 'full':
-        return `${baseClasses} bg-[#FFE2E2] border border-[#FEC9C9] opacity-60 cursor-not-allowed`;
-      case 'partial':
-        return `${baseClasses} cursor-pointer bg-[#FEF2F2] border border-[#FFC9C9] ${isHovered ? 'opacity-100' : 'opacity-80'}`;
       case 'disabled':
         return `${baseClasses} bg-[#f5f5f5] border border-[#e0e0e0] cursor-not-allowed`;
       default:
@@ -144,8 +128,8 @@ export default function WeeklyTimeTableNew({
   };
 
   const handleMouseDown = (dayIndex: number, time: string, status: SlotStatus) => {
-    // Disabled and full slots are not draggable
-    if (status === 'disabled' || status === 'full') {
+    // Disabled slots are not draggable
+    if (status === 'disabled') {
       return;
     }
 
@@ -160,8 +144,8 @@ export default function WeeklyTimeTableNew({
   const handleMouseEnter = (dayIndex: number, time: string, status: SlotStatus) => {
     if (!isDragging) return;
 
-    // Disabled and full slots cannot be dragged over
-    if (status === 'disabled' || status === 'full') {
+    // Disabled slots cannot be dragged over
+    if (status === 'disabled') {
       return;
     }
 
@@ -259,7 +243,6 @@ export default function WeeklyTimeTableNew({
                 const slotKey = `${dayIndex}-${time}`;
                 const status = getSlotStatus(dayIndex, time);
                 const isHovered = hoveredSlot === slotKey;
-                const capacity = slotCapacity[slotKey];
 
                 const isDraggedOver = draggedSlots.has(slotKey);
 
@@ -274,25 +257,12 @@ export default function WeeklyTimeTableNew({
                         handleMouseEnter(dayIndex, time, status);
                       }}
                       onMouseLeave={() => setHoveredSlot(null)}
-                      title={
-                        capacity
-                          ? `${capacity.current}/${capacity.max}명 신청`
-                          : status === 'disabled'
-                          ? '점심시간'
-                          : '신청 가능'
-                      }
+                      title={status === 'disabled' ? '점심시간' : '신청 가능'}
                     >
                       {/* Tooltip on hover */}
                       {isHovered && (
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.2rem] py-[0.1rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">
-                          {status === 'disabled'
-                            ? '점심시간'
-                            : status === 'full'
-                            ? '5/5명'
-                            : status === 'partial'
-                            ? '4/5명'
-                            : `${capacity?.current || 0}/${capacity?.max || 5}명`
-                          }
+                          {status === 'disabled' ? '점심시간' : status === 'selected' ? '선택됨' : '신청 가능'}
                         </div>
                       )}
                     </div>

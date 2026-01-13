@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ScheduleInfoCard from '../shared/components/ScheduleInfoCard';
 import WeekTotalCard from '../shared/components/WeekTotalCard';
@@ -7,8 +7,8 @@ import MonthlyHoursCard from '../shared/components/MonthlyHoursCard';
 import WeeklySummaryCard from '../shared/components/WeeklySummaryCard';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import successIcon from '../shared/assets/success.svg';
-import { applyWorkSchedule } from '../shared/apis/schedule.api';
-import { convertSlotsToTimeSlots } from '../shared/utils/scheduleUtils';
+import { applyWorkSchedule, getMySchedules } from '../shared/apis/schedule.api';
+import { convertSlotsToTimeSlots, convertSchedulesToSlots } from '../shared/utils/scheduleUtils';
 import type { TimeSlot } from '../shared/types/schedule.types';
 
 export default function ScheduleApplyPage() {
@@ -19,33 +19,50 @@ export default function ScheduleApplyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [failedSlots, setFailedSlots] = useState<TimeSlot[]>([]);
+  const [isLoadingSchedules, setIsLoadingSchedules] = useState(false);
 
-  // Mock data for slot capacity (in real app, this would come from backend)
-  // dayIndex: 0=월, 1=화, 2=수, 3=목, 4=금
-  const slotCapacity: Record<string, { current: number; max: number }> = {
-    // 월요일 - 선택된 슬롯들
-    '0-10:00': { current: 1, max: 5 },
-    '0-10:30': { current: 1, max: 5 },
-    '0-11:00': { current: 1, max: 5 },
+  // 현재 연도/월
+  const currentYear = 2026;
+  const currentMonth = 1;
 
-    // 화요일 - 마감된 슬롯 (핑크색)
-    '1-09:00': { current: 5, max: 5 },
-    '1-09:30': { current: 5, max: 5 },
-    '1-14:00': { current: 5, max: 5 },
+  // 내 스케줄 조회 함수
+  const fetchMySchedules = useCallback(async () => {
+    setIsLoadingSchedules(true);
+    try {
+      console.log('스케줄 조회 시작:', { year: currentYear, month: currentMonth, week: selectedWeek });
+      const response = await getMySchedules(currentYear, currentMonth);
 
-    // 수요일 - 부분 신청 슬롯 (주황색 4명)
-    '2-10:00': { current: 4, max: 5 },
-    '2-10:30': { current: 4, max: 5 },
+      console.log('스케줄 조회 응답:', response);
 
-    // 목요일 - 마감된 슬롯 (핑크색)
-    '3-09:00': { current: 5, max: 5 },
-    '3-09:30': { current: 5, max: 5 },
-    '3-10:00': { current: 5, max: 5 },
-    '3-10:30': { current: 5, max: 5 },
+      if (response.isSuccess && response.details?.schedules) {
+        console.log('조회된 스케줄:', response.details.schedules);
 
-    // 금요일 - 일부 슬롯들
-    '4-14:00': { current: 2, max: 5 },
-  };
+        // 조회한 스케줄을 selectedSlots 형식으로 변환
+        const slots = convertSchedulesToSlots(
+          response.details.schedules,
+          selectedWeek,
+          currentYear,
+          currentMonth
+        );
+
+        console.log('변환된 슬롯:', slots);
+        setSelectedSlots(slots);
+      } else {
+        console.log('스케줄이 없거나 실패:', response.message);
+        setSelectedSlots([]);
+      }
+    } catch (err) {
+      console.error('스케줄 조회 에러:', err);
+      setSelectedSlots([]);
+    } finally {
+      setIsLoadingSchedules(false);
+    }
+  }, [selectedWeek, currentYear, currentMonth]);
+
+  // 페이지 로드 시 및 주차 변경 시 내 스케줄 조회
+  useEffect(() => {
+    fetchMySchedules();
+  }, [fetchMySchedules]);
 
   const handleSlotClick = (dayIndex: number, time: string) => {
     const slotKey = `${dayIndex}-${time}`;
@@ -101,6 +118,9 @@ export default function ScheduleApplyPage() {
           setFailedSlots(response.details.failure);
           setError(`일부 일정 신청에 실패했습니다. (성공: ${response.details.success.length}개, 실패: ${response.details.failure.length}개)`);
         }
+
+        // 성공한 경우 스케줄 재조회
+        await fetchMySchedules();
 
         // 성공한 경우 (전체 또는 부분)
         setIsSubmitted(true);
@@ -269,7 +289,6 @@ export default function ScheduleApplyPage() {
             selectedWeek={selectedWeek}
             selectedSlots={selectedSlots}
             onSlotClick={handleSlotClick}
-            slotCapacity={slotCapacity}
           />
 
           {/* Monthly Summary */}

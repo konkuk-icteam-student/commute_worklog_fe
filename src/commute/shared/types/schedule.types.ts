@@ -40,21 +40,22 @@ export interface ModifyWorkScheduleRequest {
 }
 
 /**
- * 근무 일정 단건
+ * 근무 일정 단건 (실제 API 응답 구조)
  */
 export interface WorkSchedule {
-  scheduleId: number;
-  scheduleDate: string; // "2026-01-11"
-  startTime: string; // "09:00:00"
-  endTime: string; // "18:00:00"
-  statusCode: string; // "WS02" 등
+  id: number;
+  start: string; // ISO 8601: "2026-01-23T09:00:00"
+  end: string; // ISO 8601: "2026-01-23T11:00:00"
+  status: string; // "WS01", "WS02" 등
+  timestamp: string;
 }
 
 /**
- * 근무 일정 목록 조회 응답 상세
+ * 근무 일정 목록 조회 응답 상세 (실제 API 응답 구조)
  */
 export interface WorkScheduleListDetails {
-  workSchedules: WorkSchedule[];
+  schedules: WorkSchedule[]; // workSchedules가 아니라 schedules
+  timestamp: string;
 }
 
 /**
