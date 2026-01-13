@@ -29,14 +29,9 @@ export default function ScheduleApplyPage() {
   const fetchMySchedules = useCallback(async () => {
     setIsLoadingSchedules(true);
     try {
-      console.log('스케줄 조회 시작:', { year: currentYear, month: currentMonth, week: selectedWeek });
       const response = await getMySchedules(currentYear, currentMonth);
 
-      console.log('스케줄 조회 응답:', response);
-
       if (response.isSuccess && response.details?.schedules) {
-        console.log('조회된 스케줄:', response.details.schedules);
-
         // 조회한 스케줄을 selectedSlots 형식으로 변환
         const slots = convertSchedulesToSlots(
           response.details.schedules,
@@ -44,11 +39,8 @@ export default function ScheduleApplyPage() {
           currentYear,
           currentMonth
         );
-
-        console.log('변환된 슬롯:', slots);
         setSelectedSlots(slots);
       } else {
-        console.log('스케줄이 없거나 실패:', response.message);
         setSelectedSlots([]);
       }
     } catch (err) {
@@ -106,8 +98,6 @@ export default function ScheduleApplyPage() {
         setIsLoading(false);
         return;
       }
-
-      console.log('신청할 일정:', timeSlots);
 
       // API 호출
       const response = await applyWorkSchedule({ slots: timeSlots });
