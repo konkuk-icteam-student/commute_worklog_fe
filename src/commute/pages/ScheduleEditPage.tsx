@@ -13,33 +13,6 @@ export default function ScheduleEditPage() {
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [modificationReason, setModificationReason] = useState('');
 
-  // Mock data for slot capacity (in real app, this would come from backend)
-  // dayIndex: 0=월, 1=화, 2=수, 3=목, 4=금
-  const slotCapacity: Record<string, { current: number; max: number }> = {
-    // 월요일 - 선택된 슬롯들
-    '0-10:00': { current: 1, max: 5 },
-    '0-10:30': { current: 1, max: 5 },
-    '0-11:00': { current: 1, max: 5 },
-
-    // 화요일 - 마감된 슬롯 (핑크색)
-    '1-09:00': { current: 5, max: 5 },
-    '1-09:30': { current: 5, max: 5 },
-    '1-14:00': { current: 5, max: 5 },
-
-    // 수요일 - 부분 신청 슬롯 (주황색 4명)
-    '2-10:00': { current: 4, max: 5 },
-    '2-10:30': { current: 4, max: 5 },
-
-    // 목요일 - 마감된 슬롯 (핑크색)
-    '3-09:00': { current: 5, max: 5 },
-    '3-09:30': { current: 5, max: 5 },
-    '3-10:00': { current: 5, max: 5 },
-    '3-10:30': { current: 5, max: 5 },
-
-    // 금요일 - 일부 슬롯들
-    '4-14:00': { current: 2, max: 5 },
-  };
-
   const handleSlotClick = (dayIndex: number, time: string) => {
     const slotKey = `${dayIndex}-${time}`;
     setSelectedSlots(prev => {

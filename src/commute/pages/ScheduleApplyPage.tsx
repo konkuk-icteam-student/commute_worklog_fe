@@ -136,7 +136,6 @@ export default function ScheduleApplyPage() {
 
   // 내 스케줄 조회 함수
   const fetchMySchedules = useCallback(async () => {
-    setIsLoadingSchedules(true);
     try {
       const response = await getMySchedules(currentYear, currentMonth);
 
@@ -160,8 +159,6 @@ export default function ScheduleApplyPage() {
       console.error('스케줄 조회 에러:', err);
       setAllSchedules([]);
       setSelectedSlots([]);
-    } finally {
-      setIsLoadingSchedules(false);
     }
   }, [selectedWeek, currentYear, currentMonth]);
 
