@@ -20,7 +20,6 @@ export default function ScheduleApplyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [failedSlots, setFailedSlots] = useState<TimeSlot[]>([]);
-  const [isLoadingSchedules, setIsLoadingSchedules] = useState(false);
   const [allSchedules, setAllSchedules] = useState<WorkSchedule[]>([]); // 전체 월의 스케줄
   const [slotCapacityMap, setSlotCapacityMap] = useState<Map<string, number>>(new Map()); // 슬롯별 신청 인원수
   const [isLoadingCapacity, setIsLoadingCapacity] = useState(false);

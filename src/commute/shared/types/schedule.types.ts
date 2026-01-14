@@ -28,6 +28,7 @@ export interface ApplyWorkScheduleRequest {
 export interface ApplyWorkScheduleDetails {
   timestamp?: string;
   success: TimeSlot[];
+  failure?: TimeSlot[];
 }
 
 /**

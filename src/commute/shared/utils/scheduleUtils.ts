@@ -186,8 +186,8 @@ export const convertSchedulesToSlots = (
 
   schedules.forEach((schedule) => {
     // start: "2026-01-23T09:00:00"에서 날짜 추출
-    const [datePart, timePart] = schedule.start.split('T');
-    const [yearStr, monthStr, dayStr] = datePart.split('-');
+    const datePart = schedule.start.split('T')[0];
+    const [, monthStr, dayStr] = datePart.split('-');
     const dateStr = `${parseInt(monthStr)}/${parseInt(dayStr)}`; // "1/23"
 
     // 해당 날짜가 현재 주차에 있는지 확인

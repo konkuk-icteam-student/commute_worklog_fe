@@ -182,7 +182,6 @@ export default function ScheduleEditPage() {
             selectedWeek={selectedWeek}
             selectedSlots={selectedSlots}
             onSlotClick={handleSlotClick}
-            slotCapacity={slotCapacity}
           />
 
           {/* Monthly Summary */}
