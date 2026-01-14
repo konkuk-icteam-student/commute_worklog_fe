@@ -23,7 +23,6 @@ const apiClient: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // HttpOnly Cookie 사용을 위한 설정
 });
 
 /**
@@ -53,16 +52,9 @@ const refreshAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    const response = await axios.post(
-      '/api/v1/auth/refresh',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post('/api/v1/auth/refresh-token', {
+      refreshToken,
+    });
 
     if (response.data.isSuccess && response.data.details) {
       const { accessToken, refreshToken: newRefreshToken, expiresAt } = response.data.details;
@@ -102,14 +94,8 @@ apiClient.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // 인증 관련 API는 재시도하지 않음 (로그인, 회원가입, 토큰 갱신 등)
-    const authEndpoints = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/refresh'];
-    const isAuthEndpoint = authEndpoints.some((endpoint) =>
-      originalRequest.url?.includes(endpoint)
-    );
-
-    // 401 에러이고 재시도하지 않은 요청이며, 인증 API가 아닌 경우
-    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
+    // 401 에러이고 재시도하지 않은 요청인 경우
+    if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         // 이미 토큰 갱신 중인 경우, 대기
         return new Promise((resolve) => {
@@ -137,7 +123,7 @@ apiClient.interceptors.response.use(
       } else {
         // 리프레시 토큰도 만료된 경우, 로그인 페이지로 이동
         clearTokens();
-        window.location.href = '/auth';
+        window.location.href = '/login';
         return Promise.reject(error);
       }
     }
