@@ -1,0 +1,206 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ScheduleInfoCard from '../shared/components/ScheduleInfoCard';
+import WeekTotalCard from '../shared/components/WeekTotalCard';
+import WeeklyTimeTableNew from '../shared/components/WeeklyTimeTableNew';
+import MonthlyHoursCard from '../shared/components/MonthlyHoursCard';
+import WeeklySummaryCard from '../shared/components/WeeklySummaryCard';
+import ModificationReasonField from '../shared/components/ModificationReasonField';
+
+export default function ScheduleEditPage() {
+  const navigate = useNavigate();
+  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+  const [modificationReason, setModificationReason] = useState('');
+
+  const handleSlotClick = (dayIndex: number, time: string) => {
+    const slotKey = `${dayIndex}-${time}`;
+    setSelectedSlots(prev => {
+      if (prev.includes(slotKey)) {
+        return prev.filter(s => s !== slotKey);
+      } else {
+        return [...prev, slotKey];
+      }
+    });
+  };
+
+  const calculateWeekHours = (week: number) => {
+    // Mock calculation - in real app, this would calculate from selectedSlots
+    const weekHours: Record<number, number> = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+    };
+    return weekHours[week] || 0;
+  };
+
+  const currentWeekHours = calculateWeekHours(selectedWeek);
+  const totalMonthHours = 0; // Sum of all weeks
+
+  const handleSubmit = () => {
+    if (selectedSlots.length > 0 && modificationReason.trim().length >= 10) {
+      // Generate new request ID
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const newId = `ID${year}${month}${day}${hours}${minutes}`;
+
+      // Create new request object
+      const newRequest = {
+        id: newId,
+        status: 'pending' as const,
+        statusLabel: '승인 대기 중',
+        statusDescription: '관리자가 검토 중입니다',
+        applicationDate: `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`,
+        modificationReason: modificationReason.trim(),
+      };
+
+      // Load existing requests from localStorage
+      const STORAGE_KEY = 'modificationRequests';
+      const stored = localStorage.getItem(STORAGE_KEY);
+      const existingRequests = stored ? JSON.parse(stored) : [];
+
+      // Add new request at the beginning (most recent)
+      const updatedRequests = [newRequest, ...existingRequests];
+
+      // Save back to localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedRequests));
+
+      console.log('수정 요청 추가됨:', newRequest);
+
+      // Navigate back to schedule modify page
+      navigate('/schedule/modify');
+    }
+  };
+
+  // Check if submit button should be enabled
+  const isSubmitEnabled = selectedSlots.length > 0 && modificationReason.trim().length >= 10;
+
+  return (
+    <div className="bg-white relative min-h-screen w-full" data-name="scheduleEdit">
+      {/* Background Gradient */}
+      <div className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] inset-0 -z-10" data-name="Background" />
+
+      {/* Header */}
+      <div className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]" data-name="Container">
+        <div className="max-w-[39.3rem] mx-auto px-[3.2rem] py-[2.4rem]">
+          <div className="flex items-center gap-[1.6rem]">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate('/schedule/modify')}
+              className="shrink-0 size-[4rem] flex items-center justify-center"
+              data-name="Button"
+            >
+              <svg className="size-[2.4rem]" fill="none" viewBox="0 0 24 24">
+                <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            <div className="flex flex-col gap-[0.4rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] text-white">
+                근로 시간 수정
+              </p>
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
+                10월
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content - Scrollable */}
+      <div className="w-full">
+        <div className="max-w-[39.3rem] mx-auto px-[2.4rem] pt-[3.2rem] pb-[3.2rem] flex flex-col gap-[2rem]">
+          {/* Info Box */}
+          <div className="w-full">
+            <ScheduleInfoCard />
+          </div>
+
+          {/* Week Tabs */}
+          <div className="flex gap-[1rem] w-full" data-name="Container">
+            {[1, 2, 3, 4, 5].map((week) => {
+              const isActive = selectedWeek === week;
+
+              return (
+                <button
+                  key={week}
+                  onClick={() => setSelectedWeek(week)}
+                  className={`flex-1 h-[3.6rem] rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
+                  data-name="Button"
+                >
+                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.2rem] tracking-[0.021rem] ${isActive ? 'text-white' : 'text-[#09121c]'}`}>
+                    {week}주차
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Weekly Hours Card */}
+          <div className="w-full">
+            <WeekTotalCard
+              week={selectedWeek}
+              currentHours={currentWeekHours}
+              maxHours={13}
+            />
+          </div>
+
+          {/* Time Table */}
+          <WeeklyTimeTableNew
+            selectedWeek={selectedWeek}
+            selectedSlots={selectedSlots}
+            onSlotClick={handleSlotClick}
+          />
+
+          {/* Monthly Summary */}
+          <div className="w-full">
+            <MonthlyHoursCard currentHours={totalMonthHours} maxHours={27} />
+          </div>
+
+          {/* Week Summary List */}
+          <div className="w-full">
+            <WeeklySummaryCard />
+          </div>
+
+          {/* Modification Reason Field */}
+          <div className="w-full">
+            <ModificationReasonField
+              value={modificationReason}
+              onChange={setModificationReason}
+            />
+            {modificationReason.trim().length > 0 && modificationReason.trim().length < 10 && (
+              <p className="mt-2 text-[1.2rem] text-[#f54900] font-['LINE_Seed_Sans_KR:Regular',sans-serif]">
+                수정 사유는 최소 10글자 이상 입력해주세요. (현재: {modificationReason.trim().length}자)
+              </p>
+            )}
+          </div>
+
+          {/* Submit Button - At bottom of page */}
+          <div className="w-full bg-white py-[2rem]">
+            <button
+              onClick={handleSubmit}
+              disabled={!isSubmitEnabled}
+              className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
+                isSubmitEnabled
+                  ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
+                  : 'bg-[#eaeaea]'
+              }`}
+              data-name="Button"
+            >
+              <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
+                isSubmitEnabled ? 'text-white' : 'text-[#cdcdcd]'
+              }`}>
+                요청하기
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
