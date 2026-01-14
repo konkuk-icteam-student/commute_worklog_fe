@@ -36,7 +36,7 @@ export const useScheduleWebSocket = ({
 
       // STOMP 클라이언트 생성
       const client = new Client({
-        webSocketFactory: () => socket as any,
+        webSocketFactory: () => socket as unknown as WebSocket,
         reconnectDelay: 5000, // 재연결 딜레이 (5초)
         heartbeatIncoming: 10000, // 서버 → 클라이언트 heartbeat (10초)
         heartbeatOutgoing: 10000, // 클라이언트 → 서버 heartbeat (10초)

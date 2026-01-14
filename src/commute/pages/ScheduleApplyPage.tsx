@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import ScheduleInfoCard from '../shared/components/ScheduleInfoCard';
 import WeekTotalCard from '../shared/components/WeekTotalCard';
 import WeeklyTimeTableNew from '../shared/components/WeeklyTimeTableNew';
@@ -244,12 +245,12 @@ export default function ScheduleApplyPage() {
           setFailedSlots(response.details.failure);
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('일정 신청 에러:', err);
 
       // axios 에러에서 response.data 추출
-      if (err.response && err.response.data) {
-        const errorData = err.response.data;
+      if (axios.isAxiosError(err) && err.response?.data) {
+        const errorData = err.response.data as { message?: string; details?: { failure?: TimeSlot[] } };
         setError(errorData.message || '일정 신청에 실패했습니다.');
 
         // 실패한 슬롯 정보가 있으면 표시

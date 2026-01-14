@@ -5,7 +5,8 @@
       "Bash(pnpm build:*)",
       "Bash(npm install:*)",
       "Bash(pnpm exec tsc:*)",
-      "Bash(pnpm list:*)"
+      "Bash(pnpm list:*)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
