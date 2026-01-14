@@ -6,7 +6,9 @@
       "Bash(npm install:*)",
       "Bash(pnpm exec tsc:*)",
       "Bash(pnpm list:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []
