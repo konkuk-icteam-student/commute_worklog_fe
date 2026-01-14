@@ -86,3 +86,39 @@ export interface WorkScheduleDetail {
   endTime: string; // "18:00:00"
   statusCode: string; // "WS02" 등
 }
+
+/**
+ * 전체 스케줄 히스토리 단건 (admin API 응답)
+ */
+export interface ScheduleHistoryItem {
+  scheduleId: number;
+  start: string; // "2026-01-11T13:00:00"
+  end: string; // "2026-01-11T16:00:00"
+  status: string;
+  actualStart: string;
+  actualEnd: string;
+  workDurationMinutes: number;
+}
+
+/**
+ * 전체 스케줄 히스토리 응답 상세
+ */
+export interface AllScheduleHistoryDetails {
+  histories: ScheduleHistoryItem[];
+}
+
+/**
+ * 웹소켓 스케줄 업데이트 단건
+ */
+export interface ScheduleUpdateItem {
+  isAdd: boolean; // true: 신청, false: 취소
+  slotStartTime: string; // "2026-01-11T09:00:00" (30분 단위, 종료시간은 +30분)
+}
+
+/**
+ * 웹소켓 스케줄 업데이트 메시지
+ */
+export interface ScheduleUpdateMessage {
+  type: 'SCHEDULE_UPDATED';
+  updates: ScheduleUpdateItem[];
+}

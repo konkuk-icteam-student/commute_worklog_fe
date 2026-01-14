@@ -7,6 +7,7 @@ import type {
   WorkScheduleListDetails,
   WorkHistoryListDetails,
   WorkScheduleDetail,
+  AllScheduleHistoryDetails,
 } from '../types/schedule.types';
 
 /**
@@ -104,6 +105,25 @@ export const getWorkScheduleDetail = async (
 export const deleteWorkSchedule = async (scheduleId: number): Promise<ApiResponse<null>> => {
   const response = await apiClient.delete<ApiResponse<null>>(
     `/api/v1/work-schedules/${scheduleId}`
+  );
+  return response.data;
+};
+
+/**
+ * 전체 근무 이력 조회 (관리자용 - 모든 사용자의 스케줄)
+ * @param year 조회할 연도
+ * @param month 조회할 월 (1~12)
+ * @returns API 응답 (전체 스케줄 히스토리 목록)
+ */
+export const getAllScheduleHistory = async (
+  year: number,
+  month: number
+): Promise<ApiResponse<AllScheduleHistoryDetails>> => {
+  const response = await apiClient.get<ApiResponse<AllScheduleHistoryDetails>>(
+    '/api/v1/admin/schedule/history/all',
+    {
+      params: { year, month },
+    }
   );
   return response.data;
 };

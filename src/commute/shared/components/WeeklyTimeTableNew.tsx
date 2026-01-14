@@ -14,12 +14,16 @@ interface WeeklyTimeTableNewProps {
   selectedWeek?: number;
   selectedSlots?: string[];
   onSlotClick?: (day: number, time: string) => void;
+  slotCapacityMap?: Map<string, number>; // 슬롯별 현재 신청 인원수
+  maxCapacity?: number; // 최대 신청 가능 인원수
 }
 
 export default function WeeklyTimeTableNew({
   selectedWeek = 1,
   selectedSlots = [],
-  onSlotClick = () => {}
+  onSlotClick = () => {},
+  slotCapacityMap = new Map(),
+  maxCapacity = 5
 }: WeeklyTimeTableNewProps) {
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
   const [randomStyleSlots, setRandomStyleSlots] = useState<Record<string, RandomStyle>>({});
@@ -55,6 +59,49 @@ export default function WeeklyTimeTableNew({
     { day: '금', date: dates[4], hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '', color: calculateDayHours(4) > 0 ? '#51a8ff' : '' },
   ];
 
+  /**
+   * 날짜 + 시간을 ISO 형식으로 변환하여 슬롯 키 생성
+   * @param dayIndex 요일 인덱스 (0~4)
+   * @param time 시작 시간 (e.g., "09:00")
+   * @returns 슬롯 키 (e.g., "2026-01-11T09:00:00_2026-01-11T09:30:00")
+   */
+  const getSlotKeyForCapacity = (dayIndex: number, time: string): string => {
+    const date = dates[dayIndex];
+    if (date === '-') return '';
+
+    // 시작 시간
+    const startISO = `2026-01-${date.padStart(2, '0')}T${time}:00`;
+
+    // 종료 시간 계산 (30분 후)
+    const [hour, minute] = time.split(':').map(Number);
+    let endHour = hour;
+    let endMinute = minute + 30;
+    if (endMinute >= 60) {
+      endHour += 1;
+      endMinute -= 60;
+    }
+    const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
+    const endISO = `2026-01-${date.padStart(2, '0')}T${endTime}:00`;
+
+    return `${startISO}_${endISO}`;
+  };
+
+  /**
+   * 특정 슬롯의 현재 신청 인원수 가져오기
+   */
+  const getSlotCapacity = (dayIndex: number, time: string): number => {
+    const slotKey = getSlotKeyForCapacity(dayIndex, time);
+    return slotCapacityMap.get(slotKey) || 0;
+  };
+
+  /**
+   * 슬롯이 마감되었는지 확인
+   */
+  const isSlotFull = (dayIndex: number, time: string): boolean => {
+    const currentCapacity = getSlotCapacity(dayIndex, time);
+    return currentCapacity >= maxCapacity;
+  };
+
   // Generate random style slots on mount
   useEffect(() => {
     const slots: Record<string, RandomStyle> = {};
@@ -89,8 +136,14 @@ export default function WeeklyTimeTableNew({
       return 'disabled';
     }
 
+    // 사용자가 이미 선택한 슬롯
     if (selectedSlots.includes(slotKey)) {
       return 'selected';
+    }
+
+    // 마감된 슬롯 (5명 다 찬 경우)
+    if (isSlotFull(dayIndex, time)) {
+      return 'disabled';
     }
 
     return 'available';
@@ -243,13 +296,17 @@ export default function WeeklyTimeTableNew({
                 const slotKey = `${dayIndex}-${time}`;
                 const status = getSlotStatus(dayIndex, time);
                 const isHovered = hoveredSlot === slotKey;
-
                 const isDraggedOver = draggedSlots.has(slotKey);
+
+                // 현재 신청 인원수
+                const currentCapacity = getSlotCapacity(dayIndex, time);
+                const isLunchTime = time >= '12:00' && time < '13:00';
+                const isFull = isSlotFull(dayIndex, time);
 
                 return (
                   <div key={slotKey} className="relative">
                     <div
-                      className={`${getSlotClasses(status, isHovered, slotKey)} ${isDraggedOver ? 'ring-2 ring-[#51a8ff] ring-opacity-50' : ''}`}
+                      className={`${getSlotClasses(status, isHovered, slotKey)} ${isDraggedOver ? 'ring-2 ring-[#51a8ff] ring-opacity-50' : ''} flex items-center justify-center`}
                       style={status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined}
                       onMouseDown={() => handleMouseDown(dayIndex, time, status)}
                       onMouseEnter={() => {
@@ -257,12 +314,19 @@ export default function WeeklyTimeTableNew({
                         handleMouseEnter(dayIndex, time, status);
                       }}
                       onMouseLeave={() => setHoveredSlot(null)}
-                      title={status === 'disabled' ? '점심시간' : '신청 가능'}
+                      title={isLunchTime ? '점심시간' : isFull ? '마감' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity})`}
                     >
+                      {/* 인원수 표시 (선택되지 않은 available 슬롯에만) */}
+                      {status === 'available' && currentCapacity > 0 && (
+                        <span className="text-[0.8rem] text-[#9ca3af] font-['LINE_Seed_Sans_KR:Regular',sans-serif]">
+                          {currentCapacity}/{maxCapacity}
+                        </span>
+                      )}
+
                       {/* Tooltip on hover */}
                       {isHovered && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.2rem] py-[0.1rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">
-                          {status === 'disabled' ? '점심시간' : status === 'selected' ? '선택됨' : '신청 가능'}
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.6rem] py-[0.3rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">
+                          {isLunchTime ? '점심시간' : isFull ? '마감됨' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity}명)`}
                         </div>
                       )}
                     </div>
