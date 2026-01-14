@@ -13,6 +13,10 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    define: {
+      // sockjs-client를 위한 global polyfill
+      global: 'globalThis',
+    },
     server: {
       proxy: {
         '/api': {

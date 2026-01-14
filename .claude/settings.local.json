@@ -3,7 +3,11 @@
     "allow": [
       "Bash(pnpm add:*)",
       "Bash(pnpm build:*)",
-      "Bash(git checkout:*)"
-    ]
+      "Bash(npm install:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(pnpm list:*)"
+    ],
+    "deny": [],
+    "ask": []
   }
 }
