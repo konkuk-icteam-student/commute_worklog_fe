@@ -10,6 +10,7 @@ import ScheduleEditPage from '../../commute/pages/ScheduleEditPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
 import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
+import Category from '@/worklog/pages/category/Category';
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/dashboard',
     element: <AdminDashboardPage />,
+  },
+  {
+    path: '/worklog/category',
+    element: <Category />,
   },
 ]);
 
