@@ -11,6 +11,7 @@ import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
 import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
 import QRScannerPage from '../../commute/pages/QRScannerPage';
+import Category from '@/worklog/pages/category/Category';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: '/qr-scanner',
     element: <QRScannerPage />,
+  },
+  {
+    path: '/worklog/category',
+    element: <Category />,
   },
 ]);
 
