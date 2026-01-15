@@ -8,7 +8,8 @@
       "Bash(pnpm list:*)",
       "Bash(npm run lint)",
       "Bash(npx tsc:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(pnpm run build)"
     ],
     "deny": [],
     "ask": []

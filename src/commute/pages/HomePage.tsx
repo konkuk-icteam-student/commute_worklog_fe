@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AttendanceButton from '../shared/components/AttendanceButton';
 import type { AttendanceStatus } from '../shared/components/AttendanceButton';
 import BottomNavigation from '../shared/components/BottomNavigation';
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus>('checkIn');
   const [checkInTime, setCheckInTime] = useState('');
   const [checkOutTime, setCheckOutTime] = useState('');
@@ -17,21 +20,35 @@ export default function HomePage() {
     return `${period} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
   };
 
+  // QR 스캔 성공 후 돌아왔을 때 상태 업데이트
+  useEffect(() => {
+    if (location.state?.attendanceSuccess) {
+      const mode = location.state.mode;
+      if (mode === 'checkIn') {
+        setCheckInTime(getFormattedTime());
+        setAttendanceStatus('checkedIn');
+      } else if (mode === 'checkOut') {
+        setCheckOutTime(getFormattedTime());
+        setAttendanceStatus('checkedOut');
+      }
+      // state 초기화 (뒤로가기 시 중복 처리 방지)
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   const handleAttendanceClick = () => {
     switch (attendanceStatus) {
       case 'checkIn':
-        // 출근 인증 → 출근 완료
-        setCheckInTime(getFormattedTime());
-        setAttendanceStatus('checkedIn');
+        // 출근 인증 → QR 스캐너로 이동
+        navigate('/qr-scanner', { state: { mode: 'checkIn' } });
         break;
       case 'checkedIn':
         // 출근 완료 → 퇴근 인증
         setAttendanceStatus('checkOut');
         break;
       case 'checkOut':
-        // 퇴근 인증 → 퇴근 완료
-        setCheckOutTime(getFormattedTime());
-        setAttendanceStatus('checkedOut');
+        // 퇴근 인증 → QR 스캐너로 이동
+        navigate('/qr-scanner', { state: { mode: 'checkOut' } });
         break;
       case 'checkedOut':
         // 퇴근 완료 → 출근 인증 (다시 처음으로)
