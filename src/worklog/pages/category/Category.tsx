@@ -1,12 +1,8 @@
 import { useState } from 'react';
-import menu from '@/worklog/shared/assets/menu.svg';
-import pencil from '@/worklog/shared/assets/pencil.svg';
-import setting from '@/worklog/shared/assets/setting.svg';
-import bell from '@/worklog/shared/assets/bell.svg';
 import v from '@/worklog/shared/assets/v.svg';
 import glasses from '@/worklog/shared/assets/glasses.svg';
 import plus from '@/worklog/shared/assets/plus.svg';
-
+import Header from '@/worklog/shared/components/header/Header';
 import Post from '@/worklog/shared/components/posting/Post';
 import ModalAddManager from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
 
@@ -28,25 +24,8 @@ const Category = () => {
 
   return (
     <>
-      <div className="relative flex h-screen flex-col overflow-hidden bg-white">
-        {/* 1. Header Section (Height: 76px) */}
-        <header className="flex h-[76px] shrink-0 items-center justify-between border-b border-[#E8EEF2] px-8">
-          <div className="cursor-pointer">
-            <img src={menu} alt="메뉴" />
-          </div>
-          <div className="flex items-center gap-6">
-            <button>
-              <img src={pencil} alt="수정" />
-            </button>
-            <button>
-              <img src={setting} alt="설정" />
-            </button>
-            <button>
-              <img src={bell} alt="알림" />
-            </button>
-          </div>
-        </header>
-
+      <main className="relative flex h-screen flex-col overflow-hidden bg-white">
+        <Header />
         {/* 2. Title Section (Height: 212px) */}
         <section className="flex h-[180px] shrink-0 flex-col items-center justify-center border-b border-[#E8EEF2]">
           <div className="flex w-full max-w-[1200px] flex-col gap-8 px-4">
@@ -86,7 +65,7 @@ const Category = () => {
         </section>
 
         {/* 3. Contents Section (Scrollable) */}
-        <main className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1200px] px-4 py-4">
             {dummyPosts.map((post) => (
               <Post
@@ -99,7 +78,7 @@ const Category = () => {
               />
             ))}
           </div>
-        </main>
+        </div>
 
         {/* Floating Action Button (FAB) */}
         <button
@@ -111,7 +90,7 @@ const Category = () => {
         >
           <img src={plus} alt="추가" />
         </button>
-      </div>
+      </main>
 
       <ModalAddManager isOpen={isModalOpen} onClose={closeModal} />
     </>
