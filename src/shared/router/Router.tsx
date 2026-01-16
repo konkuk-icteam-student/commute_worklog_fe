@@ -11,6 +11,7 @@ import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
 import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
 import Category from '@/worklog/pages/category/Category';
+import Faq from '@/worklog/pages/faq/Faq';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: '/worklog/category',
     element: <Category />,
+  },
+  {
+    path: '/worklog/faq',
+    element: <Faq />,
   },
 ]);
 
