@@ -21,8 +21,7 @@ export default function SchedulePage() {
 
   const handleView = () => {
     setSelectedCard('view');
-    // TODO: 근로시간 조회 페이지로 이동
-    console.log('근로시간 조회');
+    navigate('/schedule/view');
   };
 
   return (

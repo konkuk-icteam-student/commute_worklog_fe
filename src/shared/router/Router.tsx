@@ -7,6 +7,7 @@ import SchedulePage from '../../commute/pages/SchedulePage';
 import ScheduleApplyPage from '../../commute/pages/ScheduleApplyPage';
 import ScheduleModifyPage from '../../commute/pages/ScheduleModifyPage';
 import ScheduleEditPage from '../../commute/pages/ScheduleEditPage';
+import ScheduleViewPage from '../../commute/pages/ScheduleViewPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
 import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path: '/schedule/edit',
     element: <ScheduleEditPage />,
+  },
+  {
+    path: '/schedule/view',
+    element: <ScheduleViewPage />,
   },
   {
     path: '/tasks',
