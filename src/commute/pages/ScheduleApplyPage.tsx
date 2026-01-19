@@ -304,7 +304,6 @@ export default function ScheduleApplyPage() {
       const times = slotsByDay[day].sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
 
       let consecutiveCount = 1;
-      let hasValidBlock = false;
 
       for (let i = 1; i < times.length; i++) {
         const prevMinutes = timeToMinutes(times[i - 1]);
@@ -319,7 +318,6 @@ export default function ScheduleApplyPage() {
             return false; // 2시간 미만 블록 발견
           }
           consecutiveCount = 1;
-          hasValidBlock = true;
         }
       }
 
