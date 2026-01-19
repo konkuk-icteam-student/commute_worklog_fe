@@ -211,6 +211,88 @@ export default function ScheduleApplyPage() {
   // 월별 총 시간 계산 (모든 주차의 시간 합산)
   const totalMonthHours = Object.values(weeklyHours).reduce((total, hours) => total + hours, 0);
 
+  // 최대 근무시간 상수
+  const MAX_WEEK_HOURS = 13;
+  const MAX_MONTH_HOURS = 27;
+  const MIN_CONSECUTIVE_HOURS = 2;
+
+  /**
+   * 연속 2시간 이상 선택 여부 검사
+   * 각 요일별로 선택된 슬롯이 연속 2시간(4슬롯) 이상인지 확인
+   */
+  const checkConsecutiveHours = (): boolean => {
+    if (selectedSlots.length === 0) return true;
+
+    // 요일별로 슬롯 그룹화
+    const slotsByDay: Record<number, string[]> = {};
+    selectedSlots.forEach(slot => {
+      const [dayStr, time] = slot.split('-');
+      const day = parseInt(dayStr);
+      if (!slotsByDay[day]) slotsByDay[day] = [];
+      slotsByDay[day].push(time);
+    });
+
+    // 시간을 분으로 변환하는 함수
+    const timeToMinutes = (time: string): number => {
+      const [hour, minute] = time.split(':').map(Number);
+      return hour * 60 + minute;
+    };
+
+    // 각 요일별로 연속 블록 검사
+    for (const day in slotsByDay) {
+      const times = slotsByDay[day].sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
+
+      let consecutiveCount = 1;
+      let hasValidBlock = false;
+
+      for (let i = 1; i < times.length; i++) {
+        const prevMinutes = timeToMinutes(times[i - 1]);
+        const currMinutes = timeToMinutes(times[i]);
+
+        // 30분 간격이면 연속
+        if (currMinutes - prevMinutes === 30) {
+          consecutiveCount++;
+        } else {
+          // 연속이 끊김 - 이전 블록 검사
+          if (consecutiveCount < 4) {
+            return false; // 2시간 미만 블록 발견
+          }
+          consecutiveCount = 1;
+          hasValidBlock = true;
+        }
+      }
+
+      // 마지막 블록 검사
+      if (consecutiveCount < 4) {
+        return false; // 2시간 미만 블록 발견
+      }
+    }
+
+    return true;
+  };
+
+  // 유효성 검사
+  const isWeekHoursExceeded = currentWeekHours > MAX_WEEK_HOURS;
+  const isMonthHoursExceeded = totalMonthHours > MAX_MONTH_HOURS;
+  const isConsecutiveHoursValid = checkConsecutiveHours();
+
+  // 유효성 검사 경고 메시지
+  const getValidationWarning = (): string | null => {
+    if (isWeekHoursExceeded) {
+      return `현재 주 최대 근무 가능시간 ${MAX_WEEK_HOURS}시간을 초과하였습니다.`;
+    }
+    if (isMonthHoursExceeded) {
+      return `현재 월 최대 근무 가능시간 ${MAX_MONTH_HOURS}시간을 초과하였습니다.`;
+    }
+    if (!isConsecutiveHoursValid && selectedSlots.length > 0) {
+      return `최소 근무 시간은 ${MIN_CONSECUTIVE_HOURS}시간입니다.`;
+    }
+    return null;
+  };
+
+  const validationWarning = getValidationWarning();
+  const isSubmitDisabled = selectedSlots.length === 0 || isLoading || validationWarning !== null;
+
   const handleSubmit = async () => {
     if (selectedSlots.length === 0) return;
 
@@ -422,6 +504,15 @@ export default function ScheduleApplyPage() {
             <WeeklySummaryCard weeklyHours={weeklyHours} />
           </div>
 
+          {/* Validation Warning */}
+          {validationWarning && (
+            <div className="w-full px-[1.6rem] py-[1.2rem] bg-yellow-50 border border-yellow-300 rounded-[1.2rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-yellow-700">
+                {validationWarning}
+              </p>
+            </div>
+          )}
+
           {/* Error Message */}
           {error && (
             <div className="w-full px-[1.6rem] py-[1.2rem] bg-red-50 border border-red-200 rounded-[1.2rem]">
@@ -447,16 +538,16 @@ export default function ScheduleApplyPage() {
           <div className="w-full bg-white py-[2rem]">
             <button
               onClick={handleSubmit}
-              disabled={selectedSlots.length === 0 || isLoading}
+              disabled={isSubmitDisabled}
               className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
-                selectedSlots.length > 0 && !isLoading
+                !isSubmitDisabled
                   ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
                   : 'bg-[#eaeaea]'
               }`}
               data-name="Button"
             >
               <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
-                selectedSlots.length > 0 && !isLoading ? 'text-white' : 'text-[#cdcdcd]'
+                !isSubmitDisabled ? 'text-white' : 'text-[#cdcdcd]'
               }`}>
                 {isLoading ? '신청 중...' : '신청하기'}
               </p>
