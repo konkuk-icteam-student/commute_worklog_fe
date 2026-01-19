@@ -71,8 +71,13 @@ export default function WeeklyTimeTableNew({
     const date = dates[dayIndex];
     if (date === '-') return '';
 
+    // date 형식: "1/12" (월/일) → month=1, day=12
+    const [month, day] = date.split('/');
+    const monthPadded = month.padStart(2, '0');
+    const dayPadded = day.padStart(2, '0');
+
     // 시작 시간
-    const startISO = `2026-01-${date.padStart(2, '0')}T${time}:00`;
+    const startISO = `2026-${monthPadded}-${dayPadded}T${time}:00`;
 
     // 종료 시간 계산 (30분 후)
     const [hour, minute] = time.split(':').map(Number);
@@ -83,7 +88,7 @@ export default function WeeklyTimeTableNew({
       endMinute -= 60;
     }
     const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
-    const endISO = `2026-01-${date.padStart(2, '0')}T${endTime}:00`;
+    const endISO = `2026-${monthPadded}-${dayPadded}T${endTime}:00`;
 
     return `${startISO}_${endISO}`;
   };
@@ -93,7 +98,8 @@ export default function WeeklyTimeTableNew({
    */
   const getSlotCapacity = (dayIndex: number, time: string): number => {
     const slotKey = getSlotKeyForCapacity(dayIndex, time);
-    return slotCapacityMap.get(slotKey) || 0;
+    const capacity = slotCapacityMap.get(slotKey) || 0;
+    return capacity;
   };
 
   /**
@@ -132,6 +138,11 @@ export default function WeeklyTimeTableNew({
 
   const getSlotStatus = (dayIndex: number, time: string): SlotStatus => {
     const slotKey = `${dayIndex}-${time}`;
+
+    // 날짜가 배정되지 않은 경우 (예: 1월 1일 이전)
+    if (dates[dayIndex] === '-') {
+      return 'disabled';
+    }
 
     // 11:30 ~ 13:00 시간대는 disabled (점심시간)
     if (time >= '11:30' && time < '13:00') {
@@ -320,11 +331,37 @@ export default function WeeklyTimeTableNew({
                   ? (isLunchTime ? '점심시간' : undefined)
                   : (isLunchTime ? '점심시간' : isFull ? '마감' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity})`);
 
+                // 4/5명 또는 5/5명일 때 특별 스타일 적용
+                const getCapacityStyle = (): React.CSSProperties | undefined => {
+                  if (status === 'selected' || status === 'disabled') return undefined;
+
+                  if (currentCapacity === maxCapacity) {
+                    // 5/5명 (마감)
+                    return {
+                      borderRadius: '3px',
+                      border: '0.558px solid #FEC9C9',
+                      background: '#FFE2E2',
+                    };
+                  } else if (currentCapacity === maxCapacity - 1) {
+                    // 4/5명 (마감 임박)
+                    return {
+                      borderRadius: '3px',
+                      border: '0.558px solid #FFC9C9',
+                      opacity: 0.6,
+                      background: '#FEF2F2',
+                    };
+                  }
+                  return undefined;
+                };
+
+                const capacityStyle = getCapacityStyle();
+                const slotStyle = capacityStyle || (status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined);
+
                 return (
                   <div key={slotKey} className="relative">
                     <div
                       className={`${getSlotClasses(status, isHovered, slotKey)} ${isDraggedOver ? 'ring-2 ring-[#51a8ff] ring-opacity-50' : ''} flex items-center justify-center`}
-                      style={status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined}
+                      style={slotStyle}
                       onMouseDown={() => handleMouseDown(dayIndex, time, status)}
                       onMouseEnter={() => {
                         setHoveredSlot(slotKey);
@@ -333,13 +370,6 @@ export default function WeeklyTimeTableNew({
                       onMouseLeave={() => setHoveredSlot(null)}
                       title={titleText}
                     >
-                      {/* 인원수 표시 (선택되지 않은 available 슬롯에만, readOnly 모드에서는 숨김) */}
-                      {!readOnly && status === 'available' && currentCapacity > 0 && (
-                        <span className="text-[0.8rem] text-[#9ca3af] font-['LINE_Seed_Sans_KR:Regular',sans-serif]">
-                          {currentCapacity}/{maxCapacity}
-                        </span>
-                      )}
-
                       {/* Tooltip on hover (readOnly 모드에서는 점심시간만 표시) */}
                       {isHovered && (!readOnly || isLunchTime) && (
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.6rem] py-[0.3rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">

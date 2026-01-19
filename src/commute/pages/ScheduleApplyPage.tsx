@@ -34,6 +34,7 @@ export default function ScheduleApplyPage() {
 
   /**
    * API 응답을 슬롯별 신청 인원수로 변환
+   * 전체 시간 범위(예: 09:00~18:00)를 30분 단위 슬롯으로 분해하여 카운트
    * @param histories 전체 스케줄 히스토리 배열
    * @returns Map<슬롯키, 신청인원수>
    */
@@ -41,12 +42,35 @@ export default function ScheduleApplyPage() {
     const capacityMap = new Map<string, number>();
 
     histories.forEach((history) => {
-      // start + end를 key로 사용
-      const slotKey = `${history.start}_${history.end}`;
+      // start: "2026-01-11T09:00:00", end: "2026-01-11T18:00:00"
+      const startDate = new Date(history.start);
+      const endDate = new Date(history.end);
 
-      // 기존 카운트에 +1
-      const currentCount = capacityMap.get(slotKey) || 0;
-      capacityMap.set(slotKey, currentCount + 1);
+      // 30분 단위로 슬롯 분해
+      let currentSlotStart = new Date(startDate);
+      while (currentSlotStart < endDate) {
+        // 슬롯 종료 시간 (30분 후)
+        const currentSlotEnd = new Date(currentSlotStart.getTime() + 30 * 60 * 1000);
+
+        // ISO 형식으로 슬롯 키 생성 (시간대 정보 제거)
+        const formatDateTime = (date: Date): string => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+        };
+
+        const slotKey = `${formatDateTime(currentSlotStart)}_${formatDateTime(currentSlotEnd)}`;
+
+        // 기존 카운트에 +1
+        const currentCount = capacityMap.get(slotKey) || 0;
+        capacityMap.set(slotKey, currentCount + 1);
+
+        // 다음 30분 슬롯으로 이동
+        currentSlotStart = currentSlotEnd;
+      }
     });
 
     return capacityMap;
