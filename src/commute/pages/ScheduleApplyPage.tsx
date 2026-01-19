@@ -199,10 +199,17 @@ export default function ScheduleApplyPage() {
 
   const currentWeekHours = calculateWeekHours(selectedWeek);
 
+  // 주차별 시간 데이터 (WeeklySummaryCard에 전달)
+  const weeklyHours: Record<number, number> = {
+    1: calculateWeekHours(1),
+    2: calculateWeekHours(2),
+    3: calculateWeekHours(3),
+    4: calculateWeekHours(4),
+    5: calculateWeekHours(5),
+  };
+
   // 월별 총 시간 계산 (모든 주차의 시간 합산)
-  const totalMonthHours = [1, 2, 3, 4, 5].reduce((total, week) => {
-    return total + calculateWeekHours(week);
-  }, 0);
+  const totalMonthHours = Object.values(weeklyHours).reduce((total, hours) => total + hours, 0);
 
   const handleSubmit = async () => {
     if (selectedSlots.length === 0) return;
@@ -412,7 +419,7 @@ export default function ScheduleApplyPage() {
 
           {/* Week Summary List */}
           <div className="w-full">
-            <WeeklySummaryCard />
+            <WeeklySummaryCard weeklyHours={weeklyHours} />
           </div>
 
           {/* Error Message */}

@@ -1,18 +1,25 @@
 import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
 
-export default function WeeklySummaryCard() {
-  // TODO: 현재는 2025년 1월 하드코딩, 나중에 동적으로 year/month 받아오기
-  const year = '2025';
+interface WeeklySummaryCardProps {
+  weeklyHours?: Record<number, number>; // { 1: 3.5, 2: 0, 3: 2, ... }
+}
+
+export default function WeeklySummaryCard({ weeklyHours = {} }: WeeklySummaryCardProps) {
+  // TODO: 현재는 2026년 1월 하드코딩, 나중에 동적으로 year/month 받아오기
+  const year = '2026';
   const month = '1';
 
-  const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2025']];
+  const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2026']];
 
-  const weeklyData = monthData?.weeks.map(weekInfo => ({
-    week: weekInfo.week,
-    hours: 0,
-    status: '미신청',
-    dateRange: weekInfo.dateRange
-  })) || [];
+  const weeklyData = monthData?.weeks.map(weekInfo => {
+    const hours = weeklyHours[weekInfo.week] || 0;
+    return {
+      week: weekInfo.week,
+      hours,
+      status: hours > 0 ? '신청' : '미신청',
+      dateRange: weekInfo.dateRange
+    };
+  }) || [];
 
   return (
     <div className="bg-white relative rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] size-full p-[16px]" data-name="WeeklySummaryCard">
