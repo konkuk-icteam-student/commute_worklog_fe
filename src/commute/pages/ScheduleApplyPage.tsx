@@ -17,6 +17,7 @@ export default function ScheduleApplyPage() {
   const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+  const [pendingSlotsByWeek, setPendingSlotsByWeek] = useState<Record<number, string[]>>({}); // 주차별 선택 슬롯 저장
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,7 @@ export default function ScheduleApplyPage() {
   const [allSchedules, setAllSchedules] = useState<WorkSchedule[]>([]); // 전체 월의 스케줄
   const [slotCapacityMap, setSlotCapacityMap] = useState<Map<string, number>>(new Map()); // 슬롯별 신청 인원수
   const [isLoadingCapacity, setIsLoadingCapacity] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false); // 초기화 여부
 
   // 현재 연도/월
   const currentYear = 2026;
@@ -135,7 +137,7 @@ export default function ScheduleApplyPage() {
     enabled: true, // 백엔드 CORS 설정 완료 후 동작
   });
 
-  // 내 스케줄 조회 함수
+  // 내 스케줄 조회 함수 (초기 로드용)
   const fetchMySchedules = useCallback(async () => {
     try {
       const response = await getMySchedules(currentYear, currentMonth);
@@ -144,36 +146,71 @@ export default function ScheduleApplyPage() {
         // 전체 스케줄 저장
         setAllSchedules(response.details.schedules);
 
-        // 현재 주차의 슬롯만 selectedSlots에 저장
-        const slots = convertSchedulesToSlots(
-          response.details.schedules,
-          selectedWeek,
-          currentYear,
-          currentMonth
-        );
-        setSelectedSlots(slots);
+        // 초기화: 각 주차별 API 슬롯을 pendingSlotsByWeek에 저장
+        const initialPendingSlots: Record<number, string[]> = {};
+        for (let week = 1; week <= 5; week++) {
+          const slots = convertSchedulesToSlots(
+            response.details.schedules,
+            week,
+            currentYear,
+            currentMonth
+          );
+          initialPendingSlots[week] = slots;
+        }
+        setPendingSlotsByWeek(initialPendingSlots);
+
+        // 현재 주차의 슬롯을 selectedSlots에 설정
+        setSelectedSlots(initialPendingSlots[selectedWeek] || []);
+        setIsInitialized(true);
       } else {
         setAllSchedules([]);
+        setPendingSlotsByWeek({});
         setSelectedSlots([]);
+        setIsInitialized(true);
       }
     } catch (err) {
       console.error('스케줄 조회 에러:', err);
       setAllSchedules([]);
+      setPendingSlotsByWeek({});
       setSelectedSlots([]);
+      setIsInitialized(true);
     }
-  }, [selectedWeek, currentYear, currentMonth]);
+  }, [currentYear, currentMonth, selectedWeek]);
+
+  // 주차 변경 핸들러
+  const handleWeekChange = (newWeek: number) => {
+    if (newWeek === selectedWeek) return;
+
+    // 현재 주차의 선택 슬롯을 저장
+    setPendingSlotsByWeek(prev => ({
+      ...prev,
+      [selectedWeek]: selectedSlots
+    }));
+
+    // 새 주차로 변경
+    setSelectedWeek(newWeek);
+
+    // 새 주차의 저장된 슬롯 불러오기
+    const newWeekSlots = pendingSlotsByWeek[newWeek] || convertSchedulesToSlots(
+      allSchedules,
+      newWeek,
+      currentYear,
+      currentMonth
+    );
+    setSelectedSlots(newWeekSlots);
+  };
 
   // 1단계: 페이지 로드 시 전체 슬롯 인원수 조회 (한 번만 실행)
   useEffect(() => {
     fetchAllScheduleCapacity();
   }, [fetchAllScheduleCapacity]);
 
-  // 2단계: 전체 슬롯 인원수 로드 완료 후, 주차 변경 시마다 내 스케줄 조회
+  // 2단계: 전체 슬롯 인원수 로드 완료 후, 초기 스케줄 조회 (한 번만)
   useEffect(() => {
-    if (!isLoadingCapacity) {
+    if (!isLoadingCapacity && !isInitialized) {
       fetchMySchedules();
     }
-  }, [isLoadingCapacity, fetchMySchedules]);
+  }, [isLoadingCapacity, isInitialized, fetchMySchedules]);
 
   const handleSlotClick = (dayIndex: number, time: string) => {
     const slotKey = `${dayIndex}-${time}`;
@@ -191,8 +228,8 @@ export default function ScheduleApplyPage() {
       // 현재 선택된 주차는 selectedSlots 사용 (사용자가 추가/제거한 것 포함)
       return selectedSlots.length * 0.5;
     } else {
-      // 다른 주차는 API에서 가져온 데이터만 사용
-      const weekSlots = convertSchedulesToSlots(allSchedules, week, currentYear, currentMonth);
+      // 다른 주차는 pendingSlotsByWeek에서 가져오기 (없으면 API 데이터)
+      const weekSlots = pendingSlotsByWeek[week] || convertSchedulesToSlots(allSchedules, week, currentYear, currentMonth);
       return weekSlots.length * 0.5;
     }
   };
@@ -464,7 +501,7 @@ export default function ScheduleApplyPage() {
               return (
                 <button
                   key={week}
-                  onClick={() => setSelectedWeek(week)}
+                  onClick={() => handleWeekChange(week)}
                   className={`flex-1 h-[3.6rem] rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
                   data-name="Button"
                 >
