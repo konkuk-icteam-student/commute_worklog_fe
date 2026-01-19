@@ -5,9 +5,9 @@ type SlotStatus = 'available' | 'selected' | 'disabled';
 type RandomStyle = 'white' | 'pink' | 'blue';
 
 const TIMES = [
-  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+  '10:00', '10:30', '11:00', '11:30',
   '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-  '15:00', '15:30', '16:00', '16:30', '17:00'
+  '15:00', '15:30', '16:00', '16:30'
 ];
 
 interface WeeklyTimeTableNewProps {
@@ -106,11 +106,11 @@ export default function WeeklyTimeTableNew({
   useEffect(() => {
     const slots: Record<string, RandomStyle> = {};
 
-    // Generate all available slot keys (excluding lunch time)
+    // Generate all available slot keys (excluding lunch time 11:30~13:00)
     const allSlots: string[] = [];
     for (let day = 0; day < 5; day++) {
       for (const time of TIMES) {
-        if (time < '12:00' || time >= '13:00') { // Skip lunch time
+        if (time < '11:30' || time >= '13:00') {
           allSlots.push(`${day}-${time}`);
         }
       }
@@ -131,8 +131,8 @@ export default function WeeklyTimeTableNew({
   const getSlotStatus = (dayIndex: number, time: string): SlotStatus => {
     const slotKey = `${dayIndex}-${time}`;
 
-    // 12:00 ~ 13:00 시간대는 disabled
-    if (time >= '12:00' && time < '13:00') {
+    // 11:30 ~ 13:00 시간대는 disabled (점심시간)
+    if (time >= '11:30' && time < '13:00') {
       return 'disabled';
     }
 
@@ -300,7 +300,7 @@ export default function WeeklyTimeTableNew({
 
                 // 현재 신청 인원수
                 const currentCapacity = getSlotCapacity(dayIndex, time);
-                const isLunchTime = time >= '12:00' && time < '13:00';
+                const isLunchTime = time >= '11:30' && time < '13:00';
                 const isFull = isSlotFull(dayIndex, time);
 
                 return (
