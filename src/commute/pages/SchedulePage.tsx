@@ -62,11 +62,12 @@ export default function SchedulePage() {
               selected={selectedCard === 'apply'}
               onClick={handleApply}
             />
-            <ScheduleCard
+            {/* 근로시간 수정 버튼 임시 주석 처리 */}
+            {/* <ScheduleCard
               type="modify"
               selected={selectedCard === 'modify'}
               onClick={handleModify}
-            />
+            /> */}
             <ScheduleCard
               type="view"
               selected={selectedCard === 'view'}
