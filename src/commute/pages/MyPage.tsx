@@ -1,9 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import LogOutIcon from '../../shared/assets/LogOut.svg';
+import { useWorkTime } from '../hooks/useWorkTime';
+import LottieAnimation from '@/shared/components/LottieAnimation';
+import sampleLoading from '@/shared/assets/animations/sample-loading.json';
 
 export default function MyPage() {
   const navigate = useNavigate();
+  const { weekly, monthly, isLoading, error } = useWorkTime();
 
   const handleLogout = () => {
     // TODO: 실제 로그아웃 로직 구현 (예: API 호출, 토큰 제거 등)
@@ -37,34 +41,84 @@ export default function MyPage() {
             <div className="grid grid-cols-2 gap-[1.6rem] w-full" data-name="Container">
               {/* Weekly Hours Card */}
               <div
-                className="bg-white flex flex-col gap-[0.8rem] p-[2.4rem] rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)]"
+                className="bg-white flex flex-col gap-[0.8rem] p-[2.4rem] rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] min-h-[12rem]"
                 data-name="Container"
               >
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-500">
                   이번 주 근무시간
                 </p>
-                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[2rem] text-[#51a8ff]">
-                  6 / 13h
-                </p>
-                <div className="bg-gray-200 h-[0.8rem] rounded-full w-full overflow-hidden">
-                  <div className="bg-[#51a8ff] h-full rounded-full" style={{ width: '46%' }} />
-                </div>
+                {isLoading ? (
+                  <div className="flex items-center justify-center flex-1">
+                    <LottieAnimation
+                      animationData={sampleLoading}
+                      width={40}
+                      height={40}
+                      loop={true}
+                      autoplay={true}
+                    />
+                  </div>
+                ) : error ? (
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.2rem] text-red-400">
+                    {error}
+                  </p>
+                ) : weekly ? (
+                  <>
+                    <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[2rem] text-[#51a8ff]">
+                      {weekly.actualHours} / {weekly.maxHours}h
+                    </p>
+                    <div className="bg-gray-200 h-[0.8rem] rounded-full w-full overflow-hidden">
+                      <div
+                        className="bg-[#51a8ff] h-full rounded-full transition-all duration-300"
+                        style={{ width: `${weekly.percentage}%` }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-400">
+                    데이터 없음
+                  </p>
+                )}
               </div>
 
               {/* Monthly Hours Card */}
               <div
-                className="bg-white flex flex-col gap-[0.8rem] p-[2.4rem] rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)]"
+                className="bg-white flex flex-col gap-[0.8rem] p-[2.4rem] rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] min-h-[12rem]"
                 data-name="Container"
               >
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-500">
                   이번 달 근무시간
                 </p>
-                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[2rem] text-[#51a8ff]">
-                  18.5 / 27h
-                </p>
-                <div className="bg-gray-200 h-[0.8rem] rounded-full w-full overflow-hidden">
-                  <div className="bg-[#51a8ff] h-full rounded-full" style={{ width: '68.5%' }} />
-                </div>
+                {isLoading ? (
+                  <div className="flex items-center justify-center flex-1">
+                    <LottieAnimation
+                      animationData={sampleLoading}
+                      width={40}
+                      height={40}
+                      loop={true}
+                      autoplay={true}
+                    />
+                  </div>
+                ) : error ? (
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.2rem] text-red-400">
+                    {error}
+                  </p>
+                ) : monthly ? (
+                  <>
+                    <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[2rem] text-[#51a8ff]">
+                      {monthly.actualHours} / {monthly.maxHours}h
+                    </p>
+                    <div className="bg-gray-200 h-[0.8rem] rounded-full w-full overflow-hidden">
+                      <div
+                        className="bg-[#51a8ff] h-full rounded-full transition-all duration-300"
+                        style={{ width: `${monthly.percentage}%` }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-400">
+                    데이터 없음
+                  </p>
+                )}
               </div>
             </div>
 
