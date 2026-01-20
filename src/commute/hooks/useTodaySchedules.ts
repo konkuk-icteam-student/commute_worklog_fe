@@ -107,8 +107,17 @@ export const useTodaySchedules = (): UseTodaySchedulesResult => {
         }
       );
 
+      // 중복 제거: start 시간이 같은 스케줄은 하나만 유지 (프론트엔드 방어 코드)
+      const uniqueSchedules = todaySchedules.reduce((acc: WorkSchedule[], current: WorkSchedule) => {
+        const isDuplicate = acc.some((item) => item.start === current.start);
+        if (!isDuplicate) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
       // 화면 표시용 데이터로 변환
-      const displaySchedules: TodayScheduleDisplay[] = todaySchedules
+      const displaySchedules: TodayScheduleDisplay[] = uniqueSchedules
         .map((schedule: WorkSchedule) => {
           const startTime = new Date(schedule.start);
           const endTime = new Date(schedule.end);

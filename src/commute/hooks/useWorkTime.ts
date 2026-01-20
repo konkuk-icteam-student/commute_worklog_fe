@@ -116,7 +116,16 @@ export const useWorkTime = (): UseWorkTimeResult => {
         (schedule: WorkSchedule) => isScheduleInWeek(schedule, weekStart, weekEnd)
       );
 
-      const weeklyScheduledMinutes = weeklySchedules.reduce(
+      // 중복 제거: start 시간이 같은 스케줄은 하나만 유지 (프론트엔드 방어 코드)
+      const uniqueWeeklySchedules = weeklySchedules.reduce((acc: WorkSchedule[], current: WorkSchedule) => {
+        const isDuplicate = acc.some((item) => item.start === current.start);
+        if (!isDuplicate) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
+      const weeklyScheduledMinutes = uniqueWeeklySchedules.reduce(
         (total: number, schedule: WorkSchedule) => {
           return total + calculateDurationMinutes(schedule.start, schedule.end);
         },
