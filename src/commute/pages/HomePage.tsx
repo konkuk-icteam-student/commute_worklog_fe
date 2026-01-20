@@ -3,6 +3,33 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AttendanceButton from '../shared/components/AttendanceButton';
 import type { AttendanceStatus } from '../shared/components/AttendanceButton';
 import BottomNavigation from '../shared/components/BottomNavigation';
+import { useTodaySchedules, type ScheduleDisplayStatus } from '../hooks/useTodaySchedules';
+import LottieAnimation from '@/shared/components/LottieAnimation';
+import sampleLoading from '@/shared/assets/animations/sample-loading.json';
+
+// 스케줄 상태에 따른 배지 스타일 및 텍스트
+const getStatusBadge = (status: ScheduleDisplayStatus) => {
+  switch (status) {
+    case 'IN_PROGRESS':
+      return {
+        bgColor: 'bg-green-50',
+        textColor: 'text-[#00a63e]',
+        label: '진행중',
+      };
+    case 'UPCOMING':
+      return {
+        bgColor: 'bg-gray-100',
+        textColor: 'text-[#4a5565]',
+        label: '예정',
+      };
+    case 'COMPLETED':
+      return {
+        bgColor: 'bg-blue-50',
+        textColor: 'text-[#3b82f6]',
+        label: '완료',
+      };
+  }
+};
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -10,6 +37,9 @@ export default function HomePage() {
   const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus>('checkIn');
   const [checkInTime, setCheckInTime] = useState('');
   const [checkOutTime, setCheckOutTime] = useState('');
+
+  // 오늘의 스케줄 데이터 가져오기
+  const { schedules, isLoading: isScheduleLoading, error: scheduleError } = useTodaySchedules();
 
   const getFormattedTime = () => {
     const now = new Date();
@@ -149,109 +179,92 @@ export default function HomePage() {
                 className="w-full"
                 data-name="Container"
               >
-                  <div
-                    className="bg-white h-[16.4rem] relative rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] shrink-0 w-full"
-                    data-name="Container"
-                  >
-                    <div className="flex flex-col items-center justify-center size-full">
-                      <div className="box-border content-stretch flex flex-col h-[16.4rem] items-center justify-center px-[2.3992rem] py-0 relative w-full">
-                        {/* Morning Shift */}
-                        <div
-                          className="box-border content-stretch flex h-[6.7524rem] items-center justify-between pb-[0.0558rem] pt-0 px-0 relative shrink-0 w-full"
-                          data-name="Container"
-                        >
-                          <div
-                            aria-hidden="true"
-                            className="absolute border-[0rem_0rem_0.0558rem] border-gray-100 border-solid inset-0 pointer-events-none"
+                <div
+                  className="bg-white min-h-[16.4rem] relative rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] shrink-0 w-full"
+                  data-name="Container"
+                >
+                  <div className="flex flex-col items-center justify-center size-full">
+                    <div className="box-border content-stretch flex flex-col min-h-[16.4rem] items-center justify-center px-[2.3992rem] py-[1rem] relative w-full">
+                      {/* 로딩 상태 */}
+                      {isScheduleLoading && (
+                        <div className="flex items-center justify-center py-[2rem]">
+                          <LottieAnimation
+                            animationData={sampleLoading}
+                            width={80}
+                            height={80}
+                            loop={true}
+                            autoplay={true}
                           />
-                          <div
-                            className="h-[4.2982rem] relative shrink-0 w-[6.9005rem]"
-                            data-name="Container"
-                          >
-                            <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[0.3991rem] h-[4.2982rem] items-start relative w-[6.9005rem]">
-                              <div
-                                className="h-[2.0994rem] relative shrink-0 w-full"
-                                data-name="Paragraph"
-                              >
-                                <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[2.1rem] left-0 not-italic text-[#09121c] text-[1.4rem] text-nowrap top-[0.067rem] whitespace-pre">
-                                  오전 근무
-                                </p>
-                              </div>
-                              <div
-                                className="h-[1.7996rem] opacity-50 relative shrink-0 w-full"
-                                data-name="Paragraph"
-                              >
-                                <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[1.8rem] left-0 not-italic text-[#09121c] text-[1.2rem] text-nowrap top-[0.067rem] whitespace-pre">
-                                  09:30 - 11:30
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className="bg-green-50 h-[2.5979rem] relative rounded-[1.87153e+07px] shrink-0 w-[5.5122rem]"
-                            data-name="Container"
-                          >
-                            <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col h-[2.5979rem] items-start pb-0 pt-[0.23rem] px-[1.1992rem] relative w-[5.5122rem]">
-                              <div
-                                className="h-[1.7996rem] relative shrink-0 w-full"
-                                data-name="Paragraph"
-                              >
-                                <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[1.8rem] left-0 not-italic text-[#00a63e] text-[1.2rem] text-nowrap top-[0.067rem] whitespace-pre">
-                                  진행중
-                                </p>
-                              </div>
-                            </div>
-                          </div>
                         </div>
+                      )}
 
-                        {/* Afternoon Shift */}
-                        <div
-                          className="content-stretch flex h-[6.6966rem] items-center justify-between relative shrink-0 w-full"
-                          data-name="Container"
-                        >
-                          <div
-                            className="h-[4.2982rem] relative shrink-0 w-[7.0417rem]"
-                            data-name="Container"
-                          >
-                            <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[0.3991rem] h-[4.2982rem] items-start relative w-[7.0417rem]">
-                              <div
-                                className="h-[2.0994rem] relative shrink-0 w-full"
-                                data-name="Paragraph"
-                              >
-                                <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[2.1rem] left-0 not-italic text-[#09121c] text-[1.4rem] text-nowrap top-[0.067rem] whitespace-pre">
-                                  오후 근무
-                                </p>
-                              </div>
-                              <div
-                                className="h-[1.7996rem] opacity-50 relative shrink-0 w-full"
-                                data-name="Paragraph"
-                              >
-                                <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[1.8rem] left-0 not-italic text-[#09121c] text-[1.2rem] text-nowrap top-[0.067rem] whitespace-pre">
-                                  14:00 - 16:00
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className="bg-gray-100 h-[2.5979rem] relative rounded-[1.87153e+07px] shrink-0 w-[4.4743rem]"
-                            data-name="Container"
-                          >
-                            <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[2.5979rem] items-start pb-0 pt-[0.23rem] px-[1.1992rem] relative w-[4.4743rem]">
-                              <div
-                                className="basis-0 grow h-[1.7rem] min-h-px min-w-px relative shrink-0"
-                                data-name="Paragraph"
-                              >
-                                <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[1.8rem] left-0 not-italic text-[#4a5565] text-[1.2rem] text-nowrap top-[0.067rem] whitespace-pre">
-                                  예정
-                                </p>
-                              </div>
-                            </div>
-                          </div>
+                      {/* 에러 상태 */}
+                      {!isScheduleLoading && scheduleError && (
+                        <div className="flex items-center justify-center py-[2rem]">
+                          <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-red-400">
+                            {scheduleError}
+                          </p>
                         </div>
-                      </div>
+                      )}
+
+                      {/* 스케줄 없음 상태 */}
+                      {!isScheduleLoading && !scheduleError && schedules.length === 0 && (
+                        <div className="flex items-center justify-center py-[2rem]">
+                          <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-400">
+                            오늘 예정된 근무가 없습니다
+                          </p>
+                        </div>
+                      )}
+
+                      {/* 스케줄 목록 */}
+                      {!isScheduleLoading && !scheduleError && schedules.map((schedule, index) => {
+                        const badge = getStatusBadge(schedule.status);
+                        const isLast = index === schedules.length - 1;
+
+                        return (
+                          <div
+                            key={schedule.id}
+                            className={`box-border content-stretch flex h-[6.7524rem] items-center justify-between ${!isLast ? 'pb-[0.0558rem] border-b border-gray-100' : ''} pt-0 px-0 relative shrink-0 w-full`}
+                            data-name="Container"
+                          >
+                            <div
+                              className="h-[4.2982rem] relative shrink-0"
+                              data-name="Container"
+                            >
+                              <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[0.3991rem] h-[4.2982rem] items-start relative">
+                                <div
+                                  className="h-[2.0994rem] relative shrink-0 w-full"
+                                  data-name="Paragraph"
+                                >
+                                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[2.1rem] not-italic text-[#09121c] text-[1.4rem] text-nowrap whitespace-pre">
+                                    {schedule.label}
+                                  </p>
+                                </div>
+                                <div
+                                  className="h-[1.7996rem] opacity-50 relative shrink-0 w-full"
+                                  data-name="Paragraph"
+                                >
+                                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[1.8rem] not-italic text-[#09121c] text-[1.2rem] text-nowrap whitespace-pre">
+                                    {schedule.timeRange}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className={`${badge.bgColor} h-[2.5979rem] relative rounded-full shrink-0 px-[1.2rem] flex items-center justify-center`}
+                              data-name="Container"
+                            >
+                              <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[1.8rem] not-italic ${badge.textColor} text-[1.2rem] text-nowrap whitespace-pre`}>
+                                {badge.label}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
+              </div>
             </div>
           </div>
         </div>
