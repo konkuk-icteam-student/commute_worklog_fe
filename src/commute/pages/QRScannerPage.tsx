@@ -4,6 +4,7 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 import Lottie from 'lottie-react';
 import loadingAnimation from '../shared/assets/Insider-loading.json';
 import { checkIn, checkOut } from '../shared/apis/attendance.api';
+import leftArrowIcon from '../shared/assets/leftArrow.svg';
 
 // QR 스캔 상태 타입
 type ScanStatus = 'scanning' | 'loading' | 'success' | 'failed';
@@ -184,7 +185,7 @@ export default function QRScannerPage() {
                   }}
                   components={{
                     torch: false,
-                    finder: true,
+                    finder: false,
                   }}
                 />
               </div>
@@ -206,11 +207,7 @@ export default function QRScannerPage() {
           onClick={handleBack}
           className="relative rounded-full shrink-0 size-[4rem] flex items-center justify-center hover:bg-white/10 transition-colors"
         >
-          <div className="w-[2.4rem] h-[2.4rem] overflow-hidden relative">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8.99934 15.9988">
-              <path d={svgPaths.backArrow} stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99985" />
-            </svg>
-          </div>
+          <img src={leftArrowIcon} alt="뒤로가기" className="w-[4rem] h-[4rem]" />
         </button>
 
         {/* 제목 및 날짜 */}
