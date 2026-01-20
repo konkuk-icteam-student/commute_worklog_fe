@@ -25,22 +25,22 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="bg-white relative min-h-screen w-full" data-name="schedule">
+    <div className="relative min-h-screen w-full bg-white" data-name="schedule">
       {/* Background Gradient */}
       <div
-        className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] h-full left-0 top-0 w-full"
+        className="absolute left-0 top-0 h-full w-full bg-gradient-to-b from-[#f8fbff] to-[#ffffff]"
         data-name="Background"
       />
 
       {/* Header */}
       <div
-        className="relative bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)] w-full"
+        className="relative w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]"
         data-name="Container"
       >
-        <div className="max-w-[39.3rem] mx-auto px-[3.2rem] pt-[4.2rem] pb-[2.4rem]">
+        <div className="mx-auto max-w-[39.3rem] px-[3.2rem] pb-[2.4rem] pt-[4.2rem]">
           <div className="flex flex-col gap-[0.4rem]">
             <div data-name="Heading 1">
-              <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] text-white tracking-[0.024rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] text-white">
                 근로 시간 관리
               </p>
             </div>
@@ -55,24 +55,16 @@ export default function SchedulePage() {
 
       {/* Content */}
       <div className="relative w-full py-[3.2rem] pb-[12rem]">
-        <div className="max-w-[39.3rem] mx-auto px-[3.2rem]">
+        <div className="mx-auto max-w-[39.3rem] px-[3.2rem]">
           <div className="flex flex-col gap-[2rem]">
-            <ScheduleCard
-              type="apply"
-              selected={selectedCard === 'apply'}
-              onClick={handleApply}
-            />
+            <ScheduleCard type="apply" selected={selectedCard === 'apply'} onClick={handleApply} />
             {/* 근로시간 수정 버튼 임시 주석 처리 */}
             {/* <ScheduleCard
               type="modify"
               selected={selectedCard === 'modify'}
               onClick={handleModify}
             /> */}
-            <ScheduleCard
-              type="view"
-              selected={selectedCard === 'view'}
-              onClick={handleView}
-            />
+            <ScheduleCard type="view" selected={selectedCard === 'view'} onClick={handleView} />
           </div>
         </div>
       </div>
