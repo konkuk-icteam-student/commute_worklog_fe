@@ -112,18 +112,21 @@ export const useWorkTime = (): UseWorkTimeResult => {
       const { start: weekStart, end: weekEnd } = getWeekRange(now);
 
       // 이번 주 스케줄 필터링 및 예정 시간 계산
-      const weeklySchedules = schedulesResponse.details.schedules.filter(
-        (schedule: WorkSchedule) => isScheduleInWeek(schedule, weekStart, weekEnd)
+      const weeklySchedules = schedulesResponse.details.schedules.filter((schedule: WorkSchedule) =>
+        isScheduleInWeek(schedule, weekStart, weekEnd)
       );
 
       // 중복 제거: start 시간이 같은 스케줄은 하나만 유지 (프론트엔드 방어 코드)
-      const uniqueWeeklySchedules = weeklySchedules.reduce((acc: WorkSchedule[], current: WorkSchedule) => {
-        const isDuplicate = acc.some((item) => item.start === current.start);
-        if (!isDuplicate) {
-          acc.push(current);
-        }
-        return acc;
-      }, []);
+      const uniqueWeeklySchedules = weeklySchedules.reduce(
+        (acc: WorkSchedule[], current: WorkSchedule) => {
+          const isDuplicate = acc.some((item) => item.start === current.start);
+          if (!isDuplicate) {
+            acc.push(current);
+          }
+          return acc;
+        },
+        []
+      );
 
       const weeklyScheduledMinutes = uniqueWeeklySchedules.reduce(
         (total: number, schedule: WorkSchedule) => {
@@ -136,9 +139,10 @@ export const useWorkTime = (): UseWorkTimeResult => {
       const weeklyActualHours = minutesToHours(weeklyResponse.details.totalMinutes);
       const weeklyMaxHours = minutesToHours(weeklyScheduledMinutes);
       // 예정된 스케줄이 없으면 0으로 표시
-      const weeklyPercentage = weeklyMaxHours > 0
-        ? Math.min(100, Math.round((weeklyActualHours / weeklyMaxHours) * 100))
-        : 0;
+      const weeklyPercentage =
+        weeklyMaxHours > 0
+          ? Math.min(100, Math.round((weeklyActualHours / weeklyMaxHours) * 100))
+          : 0;
 
       setWeekly({
         actualHours: weeklyActualHours,
@@ -148,14 +152,16 @@ export const useWorkTime = (): UseWorkTimeResult => {
 
       // 월간 데이터 설정 (최대 27시간 고정)
       const monthlyActualHours = minutesToHours(monthlyResponse.details.totalMinutes);
-      const monthlyPercentage = Math.min(100, Math.round((monthlyActualHours / MONTHLY_MAX_HOURS) * 100));
+      const monthlyPercentage = Math.min(
+        100,
+        Math.round((monthlyActualHours / MONTHLY_MAX_HOURS) * 100)
+      );
 
       setMonthly({
         actualHours: monthlyActualHours,
         maxHours: MONTHLY_MAX_HOURS,
         percentage: monthlyPercentage,
       });
-
     } catch (err) {
       console.error('근무시간 데이터 조회 실패:', err);
       setError(err instanceof Error ? err.message : '근무시간을 불러오는 중 오류가 발생했습니다.');
