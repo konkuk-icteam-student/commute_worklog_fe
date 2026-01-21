@@ -14,10 +14,11 @@ export default function SchedulePage() {
     navigate('/schedule/apply');
   };
 
-  const handleModify = () => {
-    setSelectedCard('modify');
-    navigate('/schedule/modify');
-  };
+  // 근로시간 수정 버튼 임시 주석 처리
+  // const handleModify = () => {
+  //   setSelectedCard('modify');
+  //   navigate('/schedule/modify');
+  // };
 
   const handleView = () => {
     setSelectedCard('view');
