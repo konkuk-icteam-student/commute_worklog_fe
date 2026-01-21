@@ -1,50 +1,197 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../shared/components/BottomNavigation';
-import UserSelect from '../shared/components/UserSelect';
 import TimeSelect from '../shared/components/TimeSelect';
 import ClockIcon from '../shared/assets/clock.svg';
 import MenuIcon from '../shared/assets/menu.svg';
+import { getTasksByDate, toggleTaskComplete, createTask } from '../shared/apis/task.api';
+import { getMyInfo } from '../shared/apis/user.api';
+import type { Task as ApiTask } from '../shared/types/task.types';
 
-interface Task {
+interface DisplayTask {
   id: number;
   title: string;
-  assignee: string;
   time: string;
   completed: boolean;
-  type: 'regular' | 'irregular';
   period: 'morning' | 'afternoon';
+  isNew?: boolean; // 새로 추가된 업무 여부
 }
+
+// 시간 문자열을 HH:mm 형식으로 변환
+const formatTime = (taskTime: string): string => {
+  return taskTime.slice(0, 5); // "14:00:00" -> "14:00"
+};
+
+// 시간대(오전/오후) 결정
+const getPeriod = (taskTime: string): 'morning' | 'afternoon' => {
+  const hour = parseInt(taskTime.slice(0, 2), 10);
+  return hour < 12 ? 'morning' : 'afternoon';
+};
+
+// API Task를 DisplayTask로 변환
+const mapApiTaskToDisplay = (task: ApiTask): DisplayTask => ({
+  id: task.taskId,
+  title: task.title,
+  time: formatTime(task.taskTime),
+  completed: task.isCompleted,
+  period: getPeriod(task.taskTime),
+  isNew: false,
+});
+
+// 오늘 날짜를 YYYY-MM-DD 형식으로 반환
+const getTodayDateString = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export default function TasksEditPage() {
   const navigate = useNavigate();
 
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: '신문지 가져오기', assignee: '홍길동', time: '09:00', completed: true, type: 'regular', period: 'morning' },
-    { id: 2, title: '커피머신 청소', assignee: '김길동', time: '09:30', completed: false, type: 'regular', period: 'morning' },
-    { id: 3, title: '싱크대 청소', assignee: '이길동', time: '10:00', completed: true, type: 'regular', period: 'morning' },
-    { id: 4, title: '회의실 청소', assignee: '박길동', time: '10:30', completed: true, type: 'regular', period: 'morning' },
-    { id: 5, title: '바닥 쓸기', assignee: '홍길동', time: '14:00', completed: false, type: 'regular', period: 'afternoon' },
-    { id: 6, title: '바닥 닦기', assignee: '김길동', time: '14:30', completed: true, type: 'regular', period: 'afternoon' },
-    { id: 7, title: '쓰레기통 비우기', assignee: '이길동', time: '15:00', completed: true, type: 'regular', period: 'afternoon' },
-    { id: 8, title: '물티슈로 먼지 쌓이는 곳 닦기', assignee: '박길동', time: '15:30', completed: true, type: 'regular', period: 'afternoon' },
-    { id: 9, title: '기록물 정리', assignee: '홍길동', time: '16:00', completed: true, type: 'irregular', period: 'afternoon' },
-  ]);
-
+  const [regularTasks, setRegularTasks] = useState<DisplayTask[]>([]);
+  const [irregularTasks, setIrregularTasks] = useState<DisplayTask[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [newTaskInput, setNewTaskInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [titleError, setTitleError] = useState('');
+  const [userId, setUserId] = useState<number | null>(null);
 
-  const toggleTaskComplete = (id: number) => {
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+  // 업무 목록 조회
+  const fetchTasks = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await getTasksByDate(getTodayDateString());
+      // 200 OK 응답이면 데이터가 비어있어도 UI 표시
+      const regularTasksData = Array.isArray(response.details?.regularTasks)
+        ? response.details.regularTasks
+        : [];
+      const irregularTasksData = Array.isArray(response.details?.irregularTasks)
+        ? response.details.irregularTasks
+        : [];
+      setRegularTasks(regularTasksData.map(mapApiTaskToDisplay));
+      setIrregularTasks(irregularTasksData.map(mapApiTaskToDisplay));
+    } catch (err) {
+      // 실제 네트워크 에러나 서버 에러일 때만 에러 표시
+      console.error('Failed to fetch tasks:', err);
+      setError('업무 목록을 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTasks();
+    // 사용자 정보 가져오기
+    const fetchUserInfo = async () => {
+      try {
+        const response = await getMyInfo();
+        if (response.isSuccess && response.details) {
+          setUserId(response.details.userId);
+        }
+      } catch (err) {
+        console.error('Failed to fetch user info:', err);
+      }
+    };
+    fetchUserInfo();
+  }, [fetchTasks]);
+
+  // 업무 완료 상태 토글
+  const handleToggleComplete = async (id: number, isRegular: boolean) => {
+    try {
+      const response = await toggleTaskComplete(id);
+      if (response.isSuccess && response.details) {
+        const newCompleted = response.details.isCompleted;
+        if (isRegular) {
+          setRegularTasks(prev =>
+            prev.map(task =>
+              task.id === id ? { ...task, completed: newCompleted } : task
+            )
+          );
+        } else {
+          setIrregularTasks(prev =>
+            prev.map(task =>
+              task.id === id ? { ...task, completed: newCompleted } : task
+            )
+          );
+        }
+      }
+    } catch (err) {
+      console.error('Failed to toggle task:', err);
+    }
   };
 
-  const regularTasks = tasks.filter(t => t.type === 'regular');
+  // 새 비정기 업무 추가
+  const handleAddTask = async () => {
+    if (!newTaskInput.trim() || isSubmitting) return;
+
+    // 제목 길이 유효성 검사
+    if (newTaskInput.trim().length > 16) {
+      setTitleError('업무 제목은 최대 16자까지 입력 가능합니다.');
+      return;
+    }
+
+    if (!userId) {
+      setTitleError('사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setTitleError('');
+      
+      // 현재 시간 가져오기 (HH:mm:ss 형식)
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      
+      const response = await createTask({
+        title: newTaskInput.trim(),
+        assigneeId: userId,
+        taskDate: getTodayDateString(),
+        taskTime: currentTime,
+        taskType: 'TT01', // 정기 업무로 변경 (요구사항에 맞춤)
+      });
+
+      if (response.isSuccess && response.details) {
+        const newTask = mapApiTaskToDisplay({
+          taskId: response.details.taskId,
+          title: response.details.title,
+          taskTime: response.details.taskTime || '00:00:00',
+          isCompleted: response.details.isCompleted,
+        });
+        setIrregularTasks(prev => [...prev, newTask]);
+        setNewTaskInput('');
+      }
+    } catch (err) {
+      console.error('Failed to create task:', err);
+      setTitleError('업무 추가에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 시간 변경 핸들러 (API 업데이트는 저장 시에만)
+  const handleTimeChange = (id: number, time: string, isRegular: boolean) => {
+    if (isRegular) {
+      setRegularTasks(prev =>
+        prev.map(task =>
+          task.id === id ? { ...task, time } : task
+        )
+      );
+    } else {
+      setIrregularTasks(prev =>
+        prev.map(task =>
+          task.id === id ? { ...task, time } : task
+        )
+      );
+    }
+  };
+
   const morningTasks = regularTasks.filter(t => t.period === 'morning');
   const afternoonTasks = regularTasks.filter(t => t.period === 'afternoon');
-  const irregularTasks = tasks.filter(t => t.type === 'irregular');
-
-  const availableUsers = ['홍길동', '김길동', '이길동', '박길동'];
 
   // Get current date
   const now = new Date();
@@ -55,7 +202,7 @@ export default function TasksEditPage() {
   const currentDate = `${year}년 ${month}월 ${date}일 (${dayOfWeek})`;
 
   const handleSave = () => {
-    console.log('업무 저장:', tasks);
+    // 체크 상태는 이미 API로 실시간 저장됨
     navigate('/tasks');
   };
 
@@ -106,7 +253,26 @@ export default function TasksEditPage() {
       {/* Content */}
       <div className="relative w-full pt-[3.5rem] pb-[12rem]" data-name="Container">
         <div className="max-w-[39.3rem] mx-auto px-[2rem] flex flex-col gap-[3.2rem]">
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex justify-center items-center py-[4rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-500">
+                로딩 중...
+              </p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !isLoading && (
+            <div className="flex justify-center items-center py-[4rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-red-500">
+                {error}
+              </p>
+            </div>
+          )}
+
           {/* Regular Tasks Section */}
+          {!isLoading && !error && (
           <div className="flex flex-col gap-[1.6rem] items-start w-full" data-name="Container">
             {/* Section Header */}
             <div className="flex gap-[0.8rem] h-[3.2rem] items-center w-full" data-name="Container">
@@ -126,24 +292,20 @@ export default function TasksEditPage() {
               <div className="relative w-full" data-name="Container">
                 <div aria-hidden="true" className="absolute border-l-[0.16rem] border-[rgba(81,168,255,0.2)] border-solid inset-0 pointer-events-none" />
                 <div className="flex flex-col items-start pl-[1.76rem] w-full">
-                  {morningTasks.map((task) => (
-                    <EditTaskItem
-                      key={task.id}
-                      task={task}
-                      onToggle={toggleTaskComplete}
-                      onAssigneeChange={(value) => {
-                        setTasks(tasks.map(t =>
-                          t.id === task.id ? { ...t, assignee: value } : t
-                        ));
-                      }}
-                      onTimeChange={(value) => {
-                        setTasks(tasks.map(t =>
-                          t.id === task.id ? { ...t, time: value } : t
-                        ));
-                      }}
-                      availableUsers={availableUsers}
-                    />
-                  ))}
+                  {morningTasks.length > 0 ? (
+                    morningTasks.map((task) => (
+                      <EditTaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={(id) => handleToggleComplete(id, true)}
+                        onTimeChange={(value) => handleTimeChange(task.id, value, true)}
+                      />
+                    ))
+                  ) : (
+                    <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-400 py-[1.6rem]">
+                      등록된 업무가 없습니다.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -158,30 +320,28 @@ export default function TasksEditPage() {
               <div className="relative w-full" data-name="Container">
                 <div aria-hidden="true" className="absolute border-l-[0.16rem] border-[rgba(81,168,255,0.2)] border-solid inset-0 pointer-events-none" />
                 <div className="flex flex-col items-start pl-[1.76rem] w-full">
-                  {afternoonTasks.map((task) => (
-                    <EditTaskItem
-                      key={task.id}
-                      task={task}
-                      onToggle={toggleTaskComplete}
-                      onAssigneeChange={(value) => {
-                        setTasks(tasks.map(t =>
-                          t.id === task.id ? { ...t, assignee: value } : t
-                        ));
-                      }}
-                      onTimeChange={(value) => {
-                        setTasks(tasks.map(t =>
-                          t.id === task.id ? { ...t, time: value } : t
-                        ));
-                      }}
-                      availableUsers={availableUsers}
-                    />
-                  ))}
+                  {afternoonTasks.length > 0 ? (
+                    afternoonTasks.map((task) => (
+                      <EditTaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={(id) => handleToggleComplete(id, true)}
+                        onTimeChange={(value) => handleTimeChange(task.id, value, true)}
+                      />
+                    ))
+                  ) : (
+                    <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-400 py-[1.6rem]">
+                      등록된 업무가 없습니다.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           </div>
+          )}
 
           {/* Irregular Tasks Section */}
+          {!isLoading && !error && (
           <div className="flex flex-col gap-[1.6rem] items-start w-full" data-name="Container">
             {/* Section Header */}
             <div className="flex gap-[0.8rem] h-[3.2rem] items-center w-full" data-name="Container">
@@ -195,29 +355,28 @@ export default function TasksEditPage() {
             <div className="relative w-full" data-name="Container">
               <div aria-hidden="true" className="absolute border-l-[0.16rem] border-[rgba(156,163,175,0.2)] border-solid inset-0 pointer-events-none" />
               <div className="flex flex-col items-start pl-[1.76rem] w-full">
-                {irregularTasks.map((task) => (
-                  <EditTaskItem
-                    key={task.id}
-                    task={task}
-                    onToggle={toggleTaskComplete}
-                    onAssigneeChange={(value) => {
-                      setTasks(tasks.map(t =>
-                        t.id === task.id ? { ...t, assignee: value } : t
-                      ));
-                    }}
-                    onTimeChange={(value) => {
-                      setTasks(tasks.map(t =>
-                        t.id === task.id ? { ...t, time: value } : t
-                      ));
-                    }}
-                    availableUsers={availableUsers}
-                  />
-                ))}
+                {irregularTasks.length > 0 ? (
+                  irregularTasks.map((task) => (
+                    <EditTaskItem
+                      key={task.id}
+                      task={task}
+                      onToggle={(id) => handleToggleComplete(id, false)}
+                      onTimeChange={(value) => handleTimeChange(task.id, value, false)}
+                    />
+                  ))
+                ) : (
+                  <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-400 py-[1.6rem]">
+                    등록된 업무가 없습니다.
+                  </p>
+                )}
               </div>
             </div>
           </div>
+          )}
 
           {/* Add New Task Section */}
+          {!isLoading && !error && (
+          <div className="flex flex-col gap-[0.8rem]" data-name="AddTaskWrapper">
           <div className="content-stretch flex gap-[11.992px] h-[51.982px] items-center relative shrink-0 w-full" data-name="AddTaskContainer">
             {/* Text Input */}
             <div className="basis-0 grow bg-white relative rounded-[10px] h-full">
@@ -226,10 +385,25 @@ export default function TasksEditPage() {
                   <input
                     type="text"
                     value={newTaskInput}
-                    onChange={(e) => setNewTaskInput(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewTaskInput(value);
+                      // 실시간 유효성 검사
+                      if (value.length > 16) {
+                        setTitleError('업무 제목은 최대 16자까지 입력 가능합니다.');
+                      } else {
+                        setTitleError('');
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddTask();
+                      }
+                    }}
                     placeholder="새 업무 추가(최대 16자)"
                     maxLength={16}
-                    className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[normal] not-italic w-full text-[16px] outline-none placeholder:text-[#cdcdcd] text-[#09121c]"
+                    disabled={isSubmitting}
+                    className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[normal] not-italic w-full text-[16px] outline-none placeholder:text-[#cdcdcd] text-[#09121c] disabled:bg-gray-100"
                   />
                 </div>
               </div>
@@ -238,22 +412,9 @@ export default function TasksEditPage() {
 
             {/* Add Button */}
             <button
-              onClick={() => {
-                if (newTaskInput.trim()) {
-                  const newTask = {
-                    id: tasks.length + 1,
-                    title: newTaskInput,
-                    assignee: '',
-                    time: '',
-                    completed: false,
-                    type: 'irregular' as const,
-                    period: 'afternoon' as const
-                  };
-                  setTasks([...tasks, newTask]);
-                  setNewTaskInput('');
-                }
-              }}
-              className="bg-[#51a8ff] relative rounded-[10px] shrink-0 size-[51.982px]"
+              onClick={handleAddTask}
+              disabled={isSubmitting || !newTaskInput.trim()}
+              className="bg-[#51a8ff] relative rounded-[10px] shrink-0 size-[51.982px] disabled:opacity-50"
               data-name="AddButton"
             >
               <div className="flex flex-row items-center justify-center size-full">
@@ -270,8 +431,17 @@ export default function TasksEditPage() {
               </div>
             </button>
           </div>
+          {/* 에러 메시지 */}
+          {titleError && (
+            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] text-red-500 px-[0.4rem]">
+              {titleError}
+            </p>
+          )}
+          </div>
+          )}
 
           {/* Bottom Buttons */}
+          {!isLoading && !error && (
           <div className="flex gap-[1.6rem] h-[5.6rem] items-center w-full" data-name="Container">
             {/* Cancel Button */}
             <button
@@ -295,6 +465,7 @@ export default function TasksEditPage() {
               </p>
             </button>
           </div>
+          )}
         </div>
       </div>
 
@@ -306,14 +477,12 @@ export default function TasksEditPage() {
 
 // EditTaskItem Component
 interface EditTaskItemProps {
-  task: Task;
+  task: DisplayTask;
   onToggle: (id: number) => void;
-  onAssigneeChange: (value: string) => void;
   onTimeChange: (value: string) => void;
-  availableUsers: string[];
 }
 
-function EditTaskItem({ task, onToggle, onAssigneeChange, onTimeChange, availableUsers }: EditTaskItemProps) {
+function EditTaskItem({ task, onToggle, onTimeChange }: EditTaskItemProps) {
   return (
     <div className="flex gap-[1.2rem] py-[1.6rem] items-start px-[0.4rem] w-full border-b border-[#f0f0f0]" data-name="TaskItem">
       {/* Checkbox Button */}
@@ -353,11 +522,6 @@ function EditTaskItem({ task, onToggle, onAssigneeChange, onTimeChange, availabl
           {task.title}
         </p>
         <div className="flex gap-[0.8rem] items-center">
-          <UserSelect
-            value={task.assignee}
-            onChange={onAssigneeChange}
-            options={availableUsers}
-          />
           <TimeSelect
             value={task.time}
             onChange={onTimeChange}

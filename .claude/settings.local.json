@@ -10,7 +10,8 @@
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
       "Bash(pnpm run build)",
-      "Bash(pnpm run lint)"
+      "Bash(pnpm run lint)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": [],

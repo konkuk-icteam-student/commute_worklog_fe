@@ -3,6 +3,8 @@ import type {
   ApiResponse,
   TasksByDateDetails,
   TaskDetail,
+  ToggleCompleteDetails,
+  CreateTaskRequest,
 } from '../types/task.types';
 
 /**
@@ -32,6 +34,35 @@ export const getTaskDetail = async (
 ): Promise<ApiResponse<TaskDetail>> => {
   const response = await apiClient.get<ApiResponse<TaskDetail>>(
     `/api/v1/tasks/${taskId}`
+  );
+  return response.data;
+};
+
+/**
+ * 업무 완료 상태 토글
+ * @param taskId 토글할 업무 ID
+ * @returns API 응답 (토글 결과)
+ */
+export const toggleTaskComplete = async (
+  taskId: number
+): Promise<ApiResponse<ToggleCompleteDetails>> => {
+  const response = await apiClient.patch<ApiResponse<ToggleCompleteDetails>>(
+    `/api/v1/tasks/${taskId}/toggle-complete`
+  );
+  return response.data;
+};
+
+/**
+ * 업무 생성 (비정기 업무용)
+ * @param data 업무 생성 요청 데이터
+ * @returns API 응답 (생성된 업무 상세)
+ */
+export const createTask = async (
+  data: CreateTaskRequest
+): Promise<ApiResponse<TaskDetail>> => {
+  const response = await apiClient.post<ApiResponse<TaskDetail>>(
+    '/api/v1/tasks',
+    data
   );
   return response.data;
 };
