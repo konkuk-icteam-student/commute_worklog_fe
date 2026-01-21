@@ -4,6 +4,7 @@ import AttendanceButton from '../shared/components/AttendanceButton';
 import type { AttendanceStatus } from '../shared/components/AttendanceButton';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import { useTodaySchedules, type ScheduleDisplayStatus } from '../hooks/useTodaySchedules';
+import { useUserInfo } from '../hooks/useUserInfo';
 import LottieAnimation from '@/shared/components/LottieAnimation';
 import sampleLoading from '@/shared/assets/animations/sample-loading.json';
 
@@ -40,6 +41,8 @@ export default function HomePage() {
 
   // 오늘의 스케줄 데이터 가져오기
   const { schedules, isLoading: isScheduleLoading, error: scheduleError } = useTodaySchedules();
+  // 사용자 정보 가져오기
+  const { userInfo, isLoading: isUserInfoLoading } = useUserInfo();
 
   const getFormattedTime = () => {
     const now = new Date();
@@ -116,7 +119,7 @@ export default function HomePage() {
             {/* Top Navigation */}
             <div className="text-center">
               <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[1.6rem] text-[1.6rem] text-white tracking-[0.024rem]">
-                안녕하세요, 홍길동님!
+                안녕하세요, {isUserInfoLoading ? '...' : (userInfo?.name || '사용자')}님!
               </p>
             </div>
 
@@ -126,7 +129,7 @@ export default function HomePage() {
                 className="font-['Poppins:SemiBold','Noto_Sans_KR:Bold',sans-serif] leading-[4rem] text-[3.2rem] text-white tracking-[-0.016rem]"
                 style={{ fontVariationSettings: "'wght' 700" }}
               >
-                정보운영팀
+                {isUserInfoLoading ? '...' : (userInfo?.organizationName || '정보운영팀')}
               </p>
             </div>
 

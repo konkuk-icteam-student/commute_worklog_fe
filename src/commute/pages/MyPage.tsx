@@ -2,12 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import LogOutIcon from '../../shared/assets/LogOut.svg';
 import { useWorkTime } from '../hooks/useWorkTime';
+import { useUserInfo } from '../hooks/useUserInfo';
 import LottieAnimation from '@/shared/components/LottieAnimation';
 import sampleLoading from '@/shared/assets/animations/sample-loading.json';
 
 export default function MyPage() {
   const navigate = useNavigate();
   const { weekly, monthly, isLoading, error } = useWorkTime();
+  const { userInfo, isLoading: isUserInfoLoading } = useUserInfo();
 
   const handleLogout = () => {
     // TODO: 실제 로그아웃 로직 구현 (예: API 호출, 토큰 제거 등)
@@ -27,7 +29,7 @@ export default function MyPage() {
               마이페이지
             </h1>
             <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] text-[rgba(255,255,255,0.8)]">
-              홍길동님 · 정보운영팀
+              {isUserInfoLoading ? '로딩 중...' : `${userInfo?.name || '사용자'}님 · ${userInfo?.organizationName || '정보운영팀'}`}
             </p>
           </div>
         </div>
