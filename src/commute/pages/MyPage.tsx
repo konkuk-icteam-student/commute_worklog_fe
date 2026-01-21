@@ -17,19 +17,24 @@ export default function MyPage() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#f8fbff] to-[#ffffff] relative min-h-screen w-full" data-name="mypage">
+    <div
+      className="relative min-h-screen w-full bg-gradient-to-b from-[#f8fbff] to-[#ffffff]"
+      data-name="mypage"
+    >
       {/* Header */}
       <div
-        className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)] py-[2.4rem]"
+        className="w-full bg-[#51a8ff] py-[2.4rem] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]"
         data-name="Container"
       >
-        <div className="max-w-[39.3rem] mx-auto px-[2rem]">
+        <div className="mx-auto max-w-[39.3rem] px-[2rem]">
           <div className="flex flex-col gap-[0.4rem]">
             <h1 className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] text-white">
               마이페이지
             </h1>
             <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] text-[rgba(255,255,255,0.8)]">
-              {isUserInfoLoading ? '로딩 중...' : `${userInfo?.name || '사용자'}님 · ${userInfo?.organizationName || '정보운영팀'}`}
+              {isUserInfoLoading
+                ? '로딩 중...'
+                : `${userInfo?.name || '사용자'}님 · ${userInfo?.organizationName || '정보운영팀'}`}
             </p>
           </div>
         </div>
@@ -37,20 +42,20 @@ export default function MyPage() {
 
       {/* Content */}
       <div className="w-full py-[2rem] pb-[10rem]" data-name="Container">
-        <div className="max-w-[39.3rem] mx-auto px-[2rem]">
+        <div className="mx-auto max-w-[39.3rem] px-[2rem]">
           <div className="flex flex-col gap-[2.4rem]">
             {/* Work Time Cards */}
-            <div className="grid grid-cols-2 gap-[1.6rem] w-full" data-name="Container">
+            <div className="grid w-full grid-cols-2 gap-[1.6rem]" data-name="Container">
               {/* Weekly Hours Card */}
               <div
-                className="bg-white flex flex-col gap-[0.8rem] p-[2.4rem] rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] min-h-[12rem]"
+                className="flex min-h-[12rem] flex-col gap-[0.8rem] rounded-[1.6rem] bg-white p-[2.4rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)]"
                 data-name="Container"
               >
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-500">
                   이번 주 근무시간
                 </p>
                 {isLoading ? (
-                  <div className="flex items-center justify-center flex-1">
+                  <div className="flex flex-1 items-center justify-center">
                     <LottieAnimation
                       animationData={sampleLoading}
                       width={40}
@@ -68,9 +73,9 @@ export default function MyPage() {
                     <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[2rem] text-[#51a8ff]">
                       {weekly.actualHours} / {weekly.maxHours}h
                     </p>
-                    <div className="bg-gray-200 h-[0.8rem] rounded-full w-full overflow-hidden">
+                    <div className="h-[0.8rem] w-full overflow-hidden rounded-full bg-gray-200">
                       <div
-                        className="bg-[#51a8ff] h-full rounded-full transition-all duration-300"
+                        className="h-full rounded-full bg-[#51a8ff] transition-all duration-300"
                         style={{ width: `${weekly.percentage}%` }}
                       />
                     </div>
@@ -84,14 +89,14 @@ export default function MyPage() {
 
               {/* Monthly Hours Card */}
               <div
-                className="bg-white flex flex-col gap-[0.8rem] p-[2.4rem] rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] min-h-[12rem]"
+                className="flex min-h-[12rem] flex-col gap-[0.8rem] rounded-[1.6rem] bg-white p-[2.4rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)]"
                 data-name="Container"
               >
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.4rem] text-gray-500">
                   이번 달 근무시간
                 </p>
                 {isLoading ? (
-                  <div className="flex items-center justify-center flex-1">
+                  <div className="flex flex-1 items-center justify-center">
                     <LottieAnimation
                       animationData={sampleLoading}
                       width={40}
@@ -109,9 +114,9 @@ export default function MyPage() {
                     <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[2rem] text-[#51a8ff]">
                       {monthly.actualHours} / {monthly.maxHours}h
                     </p>
-                    <div className="bg-gray-200 h-[0.8rem] rounded-full w-full overflow-hidden">
+                    <div className="h-[0.8rem] w-full overflow-hidden rounded-full bg-gray-200">
                       <div
-                        className="bg-[#51a8ff] h-full rounded-full transition-all duration-300"
+                        className="h-full rounded-full bg-[#51a8ff] transition-all duration-300"
                         style={{ width: `${monthly.percentage}%` }}
                       />
                     </div>
@@ -127,15 +132,11 @@ export default function MyPage() {
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="bg-white rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] w-full p-[2rem] flex items-center gap-[2rem] hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center gap-[2rem] rounded-[1.6rem] bg-white p-[2rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] transition-colors hover:bg-gray-50"
               data-name="Button"
             >
-              <img
-                src={LogOutIcon}
-                alt="Logout"
-                className="size-[4rem] flex-shrink-0"
-              />
-              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] text-[#09121c] flex-1 text-center">
+              <img src={LogOutIcon} alt="Logout" className="size-[4rem] flex-shrink-0" />
+              <p className="flex-1 text-center font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] text-[#09121c]">
                 로그아웃
               </p>
             </button>

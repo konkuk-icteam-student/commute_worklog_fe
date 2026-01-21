@@ -23,7 +23,7 @@ export const useUserInfo = () => {
 
     const fetchUserInfo = async () => {
       try {
-        setState(prev => ({ ...prev, isLoading: true, error: null }));
+        setState((prev) => ({ ...prev, isLoading: true, error: null }));
         const response = await getMyInfo();
 
         if (!isMounted) return;
@@ -43,7 +43,7 @@ export const useUserInfo = () => {
         }
       } catch (error) {
         if (!isMounted) return;
-        
+
         console.error('사용자 정보 조회 에러:', error);
         setState({
           userInfo: null,
