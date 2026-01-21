@@ -11,6 +11,7 @@
       "Bash(npx eslint:*)",
       "Bash(pnpm run build)"
     ],
+    "includeCoAuthoredBy": false,
     "deny": [],
     "ask": []
   }
