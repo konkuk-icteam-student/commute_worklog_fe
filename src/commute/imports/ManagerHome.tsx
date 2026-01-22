@@ -1,5 +1,5 @@
 //ManagerHome.tsx
-import svgPaths from "./svg-t1qecyan8p";
+import svgPaths from './svg-t1qecyan8p';
 
 type ManagerHomeProps = {
   onNavigate: (page: 'home' | 'qr' | 'task') => void;
@@ -8,9 +8,11 @@ type ManagerHomeProps = {
 
 function Paragraph() {
   return (
-    <div className="h-[18px] relative shrink-0 w-[151px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[18px] left-0 not-italic text-[14px] text-nowrap text-white top-[0.5px]">현재 근무 중</p>
+    <div className="relative h-[18px] w-[151px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[18px] text-white">
+          현재 근무 중
+        </p>
       </div>
     </div>
   );
@@ -18,13 +20,41 @@ function Paragraph() {
 
 function Icon() {
   return (
-    <div className="relative shrink-0 size-[20px]" data-name="Icon">
+    <div className="relative size-[20px] shrink-0" data-name="Icon">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
         <g id="Icon">
-          <path d={svgPaths.p25397b80} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-          <path d={svgPaths.p18e6a68} id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-          <path d={svgPaths.p2241fff0} id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-          <path d={svgPaths.p2c4f400} id="Vector_4" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+          <path
+            d={svgPaths.p25397b80}
+            id="Vector"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
+          <path
+            d={svgPaths.p18e6a68}
+            id="Vector_2"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
+          <path
+            d={svgPaths.p2241fff0}
+            id="Vector_3"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
+          <path
+            d={svgPaths.p2c4f400}
+            id="Vector_4"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
         </g>
       </svg>
     </div>
@@ -33,7 +63,10 @@ function Icon() {
 
 function Container() {
   return (
-    <div className="content-stretch flex h-[20px] items-center justify-between relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[20px] w-full shrink-0 content-stretch items-center justify-between"
+      data-name="Container"
+    >
       <Paragraph />
       <Icon />
     </div>
@@ -42,24 +75,35 @@ function Container() {
 
 function Paragraph1() {
   return (
-    <div className="h-[42px] relative shrink-0 w-full" data-name="Paragraph">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] h-[42px] leading-[42px] left-0 not-italic text-[28px] text-nowrap text-white top-0 w-[58px]">2명</p>
+    <div className="relative h-[42px] w-full shrink-0" data-name="Paragraph">
+      <p className="absolute left-0 top-0 h-[42px] w-[58px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[28px] not-italic leading-[42px] text-white">
+        2명
+      </p>
     </div>
   );
 }
 
 function Paragraph2() {
   return (
-    <div className="h-[15px] relative shrink-0 w-full" data-name="Paragraph">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[15px] left-0 not-italic text-[14px] text-nowrap text-white top-0 w-[117px]">전체 3명</p>
+    <div className="relative h-[15px] w-full shrink-0" data-name="Paragraph">
+      <p className="absolute left-0 top-0 w-[117px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[15px] text-white">
+        전체 3명
+      </p>
     </div>
   );
 }
 
 function Container1() {
   return (
-    <div className="col-[1] relative rounded-[16px] row-[1] self-stretch shadow-[0px_4px_20px_0px_rgba(81,168,255,0.3)] shrink-0" data-name="Container" style={{ backgroundImage: "linear-gradient(166.793deg, rgb(123, 190, 253) 4.2403%, rgb(81, 168, 255) 78.689%)" }}>
-      <div className="content-stretch flex flex-col gap-[8px] items-start pb-0 pt-[14px] px-[20px] relative size-full">
+    <div
+      className="relative col-[1] row-[1] shrink-0 self-stretch rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.3)]"
+      data-name="Container"
+      style={{
+        backgroundImage:
+          'linear-gradient(166.793deg, rgb(123, 190, 253) 4.2403%, rgb(81, 168, 255) 78.689%)',
+      }}
+    >
+      <div className="relative flex size-full flex-col content-stretch items-start gap-[8px] px-[20px] pb-0 pt-[14px]">
         <Container />
         <Paragraph1 />
         <Paragraph2 />
@@ -70,9 +114,11 @@ function Container1() {
 
 function Paragraph3() {
   return (
-    <div className="h-[18px] relative shrink-0 w-[44.68px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[18px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-[0.5px]">미출근자</p>
+    <div className="relative h-[18px] w-[44.68px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[18px] text-[#09121c]">
+          미출근자
+        </p>
       </div>
     </div>
   );
@@ -80,7 +126,10 @@ function Paragraph3() {
 
 function Container2() {
   return (
-    <div className="content-stretch flex h-[20px] items-center relative shrink-0" data-name="Container">
+    <div
+      className="relative flex h-[20px] shrink-0 content-stretch items-center"
+      data-name="Container"
+    >
       <Paragraph3 />
     </div>
   );
@@ -88,25 +137,35 @@ function Container2() {
 
 function Paragraph4() {
   return (
-    <div className="h-[42px] relative shrink-0 w-full" data-name="Paragraph">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[42px] left-0 not-italic text-[#09121c] text-[28px] text-nowrap top-0 w-[107px]">1명</p>
+    <div className="relative h-[42px] w-full shrink-0" data-name="Paragraph">
+      <p className="absolute left-0 top-0 w-[107px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[28px] not-italic leading-[42px] text-[#09121c]">
+        1명
+      </p>
     </div>
   );
 }
 
 function Paragraph5() {
   return (
-    <div className="h-[15px] relative shrink-0 w-full" data-name="Paragraph">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[15px] left-0 not-italic text-[#51a8ff] text-[14px] text-nowrap top-[0.5px]">박길동</p>
+    <div className="relative h-[15px] w-full shrink-0" data-name="Paragraph">
+      <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[15px] text-[#51a8ff]">
+        박길동
+      </p>
     </div>
   );
 }
 
 function Container3() {
   return (
-    <div className="bg-white col-[2] relative rounded-[16px] row-[1] self-stretch shrink-0" data-name="Container">
-      <div aria-hidden="true" className="absolute border border-[#eaeaea] border-solid inset-0 pointer-events-none rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]" />
-      <div className="content-stretch flex flex-col gap-[8px] items-start pb-px pt-[14px] px-[21px] relative size-full">
+    <div
+      className="relative col-[2] row-[1] shrink-0 self-stretch rounded-[16px] bg-white"
+      data-name="Container"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[16px] border border-solid border-[#eaeaea] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]"
+      />
+      <div className="relative flex size-full flex-col content-stretch items-start gap-[8px] px-[21px] pb-px pt-[14px]">
         <Container2 />
         <Paragraph4 />
         <Paragraph5 />
@@ -117,9 +176,11 @@ function Container3() {
 
 function Paragraph6() {
   return (
-    <div className="h-[18px] relative shrink-0 w-[65px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[18px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-[0.5px]">오늘의 업무</p>
+    <div className="relative h-[18px] w-[65px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[18px] text-[#09121c]">
+          오늘의 업무
+        </p>
       </div>
     </div>
   );
@@ -127,7 +188,10 @@ function Paragraph6() {
 
 function Container4() {
   return (
-    <div className="content-stretch flex h-[20px] items-center justify-between relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[20px] w-full shrink-0 content-stretch items-center justify-between"
+      data-name="Container"
+    >
       <Paragraph6 />
     </div>
   );
@@ -135,25 +199,35 @@ function Container4() {
 
 function Paragraph7() {
   return (
-    <div className="h-[42px] relative shrink-0 w-full" data-name="Paragraph">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[42px] left-0 not-italic text-[#09121c] text-[28px] text-nowrap top-0 w-[103px]">1/6</p>
+    <div className="relative h-[42px] w-full shrink-0" data-name="Paragraph">
+      <p className="absolute left-0 top-0 w-[103px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[28px] not-italic leading-[42px] text-[#09121c]">
+        1/6
+      </p>
     </div>
   );
 }
 
 function Paragraph8() {
   return (
-    <div className="h-[15px] relative shrink-0 w-full" data-name="Paragraph">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[15px] left-0 not-italic text-[#51a8ff] text-[14px] text-nowrap top-[0.5px]">미완료</p>
+    <div className="relative h-[15px] w-full shrink-0" data-name="Paragraph">
+      <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[15px] text-[#51a8ff]">
+        미완료
+      </p>
     </div>
   );
 }
 
 function Container5() {
   return (
-    <div className="bg-white col-[3] relative rounded-[16px] row-[1] self-stretch shrink-0" data-name="Container">
-      <div aria-hidden="true" className="absolute border border-[#eaeaea] border-solid inset-0 pointer-events-none rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]" />
-      <div className="content-stretch flex flex-col gap-[8px] items-start pb-px pt-[14px] px-[21px] relative size-full">
+    <div
+      className="relative col-[3] row-[1] shrink-0 self-stretch rounded-[16px] bg-white"
+      data-name="Container"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[16px] border border-solid border-[#eaeaea] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]"
+      />
+      <div className="relative flex size-full flex-col content-stretch items-start gap-[8px] px-[21px] pb-px pt-[14px]">
         <Container4 />
         <Paragraph7 />
         <Paragraph8 />
@@ -164,7 +238,10 @@ function Container5() {
 
 function Container6() {
   return (
-    <div className="gap-[16px] grid grid-cols-[repeat(3,_minmax(0,_1fr))] grid-rows-[repeat(1,_minmax(0,_1fr))] h-[123px] relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative grid h-[123px] w-full shrink-0 grid-cols-[repeat(3,_minmax(0,_1fr))] grid-rows-[repeat(1,_minmax(0,_1fr))] gap-[16px]"
+      data-name="Container"
+    >
       <Container1 />
       <Container3 />
       <Container5 />
@@ -174,13 +251,41 @@ function Container6() {
 
 function Icon1() {
   return (
-    <div className="relative shrink-0 size-[20px]" data-name="Icon">
+    <div className="relative size-[20px] shrink-0" data-name="Icon">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
         <g id="Icon">
-          <path d={svgPaths.p25397b80} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-          <path d={svgPaths.p18406864} id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-          <path d={svgPaths.p2241fff0} id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-          <path d={svgPaths.p2c4f400} id="Vector_4" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+          <path
+            d={svgPaths.p25397b80}
+            id="Vector"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
+          <path
+            d={svgPaths.p18406864}
+            id="Vector_2"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
+          <path
+            d={svgPaths.p2241fff0}
+            id="Vector_3"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
+          <path
+            d={svgPaths.p2c4f400}
+            id="Vector_4"
+            stroke="var(--stroke-0, white)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.66667"
+          />
         </g>
       </svg>
     </div>
@@ -189,8 +294,10 @@ function Icon1() {
 
 function Heading() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[150px]" data-name="Heading 2">
-      <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[22.5px] left-0 not-italic text-[15px] text-nowrap text-white top-px w-[162px]">오늘 근무 학생 목록</p>
+    <div className="relative h-[23px] w-[150px] shrink-0" data-name="Heading 2">
+      <p className="absolute left-0 top-px w-[162px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[15px] not-italic leading-[22.5px] text-white">
+        오늘 근무 학생 목록
+      </p>
     </div>
   );
 }
@@ -198,7 +305,7 @@ function Heading() {
 function Frame6() {
   return (
     <div className="relative shrink-0">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[8px] items-center relative">
+      <div className="relative flex content-stretch items-center gap-[8px] border-0 border-solid border-[transparent] bg-clip-padding">
         <Icon1 />
         <Heading />
       </div>
@@ -207,15 +314,17 @@ function Frame6() {
 }
 
 function Frame4() {
-  return <div className="bg-[#51a8ff] h-[23px] rounded-[20px] shrink-0 w-[80px]" />;
+  return <div className="h-[23px] w-[80px] shrink-0 rounded-[20px] bg-[#51a8ff]" />;
 }
 
 function Frame5() {
   return (
-    <div className="bg-[rgba(255,255,255,0)] h-[28px] relative rounded-[29px] shrink-0 w-[166px]">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[12px] items-center px-[3px] py-[4px] relative size-full">
+    <div className="relative h-[28px] w-[166px] shrink-0 rounded-[29px] bg-[rgba(255,255,255,0)]">
+      <div className="relative flex size-full content-stretch items-center gap-[12px] border-0 border-solid border-[transparent] bg-clip-padding px-[3px] py-[4px]">
         <Frame4 />
-        <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[13.5px] not-italic relative shrink-0 text-[12px] text-[rgba(153,161,175,0)] text-center text-nowrap">자세히 보기</p>
+        <p className="relative shrink-0 text-nowrap text-center font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[12px] not-italic leading-[13.5px] text-[rgba(153,161,175,0)]">
+          자세히 보기
+        </p>
       </div>
     </div>
   );
@@ -223,7 +332,10 @@ function Frame5() {
 
 function Container7() {
   return (
-    <div className="content-stretch flex h-[22.5px] items-center justify-between relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[22.5px] w-full shrink-0 content-stretch items-center justify-between"
+      data-name="Container"
+    >
       <Frame6 />
       <Frame5 />
     </div>
@@ -232,9 +344,12 @@ function Container7() {
 
 function Container8() {
   return (
-    <div className="bg-[#51a8ff] h-[55.5px] relative shrink-0 w-full" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
-      <div className="content-stretch flex flex-col items-start pb-px pt-[16px] px-[20px] relative size-full">
+    <div className="relative h-[55.5px] w-full shrink-0 bg-[#51a8ff]" data-name="Container">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
+      <div className="relative flex size-full flex-col content-stretch items-start px-[20px] pb-px pt-[16px]">
         <Container7 />
       </div>
     </div>
@@ -243,17 +358,25 @@ function Container8() {
 
 function Container9() {
   return (
-    <div className="bg-[rgba(220,223,226,0.2)] col-1 h-[33px] ml-0 mt-0 relative row-1 w-[1198px]" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
+    <div
+      className="col-1 row-1 relative ml-0 mt-0 h-[33px] w-[1198px] bg-[rgba(220,223,226,0.2)]"
+      data-name="Container"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
     </div>
   );
 }
 
 function Paragraph9() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[36px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[21px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-px">오전</p>
+    <div className="relative h-[23px] w-[36px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-px text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[21px] text-[#09121c]">
+          오전
+        </p>
       </div>
     </div>
   );
@@ -261,7 +384,10 @@ function Paragraph9() {
 
 function Container10() {
   return (
-    <div className="content-stretch flex h-[21px] items-center relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[21px] w-full shrink-0 content-stretch items-center"
+      data-name="Container"
+    >
       <Paragraph9 />
     </div>
   );
@@ -269,7 +395,7 @@ function Container10() {
 
 function Frame2() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+    <div className="relative flex w-full shrink-0 flex-col content-stretch items-start">
       <Container10 />
     </div>
   );
@@ -277,7 +403,10 @@ function Frame2() {
 
 function Container11() {
   return (
-    <div className="col-1 content-stretch flex flex-col h-[21px] items-start ml-0 mt-[5px] px-[20px] py-0 relative row-1 w-[1198px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-0 mt-[5px] flex h-[21px] w-[1198px] flex-col content-stretch items-start px-[20px] py-0"
+      data-name="Container"
+    >
       <Frame2 />
     </div>
   );
@@ -285,7 +414,7 @@ function Container11() {
 
 function Group3() {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0">
+    <div className="items-[start] justify-items-[start] relative inline-grid shrink-0 grid-cols-[max-content] grid-rows-[max-content]">
       <Container9 />
       <Container11 />
     </div>
@@ -294,31 +423,43 @@ function Group3() {
 
 function Container12() {
   return (
-    <div className="col-1 h-[64px] ml-0 mt-0 relative row-1 w-[1198px]" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
+    <div className="col-1 row-1 relative ml-0 mt-0 h-[64px] w-[1198px]" data-name="Container">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
     </div>
   );
 }
 
 function Paragraph10() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[36px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[21px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-px">김길동</p>
+    <div className="relative h-[23px] w-[36px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-px text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[21px] text-[#09121c]">
+          김길동
+        </p>
       </div>
     </div>
   );
 }
 
 function Container13() {
-  return <div className="bg-[#00c950] opacity-90 rounded-[16777200px] shrink-0 size-[8px]" data-name="Container" />;
+  return (
+    <div
+      className="size-[8px] shrink-0 rounded-[16777200px] bg-[#00c950] opacity-90"
+      data-name="Container"
+    />
+  );
 }
 
 function Text() {
   return (
-    <div className="flex-[1_0_0] h-[14.5px] min-h-px min-w-px relative" data-name="Text">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[13.5px] left-0 not-italic text-[#008236] text-[9px] text-nowrap top-[0.5px]">근무중</p>
+    <div className="relative h-[14.5px] min-h-px min-w-px flex-[1_0_0]" data-name="Text">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[9px] not-italic leading-[13.5px] text-[#008236]">
+          근무중
+        </p>
       </div>
     </div>
   );
@@ -326,8 +467,11 @@ function Text() {
 
 function Container14() {
   return (
-    <div className="bg-[#dcfce7] h-[17.5px] relative rounded-[10px] shrink-0 w-[51.359px]" data-name="Container">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center px-[8px] py-0 relative size-full">
+    <div
+      className="relative h-[17.5px] w-[51.359px] shrink-0 rounded-[10px] bg-[#dcfce7]"
+      data-name="Container"
+    >
+      <div className="relative flex size-full content-stretch items-center gap-[4px] border-0 border-solid border-[transparent] bg-clip-padding px-[8px] py-0">
         <Container13 />
         <Text />
       </div>
@@ -337,7 +481,10 @@ function Container14() {
 
 function Container15() {
   return (
-    <div className="content-stretch flex gap-[8px] h-[21px] items-center relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[21px] w-full shrink-0 content-stretch items-center gap-[8px]"
+      data-name="Container"
+    >
       <Paragraph10 />
       <Container14 />
     </div>
@@ -346,7 +493,7 @@ function Container15() {
 
 function Frame8() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+    <div className="relative flex w-full shrink-0 flex-col content-stretch items-start">
       <Container15 />
     </div>
   );
@@ -354,8 +501,8 @@ function Frame8() {
 
 function Frame3() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0">
-      <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#09121c] text-[0px] text-[12px] text-nowrap w-[202px]">
+    <div className="relative flex shrink-0 flex-col content-stretch items-start">
+      <p className="relative w-[202px] shrink-0 text-nowrap font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[0px] text-[12px] not-italic leading-[0] text-[#09121c]">
         <span className="leading-[16.5px]">9시</span>
         <span className="leading-[16.5px]">{` ~ `}</span>
         <span className="leading-[16.5px]">1</span>
@@ -367,7 +514,10 @@ function Frame3() {
 
 function Container16() {
   return (
-    <div className="col-1 content-stretch flex flex-col gap-[8px] h-[46px] items-start ml-0 mt-[9px] px-[20px] py-0 relative row-1 w-[1198px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-0 mt-[9px] flex h-[46px] w-[1198px] flex-col content-stretch items-start gap-[8px] px-[20px] py-0"
+      data-name="Container"
+    >
       <Frame8 />
       <Frame3 />
     </div>
@@ -376,7 +526,7 @@ function Container16() {
 
 function Group() {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0">
+    <div className="items-[start] justify-items-[start] relative inline-grid shrink-0 grid-cols-[max-content] grid-rows-[max-content]">
       <Container12 />
       <Container16 />
     </div>
@@ -385,31 +535,43 @@ function Group() {
 
 function Container17() {
   return (
-    <div className="col-1 h-[64px] ml-0 mt-0 relative row-1 w-[1198px]" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
+    <div className="col-1 row-1 relative ml-0 mt-0 h-[64px] w-[1198px]" data-name="Container">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
     </div>
   );
 }
 
 function Paragraph11() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[36px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[21px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-px">홍길동</p>
+    <div className="relative h-[23px] w-[36px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-px text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[21px] text-[#09121c]">
+          홍길동
+        </p>
       </div>
     </div>
   );
 }
 
 function Container18() {
-  return <div className="bg-[#00c950] opacity-90 rounded-[16777200px] shrink-0 size-[8px]" data-name="Container" />;
+  return (
+    <div
+      className="size-[8px] shrink-0 rounded-[16777200px] bg-[#00c950] opacity-90"
+      data-name="Container"
+    />
+  );
 }
 
 function Text1() {
   return (
-    <div className="flex-[1_0_0] h-[14.5px] min-h-px min-w-px relative" data-name="Text">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[13.5px] left-0 not-italic text-[#008236] text-[9px] text-nowrap top-[0.5px]">근무중</p>
+    <div className="relative h-[14.5px] min-h-px min-w-px flex-[1_0_0]" data-name="Text">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[9px] not-italic leading-[13.5px] text-[#008236]">
+          근무중
+        </p>
       </div>
     </div>
   );
@@ -417,8 +579,11 @@ function Text1() {
 
 function Container19() {
   return (
-    <div className="bg-[#dcfce7] h-[17.5px] relative rounded-[10px] shrink-0 w-[51.359px]" data-name="Container">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center px-[8px] py-0 relative size-full">
+    <div
+      className="relative h-[17.5px] w-[51.359px] shrink-0 rounded-[10px] bg-[#dcfce7]"
+      data-name="Container"
+    >
+      <div className="relative flex size-full content-stretch items-center gap-[4px] border-0 border-solid border-[transparent] bg-clip-padding px-[8px] py-0">
         <Container18 />
         <Text1 />
       </div>
@@ -428,7 +593,10 @@ function Container19() {
 
 function Container20() {
   return (
-    <div className="content-stretch flex gap-[8px] h-[21px] items-center relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[21px] w-full shrink-0 content-stretch items-center gap-[8px]"
+      data-name="Container"
+    >
       <Paragraph11 />
       <Container19 />
     </div>
@@ -437,7 +605,7 @@ function Container20() {
 
 function Frame9() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+    <div className="relative flex w-full shrink-0 flex-col content-stretch items-start">
       <Container20 />
     </div>
   );
@@ -445,8 +613,8 @@ function Frame9() {
 
 function Frame10() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0">
-      <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#09121c] text-[0px] text-[12px] text-nowrap w-[202px]">
+    <div className="relative flex shrink-0 flex-col content-stretch items-start">
+      <p className="relative w-[202px] shrink-0 text-nowrap font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[0px] text-[12px] not-italic leading-[0] text-[#09121c]">
         <span className="leading-[16.5px]">9시</span>
         <span className="leading-[16.5px]">{` ~`}</span>
         <span className="leading-[16.5px]"> </span>
@@ -458,7 +626,10 @@ function Frame10() {
 
 function Container21() {
   return (
-    <div className="col-1 content-stretch flex flex-col gap-[8px] h-[46px] items-start ml-0 mt-[9px] px-[20px] py-0 relative row-1 w-[1198px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-0 mt-[9px] flex h-[46px] w-[1198px] flex-col content-stretch items-start gap-[8px] px-[20px] py-0"
+      data-name="Container"
+    >
       <Frame9 />
       <Frame10 />
     </div>
@@ -467,7 +638,7 @@ function Container21() {
 
 function Group1() {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0">
+    <div className="items-[start] justify-items-[start] relative inline-grid shrink-0 grid-cols-[max-content] grid-rows-[max-content]">
       <Container17 />
       <Container21 />
     </div>
@@ -476,31 +647,43 @@ function Group1() {
 
 function Container22() {
   return (
-    <div className="col-1 h-[64px] ml-0 mt-0 relative row-1 w-[1198px]" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
+    <div className="col-1 row-1 relative ml-0 mt-0 h-[64px] w-[1198px]" data-name="Container">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
     </div>
   );
 }
 
 function Paragraph12() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[36px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[21px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-px">박길동</p>
+    <div className="relative h-[23px] w-[36px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-px text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[21px] text-[#09121c]">
+          박길동
+        </p>
       </div>
     </div>
   );
 }
 
 function Container23() {
-  return <div className="bg-[#fb2c36] opacity-90 rounded-[16777200px] shrink-0 size-[8px]" data-name="Container" />;
+  return (
+    <div
+      className="size-[8px] shrink-0 rounded-[16777200px] bg-[#fb2c36] opacity-90"
+      data-name="Container"
+    />
+  );
 }
 
 function Text2() {
   return (
-    <div className="flex-[1_0_0] h-[14.5px] min-h-px min-w-px relative" data-name="Text">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[13.5px] left-0 not-italic text-[#833333] text-[9px] text-nowrap top-[0.5px]">미출근</p>
+    <div className="relative h-[14.5px] min-h-px min-w-px flex-[1_0_0]" data-name="Text">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[9px] not-italic leading-[13.5px] text-[#833333]">
+          미출근
+        </p>
       </div>
     </div>
   );
@@ -508,8 +691,11 @@ function Text2() {
 
 function Container24() {
   return (
-    <div className="bg-[#ffebeb] h-[17.5px] relative rounded-[10px] shrink-0 w-[51.359px]" data-name="Container">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center px-[8px] py-0 relative size-full">
+    <div
+      className="relative h-[17.5px] w-[51.359px] shrink-0 rounded-[10px] bg-[#ffebeb]"
+      data-name="Container"
+    >
+      <div className="relative flex size-full content-stretch items-center gap-[4px] border-0 border-solid border-[transparent] bg-clip-padding px-[8px] py-0">
         <Container23 />
         <Text2 />
       </div>
@@ -519,7 +705,10 @@ function Container24() {
 
 function Container25() {
   return (
-    <div className="content-stretch flex gap-[8px] h-[21px] items-center relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[21px] w-full shrink-0 content-stretch items-center gap-[8px]"
+      data-name="Container"
+    >
       <Paragraph12 />
       <Container24 />
     </div>
@@ -528,7 +717,7 @@ function Container25() {
 
 function Frame11() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+    <div className="relative flex w-full shrink-0 flex-col content-stretch items-start">
       <Container25 />
     </div>
   );
@@ -536,8 +725,8 @@ function Frame11() {
 
 function Frame15() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0">
-      <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#09121c] text-[0px] text-[12px] text-nowrap w-[202px]">
+    <div className="relative flex shrink-0 flex-col content-stretch items-start">
+      <p className="relative w-[202px] shrink-0 text-nowrap font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[0px] text-[12px] not-italic leading-[0] text-[#09121c]">
         <span className="leading-[16.5px]">9시</span>
         <span className="leading-[16.5px]">{` ~ 11시 30분`}</span>
       </p>
@@ -547,7 +736,10 @@ function Frame15() {
 
 function Container26() {
   return (
-    <div className="col-1 content-stretch flex flex-col gap-[8px] h-[46px] items-start ml-0 mt-[9px] px-[20px] py-0 relative row-1 w-[1198px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-0 mt-[9px] flex h-[46px] w-[1198px] flex-col content-stretch items-start gap-[8px] px-[20px] py-0"
+      data-name="Container"
+    >
       <Frame11 />
       <Frame15 />
     </div>
@@ -556,7 +748,7 @@ function Container26() {
 
 function Group2() {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0">
+    <div className="items-[start] justify-items-[start] relative inline-grid shrink-0 grid-cols-[max-content] grid-rows-[max-content]">
       <Container22 />
       <Container26 />
     </div>
@@ -565,17 +757,25 @@ function Group2() {
 
 function Container27() {
   return (
-    <div className="bg-[rgba(220,223,226,0.2)] col-1 h-[33px] ml-0 mt-0 relative row-1 w-[1198px]" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
+    <div
+      className="col-1 row-1 relative ml-0 mt-0 h-[33px] w-[1198px] bg-[rgba(220,223,226,0.2)]"
+      data-name="Container"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
     </div>
   );
 }
 
 function Paragraph13() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[36px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[21px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-px">오후</p>
+    <div className="relative h-[23px] w-[36px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-px text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[21px] text-[#09121c]">
+          오후
+        </p>
       </div>
     </div>
   );
@@ -583,7 +783,10 @@ function Paragraph13() {
 
 function Container28() {
   return (
-    <div className="content-stretch flex h-[21px] items-center relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[21px] w-full shrink-0 content-stretch items-center"
+      data-name="Container"
+    >
       <Paragraph13 />
     </div>
   );
@@ -591,7 +794,7 @@ function Container28() {
 
 function Frame16() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+    <div className="relative flex w-full shrink-0 flex-col content-stretch items-start">
       <Container28 />
     </div>
   );
@@ -599,7 +802,10 @@ function Frame16() {
 
 function Container29() {
   return (
-    <div className="col-1 content-stretch flex flex-col h-[21px] items-start ml-0 mt-[5px] px-[20px] py-0 relative row-1 w-[1198px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-0 mt-[5px] flex h-[21px] w-[1198px] flex-col content-stretch items-start px-[20px] py-0"
+      data-name="Container"
+    >
       <Frame16 />
     </div>
   );
@@ -607,7 +813,7 @@ function Container29() {
 
 function Group4() {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0">
+    <div className="items-[start] justify-items-[start] relative inline-grid shrink-0 grid-cols-[max-content] grid-rows-[max-content]">
       <Container27 />
       <Container29 />
     </div>
@@ -616,17 +822,22 @@ function Group4() {
 
 function Container30() {
   return (
-    <div className="col-1 h-[64px] ml-0 mt-0 relative row-1 w-[1198px]" data-name="Container">
-      <div aria-hidden="true" className="absolute border-[#eaeaea] border-b border-solid inset-0 pointer-events-none" />
+    <div className="col-1 row-1 relative ml-0 mt-0 h-[64px] w-[1198px]" data-name="Container">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 border-b border-solid border-[#eaeaea]"
+      />
     </div>
   );
 }
 
 function Paragraph14() {
   return (
-    <div className="h-[23px] relative shrink-0 w-[36px]" data-name="Paragraph">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[21px] left-0 not-italic text-[#09121c] text-[14px] text-nowrap top-px">서길동</p>
+    <div className="relative h-[23px] w-[36px] shrink-0" data-name="Paragraph">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-px text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] not-italic leading-[21px] text-[#09121c]">
+          서길동
+        </p>
       </div>
     </div>
   );
@@ -634,7 +845,10 @@ function Paragraph14() {
 
 function Container31() {
   return (
-    <div className="content-stretch flex h-[21px] items-center relative shrink-0 w-full" data-name="Container">
+    <div
+      className="relative flex h-[21px] w-full shrink-0 content-stretch items-center"
+      data-name="Container"
+    >
       <Paragraph14 />
     </div>
   );
@@ -642,7 +856,7 @@ function Container31() {
 
 function Frame17() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+    <div className="relative flex w-full shrink-0 flex-col content-stretch items-start">
       <Container31 />
     </div>
   );
@@ -650,8 +864,8 @@ function Frame17() {
 
 function Frame18() {
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0">
-      <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[0] not-italic relative shrink-0 text-[#09121c] text-[0px] text-[12px] text-nowrap w-[202px]">
+    <div className="relative flex shrink-0 flex-col content-stretch items-start">
+      <p className="relative w-[202px] shrink-0 text-nowrap font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[0px] text-[12px] not-italic leading-[0] text-[#09121c]">
         <span className="leading-[16.5px]">1시</span>
         <span className="leading-[16.5px]">{` ~ `}</span>
         <span className="leading-[16.5px]">5시 30분</span>
@@ -662,7 +876,10 @@ function Frame18() {
 
 function Container32() {
   return (
-    <div className="col-1 content-stretch flex flex-col gap-[8px] h-[46px] items-start ml-0 mt-[9px] px-[20px] py-0 relative row-1 w-[1198px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-0 mt-[9px] flex h-[46px] w-[1198px] flex-col content-stretch items-start gap-[8px] px-[20px] py-0"
+      data-name="Container"
+    >
       <Frame17 />
       <Frame18 />
     </div>
@@ -670,14 +887,21 @@ function Container32() {
 }
 
 function Container33() {
-  return <div className="bg-black opacity-90 rounded-[16777200px] shrink-0 size-[8px]" data-name="Container" />;
+  return (
+    <div
+      className="size-[8px] shrink-0 rounded-[16777200px] bg-black opacity-90"
+      data-name="Container"
+    />
+  );
 }
 
 function Text3() {
   return (
-    <div className="flex-[1_0_0] h-[14.5px] min-h-px min-w-px relative" data-name="Text">
-      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
-        <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[13.5px] left-0 not-italic text-[9px] text-black text-nowrap top-[0.5px]">출근전</p>
+    <div className="relative h-[14.5px] min-h-px min-w-px flex-[1_0_0]" data-name="Text">
+      <div className="relative size-full border-0 border-solid border-[transparent] bg-clip-padding">
+        <p className="absolute left-0 top-[0.5px] text-nowrap font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[9px] not-italic leading-[13.5px] text-black">
+          출근전
+        </p>
       </div>
     </div>
   );
@@ -685,7 +909,10 @@ function Text3() {
 
 function Container34() {
   return (
-    <div className="bg-[#f1f1f1] col-1 content-stretch flex gap-[4px] h-[17.5px] items-center ml-[64px] mt-[11px] px-[8px] py-0 relative rounded-[10px] row-1 w-[51.359px]" data-name="Container">
+    <div
+      className="col-1 row-1 relative ml-[64px] mt-[11px] flex h-[17.5px] w-[51.359px] content-stretch items-center gap-[4px] rounded-[10px] bg-[#f1f1f1] px-[8px] py-0"
+      data-name="Container"
+    >
       <Container33 />
       <Text3 />
     </div>
@@ -694,7 +921,7 @@ function Container34() {
 
 function Group5() {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid items-[start] justify-items-[start] relative shrink-0">
+    <div className="items-[start] justify-items-[start] relative inline-grid shrink-0 grid-cols-[max-content] grid-rows-[max-content]">
       <Container30 />
       <Container32 />
       <Container34 />
@@ -704,7 +931,7 @@ function Group5() {
 
 function Frame7() {
   return (
-    <div className="absolute content-stretch flex flex-col items-start leading-[0] left-0 top-[0.5px] w-[1198px]">
+    <div className="absolute left-0 top-[0.5px] flex w-[1198px] flex-col content-stretch items-start leading-[0]">
       <Group3 />
       <Group />
       <Group1 />
@@ -717,7 +944,7 @@ function Frame7() {
 
 function Container35() {
   return (
-    <div className="h-[353px] relative shrink-0 w-full" data-name="Container">
+    <div className="relative h-[353px] w-full shrink-0" data-name="Container">
       <Frame7 />
     </div>
   );
@@ -725,19 +952,28 @@ function Container35() {
 
 function Component() {
   return (
-    <div className="bg-white h-[410.5px] relative rounded-[16px] shrink-0 w-[1200px]" data-name="간단히 보기">
-      <div className="content-stretch flex flex-col items-start overflow-clip p-px relative rounded-[inherit] size-full">
+    <div
+      className="relative h-[410.5px] w-[1200px] shrink-0 rounded-[16px] bg-white"
+      data-name="간단히 보기"
+    >
+      <div className="relative flex size-full flex-col content-stretch items-start overflow-clip rounded-[inherit] p-px">
         <Container8 />
         <Container35 />
       </div>
-      <div aria-hidden="true" className="absolute border border-[#eaeaea] border-solid inset-0 pointer-events-none rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[16px] border border-solid border-[#eaeaea] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]"
+      />
     </div>
   );
 }
 
 function Container36() {
   return (
-    <div className="absolute content-stretch flex flex-col gap-[24px] h-[891px] items-start left-1/2 -translate-x-1/2 top-0 w-[1200px] max-w-[calc(100%-40px)]" data-name="Container">
+    <div
+      className="absolute left-1/2 top-0 flex h-[891px] w-[1200px] max-w-[calc(100%-40px)] -translate-x-1/2 flex-col content-stretch items-start gap-[24px]"
+      data-name="Container"
+    >
       <Container6 />
       <Component />
     </div>
@@ -746,7 +982,7 @@ function Container36() {
 
 function Section() {
   return (
-    <div className="absolute h-[784px] left-0 right-0 top-[114px] w-full" data-name="Section">
+    <div className="absolute left-0 right-0 top-[114px] h-[784px] w-full" data-name="Section">
       <Container36 />
     </div>
   );
@@ -754,7 +990,7 @@ function Section() {
 
 function Section1() {
   return (
-    <div className="absolute h-[1004px] left-0 right-0 top-[76px] w-full" data-name="Section">
+    <div className="absolute left-0 right-0 top-[76px] h-[1004px] w-full" data-name="Section">
       <Section />
     </div>
   );
@@ -762,9 +998,9 @@ function Section1() {
 
 function SearchContent() {
   return (
-    <div className="absolute h-[30px] left-0 top-[31px] w-[1200px]" data-name="Search content">
-      <div className="absolute flex flex-col font-['LINE_Seed_Sans_KR:Bold',sans-serif] justify-center leading-[0] left-[600px] not-italic text-[#17191a] text-[40px] text-center top-[14px] translate-x-[-50%] translate-y-[-50%] w-[1200px]">
-        <p className="leading-[1.25] text-nowrap">2025년 9월</p>
+    <div className="absolute left-0 top-[31px] h-[30px] w-[1200px]" data-name="Search content">
+      <div className="absolute left-[600px] top-[14px] flex w-[1200px] translate-x-[-50%] translate-y-[-50%] flex-col justify-center text-center font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[40px] not-italic leading-[0] text-[#17191a]">
+        <p className="text-nowrap leading-[1.25]">2025년 9월</p>
       </div>
     </div>
   );
@@ -772,7 +1008,7 @@ function SearchContent() {
 
 function Container37() {
   return (
-    <div className="absolute h-[95px] left-0 top-0 w-[1200px]" data-name="Container">
+    <div className="absolute left-0 top-0 h-[95px] w-[1200px]" data-name="Container">
       <SearchContent />
     </div>
   );
@@ -780,7 +1016,10 @@ function Container37() {
 
 function SearchContainer() {
   return (
-    <div className="absolute h-[95px] left-1/2 -translate-x-1/2 top-0 w-[1200px] max-w-[calc(100%-40px)]" data-name="Search container">
+    <div
+      className="absolute left-1/2 top-0 h-[95px] w-[1200px] max-w-[calc(100%-40px)] -translate-x-1/2"
+      data-name="Search container"
+    >
       <Container37 />
     </div>
   );
@@ -788,7 +1027,7 @@ function SearchContainer() {
 
 function Frame() {
   return (
-    <div className="relative shrink-0 size-[40px]" data-name="Frame">
+    <div className="relative size-[40px] shrink-0" data-name="Frame">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 40 40">
         <g id="Frame">
           <path d={svgPaths.p3a82b80} fill="var(--fill-0, black)" id="Vector" />
@@ -800,7 +1039,7 @@ function Frame() {
 
 function Frame13() {
   return (
-    <div className="content-stretch flex items-center relative shrink-0">
+    <div className="relative flex shrink-0 content-stretch items-center">
       <Frame />
     </div>
   );
@@ -820,8 +1059,8 @@ function Frame1() {
 
 function Frame14() {
   return (
-    <div className="content-stretch flex items-center justify-end relative shrink-0">
-      <div className="flex items-center justify-center relative shrink-0">
+    <div className="relative flex shrink-0 content-stretch items-center justify-end">
+      <div className="relative flex shrink-0 items-center justify-center">
         <div className="flex-none rotate-[180deg] scale-y-[-100%]">
           <Frame1 />
         </div>
@@ -832,7 +1071,7 @@ function Frame14() {
 
 function Frame12() {
   return (
-    <div className="absolute content-stretch flex items-center justify-between left-1/2 pl-0 pr-[2px] py-0 top-[27px] translate-x-[-50%] w-[360px]">
+    <div className="absolute left-1/2 top-[27px] flex w-[360px] translate-x-[-50%] content-stretch items-center justify-between py-0 pl-0 pr-[2px]">
       <Frame13 />
       <Frame14 />
     </div>
@@ -841,8 +1080,11 @@ function Frame12() {
 
 function PageHeaderSectionDesktop() {
   return (
-    <div className="absolute bg-white h-[95px] left-0 right-0 top-[76px] w-full" data-name="Page-header-section-desktop">
-      <div className="max-w-[1920px] mx-auto relative h-full">
+    <div
+      className="absolute left-0 right-0 top-[76px] h-[95px] w-full bg-white"
+      data-name="Page-header-section-desktop"
+    >
+      <div className="relative mx-auto h-full max-w-[1920px]">
         <SearchContainer />
         <Frame12 />
       </div>
@@ -852,9 +1094,12 @@ function PageHeaderSectionDesktop() {
 
 function SearchContent1() {
   return (
-    <div className="absolute h-[30px] left-1/2 -translate-x-1/2 top-[23px] w-[1200px]" data-name="Search content">
-      <div className="flex flex-col font-['LINE_Seed_Sans_KR:Bold',sans-serif] justify-center leading-[0] not-italic text-[20px] text-center text-white h-full w-full">
-        <p className="leading-[1.25] text-nowrap">정보운영팀 출근부 · 관리자 홈</p>
+    <div
+      className="absolute left-1/2 top-[23px] h-[30px] w-[1200px] -translate-x-1/2"
+      data-name="Search content"
+    >
+      <div className="flex h-full w-full flex-col justify-center text-center font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[20px] not-italic leading-[0] text-white">
+        <p className="text-nowrap leading-[1.25]">정보운영팀 출근부 · 관리자 홈</p>
       </div>
     </div>
   );
@@ -862,9 +1107,15 @@ function SearchContent1() {
 
 function HeaderDesktop() {
   return (
-    <div className="absolute bg-[#51a8ff] h-[76px] left-0 right-0 top-0 w-full" data-name="Header-Desktop">
-      <div aria-hidden="true" className="absolute border-[#e8eef2] border-b border-solid inset-[0_0_-0.5px_0] pointer-events-none" />
-      <div className="max-w-[1920px] mx-auto relative h-full">
+    <div
+      className="absolute left-0 right-0 top-0 h-[76px] w-full bg-[#51a8ff]"
+      data-name="Header-Desktop"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-[0_0_-0.5px_0] border-b border-solid border-[#e8eef2]"
+      />
+      <div className="relative mx-auto h-full max-w-[1920px]">
         <SearchContent1 />
       </div>
     </div>
@@ -877,18 +1128,45 @@ type Icon2Props = {
 
 function Icon2({ active }: Icon2Props) {
   return (
-    <div className="h-[23.992px] overflow-clip relative shrink-0 w-full" data-name="Icon">
-      <div className="absolute bottom-[12.5%] left-[37.5%] right-[37.5%] top-1/2" data-name="Vector">
+    <div className="relative h-[23.992px] w-full shrink-0 overflow-clip" data-name="Icon">
+      <div
+        className="absolute bottom-[12.5%] left-[37.5%] right-[37.5%] top-1/2"
+        data-name="Vector"
+      >
         <div className="absolute inset-[-11.11%_-16.67%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 7.99746 10.9965">
-            <path d={svgPaths.p27b3c860} id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 7.99746 10.9965"
+          >
+            <path
+              d={svgPaths.p27b3c860}
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
       <div className="absolute inset-[8.33%_12.5%_12.5%_12.5%]" data-name="Vector">
         <div className="absolute inset-[-5.26%_-5.56%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 19.9937 20.9938">
-            <path d={svgPaths.p27cb6000} id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 19.9937 20.9938"
+          >
+            <path
+              d={svgPaths.p27cb6000}
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
@@ -903,9 +1181,9 @@ type ButtonProps = {
 
 function Button({ active, onClick }: ButtonProps) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`absolute content-stretch flex flex-col items-start left-0 pb-0 pt-[7.992px] px-[7.992px] rounded-[18715300px] size-[39.976px] top-0 ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
+      className={`absolute left-0 top-0 flex size-[39.976px] flex-col content-stretch items-start rounded-[18715300px] px-[7.992px] pb-0 pt-[7.992px] ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
       data-name="Button"
     >
       <Icon2 active={active} />
@@ -919,32 +1197,86 @@ type Icon3Props = {
 
 function Icon3({ active }: Icon3Props) {
   return (
-    <div className="h-[23.992px] overflow-clip relative shrink-0 w-full" data-name="Icon">
-      <div className="absolute bottom-3/4 left-[33.33%] right-[66.67%] top-[8.33%]" data-name="Vector">
+    <div className="relative h-[23.992px] w-full shrink-0 overflow-clip" data-name="Icon">
+      <div
+        className="absolute bottom-3/4 left-[33.33%] right-[66.67%] top-[8.33%]"
+        data-name="Vector"
+      >
         <div className="absolute inset-[-25%_-1px]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1.99936 5.9981">
-            <path d="M0.999682 0.999682V4.99841" id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 1.99936 5.9981"
+          >
+            <path
+              d="M0.999682 0.999682V4.99841"
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
-      <div className="absolute bottom-3/4 left-[66.67%] right-[33.33%] top-[8.33%]" data-name="Vector">
+      <div
+        className="absolute bottom-3/4 left-[66.67%] right-[33.33%] top-[8.33%]"
+        data-name="Vector"
+      >
         <div className="absolute inset-[-25%_-1px]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1.99936 5.9981">
-            <path d="M0.999682 0.999682V4.99841" id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 1.99936 5.9981"
+          >
+            <path
+              d="M0.999682 0.999682V4.99841"
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
       <div className="absolute inset-[16.67%_12.5%_8.33%_12.5%]" data-name="Vector">
         <div className="absolute inset-[-5.56%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 19.9937 19.9937">
-            <path d={svgPaths.p260a3f80} id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 19.9937 19.9937"
+          >
+            <path
+              d={svgPaths.p260a3f80}
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
       <div className="absolute inset-[41.67%_12.5%_58.33%_12.5%]" data-name="Vector">
         <div className="absolute inset-[-1px_-5.56%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 19.9937 1.99936">
-            <path d="M0.999682 0.999682H18.994" id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 19.9937 1.99936"
+          >
+            <path
+              d="M0.999682 0.999682H18.994"
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
@@ -955,7 +1287,7 @@ function Icon3({ active }: Icon3Props) {
 function Button1({ active }: { active: boolean }) {
   return (
     <div
-      className={`absolute content-stretch flex flex-col items-start left-[87.97px] pb-0 pt-[7.992px] px-[7.992px] rounded-[18715300px] size-[39.976px] top-0 ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
+      className={`absolute left-[87.97px] top-0 flex size-[39.976px] flex-col content-stretch items-start rounded-[18715300px] px-[7.992px] pb-0 pt-[7.992px] ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
       data-name="Button"
     >
       <Icon3 active={active} />
@@ -969,11 +1301,23 @@ type Icon4Props = {
 
 function Icon4({ active }: Icon4Props) {
   return (
-    <div className="h-[23.992px] overflow-clip relative shrink-0 w-full" data-name="Icon">
+    <div className="relative h-[23.992px] w-full shrink-0 overflow-clip" data-name="Icon">
       <div className="absolute inset-[12.5%_8.33%_8.35%_8.33%]" data-name="Vector">
         <div className="absolute inset-[-5.26%_-5%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 21.993 20.9892">
-            <path d={svgPaths.p3a853f00} id="Vector" stroke={active ? '#51A8FF' : '#99A1AF'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 21.993 20.9892"
+          >
+            <path
+              d={svgPaths.p3a853f00}
+              id="Vector"
+              stroke={active ? '#51A8FF' : '#99A1AF'}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
@@ -983,9 +1327,9 @@ function Icon4({ active }: Icon4Props) {
 
 function Button2({ active, onClick }: ButtonProps) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`absolute content-stretch flex flex-col items-start left-[175.94px] pb-0 pt-[7.992px] px-[7.992px] rounded-[18715300px] size-[39.976px] top-0 ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
+      className={`absolute left-[175.94px] top-0 flex size-[39.976px] flex-col content-stretch items-start rounded-[18715300px] px-[7.992px] pb-0 pt-[7.992px] ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
       data-name="Button"
     >
       <Icon4 active={active} />
@@ -995,18 +1339,42 @@ function Button2({ active, onClick }: ButtonProps) {
 
 function Icon5() {
   return (
-    <div className="h-[23.992px] overflow-clip relative shrink-0 w-full" data-name="Icon">
+    <div className="relative h-[23.992px] w-full shrink-0 overflow-clip" data-name="Icon">
       <div className="absolute inset-[62.5%_20.83%_12.5%_20.83%]" data-name="Vector">
         <div className="absolute inset-[-16.67%_-7.14%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 15.9949 7.99746">
-            <path d={svgPaths.p39f3b4d0} id="Vector" stroke="var(--stroke-0, #99A1AF)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 15.9949 7.99746"
+          >
+            <path
+              d={svgPaths.p39f3b4d0}
+              id="Vector"
+              stroke="var(--stroke-0, #99A1AF)"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
       <div className="absolute inset-[12.5%_33.33%_54.17%_33.33%]" data-name="Vector">
         <div className="absolute inset-[-12.5%]">
-          <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 9.99683 9.99683">
-            <path d={svgPaths.p370c1e00} id="Vector" stroke="var(--stroke-0, #99A1AF)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99936" />
+          <svg
+            className="block size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 9.99683 9.99683"
+          >
+            <path
+              d={svgPaths.p370c1e00}
+              id="Vector"
+              stroke="var(--stroke-0, #99A1AF)"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.99936"
+            />
           </svg>
         </div>
       </div>
@@ -1016,7 +1384,10 @@ function Icon5() {
 
 function Button3() {
   return (
-    <div className="absolute content-stretch flex flex-col items-start left-[263.91px] pb-0 pt-[7.992px] px-[7.992px] rounded-[18715300px] size-[39.976px] top-0" data-name="Button">
+    <div
+      className="absolute left-[263.91px] top-0 flex size-[39.976px] flex-col content-stretch items-start rounded-[18715300px] px-[7.992px] pb-0 pt-[7.992px]"
+      data-name="Button"
+    >
       <Icon5 />
     </div>
   );
@@ -1029,7 +1400,7 @@ type Container38Props = {
 
 function Container38({ onNavigate, currentPage }: Container38Props) {
   return (
-    <div className="h-[39.976px] relative shrink-0 w-full" data-name="Container">
+    <div className="relative h-[39.976px] w-full shrink-0" data-name="Container">
       <Button active={currentPage === 'home'} onClick={() => onNavigate('home')} />
       <Button1 active={currentPage === 'qr'} />
       <Button2 active={currentPage === 'task'} onClick={() => onNavigate('task')} />
@@ -1040,7 +1411,10 @@ function Container38({ onNavigate, currentPage }: Container38Props) {
 
 function DesktopHome({ onNavigate, currentPage }: ManagerHomeProps) {
   return (
-    <div className="absolute bg-white content-stretch flex flex-col h-[71.96px] items-start left-[calc(50%-0.07px)] pb-0 pt-[15.992px] px-[31.993px] rounded-[18715300px] shadow-[0px_4px_30px_0px_rgba(81,168,255,0.2)] top-[965px] translate-x-[-50%] w-[367.869px]" data-name="DesktopHome">
+    <div
+      className="absolute left-[calc(50%-0.07px)] top-[965px] flex h-[71.96px] w-[367.869px] translate-x-[-50%] flex-col content-stretch items-start rounded-[18715300px] bg-white px-[31.993px] pb-0 pt-[15.992px] shadow-[0px_4px_30px_0px_rgba(81,168,255,0.2)]"
+      data-name="DesktopHome"
+    >
       <Container38 onNavigate={onNavigate} currentPage={currentPage} />
     </div>
   );
@@ -1048,7 +1422,7 @@ function DesktopHome({ onNavigate, currentPage }: ManagerHomeProps) {
 
 export default function ManagerHome({ onNavigate, currentPage }: ManagerHomeProps) {
   return (
-    <div className="bg-white relative size-full" data-name="Manager_Home">
+    <div className="relative size-full bg-white" data-name="Manager_Home">
       <Section1 />
       <PageHeaderSectionDesktop />
       <HeaderDesktop />

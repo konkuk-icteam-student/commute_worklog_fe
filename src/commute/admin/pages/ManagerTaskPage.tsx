@@ -159,7 +159,7 @@ function Icon3({ active }: { active: boolean }) {
 function Button1({ active }: { active: boolean }) {
   return (
     <div
-      className={`absolute content-stretch flex flex-col items-start left-[87.97px] pb-0 pt-[7.992px] px-[7.992px] rounded-[18715300px] size-[39.976px] top-0 ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
+      className={`absolute left-[87.97px] top-0 flex size-[39.976px] flex-col content-stretch items-start rounded-[18715300px] px-[7.992px] pb-0 pt-[7.992px] ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
       data-name="Button"
     >
       <Icon3 active={active} />
