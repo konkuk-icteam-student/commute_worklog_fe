@@ -4,6 +4,7 @@ import Title from '@/worklog/shared/components/faq/Title';
 import SearchBar from '@/worklog/shared/components/faq/SearchBar';
 import SidePanel, { type TabData } from '@/worklog/shared/components/faq/SidePanel';
 import PanelContent from '@/worklog/shared/components/faq/PanelContent';
+
 const Faq = () => {
   const [tabs, setTabs] = useState<TabData[]>([]); // 열린 탭 목록
   const [activeTabId, setActiveTabId] = useState<string | number>(0); // 현재 보고있는 탭 ID

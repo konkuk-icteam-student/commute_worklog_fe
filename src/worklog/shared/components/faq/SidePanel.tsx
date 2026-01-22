@@ -1,3 +1,5 @@
+import blueX from '../../assets/blueX.svg';
+
 export interface TabData {
   id: string | number; // 탭 고유 ID
   title: string; // 탭 제목
@@ -13,6 +15,7 @@ interface SidePanelProps {
 }
 
 const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) => {
+  const activeTab = tabs.find((t) => t.id === activeTabId);
   return (
     <div className="flex h-full flex-col border-r border-[#E8EEF2] bg-white">
       {/* 1. 탭 영역 (사다리꼴 모양 구현) */}
@@ -47,26 +50,31 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
       </div>
 
       {/* 2. 컨텐츠 영역 (탭에 따라 내용 바뀜) */}
-      <div className="relative flex-1 overflow-y-auto p-6">
-        {/* 임시 닫기 버튼 */}
-        <button
-          onClick={() => onClose(activeTabId)}
-          className="absolute right-4 top-4 rounded-md border border-gray-300 px-3 py-1 text-xs hover:bg-gray-100"
-        >
-          패널 닫기 (X)
-        </button>
+      <div className="relative h-full flex-1 overflow-y-auto p-6">
+        {activeTab && (
+          <button
+            onClick={() => onClose(activeTabId)}
+            className="absolute right-4 top-4 flex items-center justify-center transition-opacity hover:opacity-80"
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '6px',
+              background: '#E6E8FF',
+            }}
+          >
+            <img src={blueX} alt="닫기" />
+          </button>
+        )}
 
         {/* 현재 활성화된 탭의 내용 표시 */}
-        {tabs.length > 0 && activeTabId ? (
+        {activeTab ? (
           <div className="mt-8">
             <h2 className="mb-4 text-xl font-bold">
-              {tabs.find((t) => t.id === activeTabId)?.title}
+              {activeTab.title} {/* 여기서도 바로 activeTab 변수 사용 가능 */}
             </h2>
 
-            {/* [수정] 단순히 글자를 보여주는 게 아니라, tab.content가 있으면 그걸 보여주고 없으면 기존 박스 보여주기 */}
             <div className="w-full">
-              {tabs.find((t) => t.id === activeTabId)?.content || (
-                // content가 없을 때 보여줄 기본 UI (기존 코드)
+              {activeTab.content || (
                 <div className="flex h-[200px] w-full items-center justify-center rounded border border-dashed border-gray-300 bg-gray-50 text-gray-400">
                   준비 중인 화면입니다.
                 </div>
