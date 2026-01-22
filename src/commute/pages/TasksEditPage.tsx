@@ -139,15 +139,26 @@ export default function TasksEditPage() {
       setIsSubmitting(true);
       setTitleError('');
 
-      // 현재 시간 가져오기 (HH:mm:ss 형식)
+      // 현재 시간 + 30분 후, 분 내림 처리 (HH:00:00 형식)
       const now = new Date();
-      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      const totalMinutes = now.getHours() * 60 + now.getMinutes() + 30;
+      let taskHour = Math.floor(totalMinutes / 60);
+
+      // 점심시간대(11:30-13:00) 체크
+      const lunchStart = 11 * 60 + 30; // 11:30 = 690분
+      const lunchEnd = 13 * 60; // 13:00 = 780분
+
+      if (totalMinutes >= lunchStart && totalMinutes < lunchEnd) {
+        taskHour = 13;
+      }
+
+      const taskTime = `${String(taskHour).padStart(2, '0')}:00:00`;
 
       const response = await createTask({
         title: newTaskInput.trim(),
         assigneeId: userId,
         taskDate: getTodayDateString(),
-        taskTime: currentTime,
+        taskTime: taskTime,
         taskType: 'TT01', // 정기 업무로 변경 (요구사항에 맞춤)
       });
 
