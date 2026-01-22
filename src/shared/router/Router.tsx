@@ -11,6 +11,9 @@ import ScheduleViewPage from '../../commute/pages/ScheduleViewPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
 import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
+import ManagerHomePage from '../../commute/admin/pages/ManagerHomePage';
+import ManagerQRPage from '../../commute/admin/pages/ManagerQRPage';
+import ManagerTaskPage from '../../commute/admin/pages/ManagerTaskPage';
 import QRScannerPage from '../../commute/pages/QRScannerPage';
 import Category from '@/worklog/pages/category/Category';
 
@@ -74,6 +77,22 @@ const router = createBrowserRouter([
   {
     path: '/worklog/category',
     element: <Category />,
+  },
+  {
+    path: '/manager',
+    element: <ManagerHomePage />,
+  },
+  {
+    path: '/manager/home',
+    element: <ManagerHomePage />,
+  },
+  {
+    path: '/manager/qr',
+    element: <ManagerQRPage />,
+  },
+  {
+    path: '/manager/task',
+    element: <ManagerTaskPage />,
   },
 ]);
 
