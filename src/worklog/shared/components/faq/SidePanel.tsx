@@ -78,7 +78,7 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
               <img src={rightArrow} alt="오른쪽 화살표" />
               <span className="text-[14px] font-[400] text-[#A9AFB2]">category</span>
             </div>
-            <h2 className="mb-4 text-xl font-bold">
+            <h2 className="color-[#17191A] mb-4 text-[32px] font-[700]">
               {activeTab.title} {/* 여기서도 바로 activeTab 변수 사용 가능 */}
             </h2>
 
