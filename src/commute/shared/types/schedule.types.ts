@@ -109,6 +109,32 @@ export interface AllScheduleHistoryDetails {
 }
 
 /**
+ * 유저 정보 (관리자 근무 시간 통계 조회용)
+ */
+export interface WorkTimeSummaryUserInfo {
+  userId: number;
+  name: string;
+  email: string;
+  roleCode: string;
+  organizationName: string;
+}
+
+/**
+ * 근무 시간 통계 단건
+ */
+export interface WorkTimeSummaryItem {
+  userInfo: WorkTimeSummaryUserInfo;
+  totalMinutes: number;
+}
+
+/**
+ * 전체 근무 시간 통계 응답 상세
+ */
+export interface WorkTimeSummaryDetails {
+  summaries: WorkTimeSummaryItem[];
+}
+
+/**
  * 웹소켓 스케줄 업데이트 단건
  */
 export interface ScheduleUpdateItem {

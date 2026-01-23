@@ -33,6 +33,22 @@ export interface TodayAttendanceHistoryDetails {
   histories: TodayAttendanceHistory[];
 }
 
+/**
+ * QR 토큰 발급 응답 상세
+ */
+export interface QrTokenDetails {
+  token: string;
+  expiresAt: string; // ISO 8601: "2026-01-11T12:01:00"
+  validSeconds: number;
+}
+
+/**
+ * 특정 날짜의 출퇴근 기록 조회 응답 상세
+ */
+export interface AttendanceHistoryDetails {
+  histories: TodayAttendanceHistory[];
+}
+
 // ============================================
 // API 응답 타입 별칭 (편의를 위해)
 // ============================================

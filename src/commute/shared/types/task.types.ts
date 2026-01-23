@@ -85,6 +85,22 @@ export interface CreateTaskRequest {
 }
 
 /**
+ * 업무 수정 요청 (관리자 전용)
+ */
+export interface UpdateTaskRequest {
+  title?: string;
+  assigneeId?: number;
+  taskTime?: string; // "HH:mm:ss"
+}
+
+/**
+ * 업무 완료 상태 설정 요청
+ */
+export interface SetTaskCompleteRequest {
+  isCompleted: boolean;
+}
+
+/**
  * 업무 생성 응답
  */
 export type CreateTaskResponse = ApiResponse<TaskDetail>;

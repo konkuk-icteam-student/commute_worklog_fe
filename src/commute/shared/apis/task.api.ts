@@ -5,6 +5,8 @@ import type {
   TaskDetail,
   ToggleCompleteDetails,
   CreateTaskRequest,
+  UpdateTaskRequest,
+  SetTaskCompleteRequest,
 } from '../types/task.types';
 
 /**
@@ -62,6 +64,40 @@ export const createTask = async (
 ): Promise<ApiResponse<TaskDetail>> => {
   const response = await apiClient.post<ApiResponse<TaskDetail>>(
     '/api/v1/tasks',
+    data
+  );
+  return response.data;
+};
+
+/**
+ * 업무 수정 (관리자 전용)
+ * @param taskId 수정할 업무 ID
+ * @param data 수정할 필드 (title, assigneeId, taskTime)
+ * @returns API 응답 (수정된 업무 상세)
+ */
+export const updateTask = async (
+  taskId: number,
+  data: UpdateTaskRequest
+): Promise<ApiResponse<TaskDetail>> => {
+  const response = await apiClient.patch<ApiResponse<TaskDetail>>(
+    `/api/v1/tasks/${taskId}`,
+    data
+  );
+  return response.data;
+};
+
+/**
+ * 업무 완료 상태 설정
+ * @param taskId 설정할 업무 ID
+ * @param data 완료 상태 (isCompleted)
+ * @returns API 응답 (토글 결과)
+ */
+export const setTaskComplete = async (
+  taskId: number,
+  data: SetTaskCompleteRequest
+): Promise<ApiResponse<ToggleCompleteDetails>> => {
+  const response = await apiClient.patch<ApiResponse<ToggleCompleteDetails>>(
+    `/api/v1/tasks/${taskId}/complete`,
     data
   );
   return response.data;

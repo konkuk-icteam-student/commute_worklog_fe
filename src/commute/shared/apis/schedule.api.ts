@@ -8,6 +8,7 @@ import type {
   WorkHistoryListDetails,
   WorkScheduleDetail,
   AllScheduleHistoryDetails,
+  WorkTimeSummaryDetails,
 } from '../types/schedule.types';
 
 /**
@@ -121,6 +122,25 @@ export const getAllScheduleHistory = async (
 ): Promise<ApiResponse<AllScheduleHistoryDetails>> => {
   const response = await apiClient.get<ApiResponse<AllScheduleHistoryDetails>>(
     '/api/v1/admin/schedule/history/all',
+    {
+      params: { year, month },
+    }
+  );
+  return response.data;
+};
+
+/**
+ * 전체 사용자 근무 시간 통계 조회 (관리자용)
+ * @param year 조회할 연도
+ * @param month 조회할 월 (1~12)
+ * @returns API 응답 (사용자별 근무 시간 통계)
+ */
+export const getWorkTimeSummary = async (
+  year: number,
+  month: number
+): Promise<ApiResponse<WorkTimeSummaryDetails>> => {
+  const response = await apiClient.get<ApiResponse<WorkTimeSummaryDetails>>(
+    '/api/v1/admin/schedule/work-time/summary',
     {
       params: { year, month },
     }
