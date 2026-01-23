@@ -102,3 +102,17 @@ export const setTaskComplete = async (
   );
   return response.data;
 };
+
+/**
+ * 업무 삭제 (관리자 전용)
+ * @param taskId 삭제할 업무 ID
+ * @returns API 응답 (details: null)
+ */
+export const deleteTask = async (
+  taskId: number
+): Promise<ApiResponse<null>> => {
+  const response = await apiClient.delete<ApiResponse<null>>(
+    `/api/v1/tasks/${taskId}`
+  );
+  return response.data;
+};
