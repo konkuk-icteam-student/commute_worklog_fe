@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import ManagerTaskContent from '../../imports/ManagerTaskContent';
+import ManagerTaskManager from '../components/ManagerTaskManager';
 import svgPaths from '../../imports/svg-t1qecyan8p';
 
 type ButtonProps = {
@@ -302,7 +302,19 @@ export default function ManagerTaskPage() {
   return (
     <div className="flex min-h-screen w-full justify-center bg-white">
       <div className="relative w-full max-w-[1920px]">
-        <ManagerTaskContent />
+        {/* Header */}
+        <div className="absolute left-0 right-0 top-0 h-[76px] w-full bg-[#51a8ff]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-[0_0_-0.5px_0] border-b border-solid border-[#e8eef2]" />
+          <div className="relative mx-auto flex h-full max-w-[1920px] items-center justify-center">
+            <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[20px] text-white">정보운영팀 출근부 · 업무 관리</p>
+          </div>
+        </div>
+        {/* Content */}
+        <div className="pt-[76px] pb-[120px]">
+          <div className="mx-auto w-full max-w-[1200px] px-[20px] pt-[40px]">
+            <ManagerTaskManager />
+          </div>
+        </div>
         <BottomNavigation onNavigate={handleNavigate} currentPage="task" />
       </div>
     </div>

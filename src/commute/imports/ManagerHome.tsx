@@ -1,5 +1,6 @@
 //ManagerHome.tsx
 import svgPaths from './svg-t1qecyan8p';
+import TodayWorkStudentList from '../admin/components/TodayWorkStudentList';
 
 type ManagerHomeProps = {
   onNavigate: (page: 'home' | 'qr' | 'task') => void;
@@ -952,18 +953,8 @@ function Container35() {
 
 function Component() {
   return (
-    <div
-      className="relative h-[410.5px] w-[1200px] shrink-0 rounded-[16px] bg-white"
-      data-name="간단히 보기"
-    >
-      <div className="relative flex size-full flex-col content-stretch items-start overflow-clip rounded-[inherit] p-px">
-        <Container8 />
-        <Container35 />
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-[16px] border border-solid border-[#eaeaea] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]"
-      />
+    <div className="w-full shrink-0">
+      <TodayWorkStudentList />
     </div>
   );
 }

@@ -11,7 +11,8 @@
       "Bash(npx eslint:*)",
       "Bash(pnpm run build)",
       "Bash(pnpm run lint)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npx vite build)"
     ],
     "deny": [],
     "ask": [],
