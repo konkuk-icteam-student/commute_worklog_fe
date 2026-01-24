@@ -6,6 +6,7 @@ import VerificationCodeField from '../shared/components/VerificationCodeField';
 import VerificationButton from '../shared/components/VerificationButton';
 import UserTypeRadio from '../shared/components/UserTypeRadio';
 import { sendVerificationCode, verifyCode, register, login } from '../../shared/apis/auth.api';
+import { getMyInfo } from '../shared/apis/user.api';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -53,15 +54,16 @@ export default function AuthPage() {
       });
 
       if (response.isSuccess) {
-        console.log('로그인 성공:', response.details);
-
-        // 관리자 로그인 체크 (임시 하드코딩)
-        if (loginEmail === 'admin1@gmail.com' && loginPassword === 'admin1') {
-          console.log('관리자 로그인 성공');
-          navigate('/admin/dashboard');
-          return;
+        // 로그인 성공 후 역할 확인하여 리다이렉트
+        try {
+          const userInfo = await getMyInfo();
+          if (userInfo.isSuccess && userInfo.details.roleCode === 'RL02') {
+            navigate('/manager');
+            return;
+          }
+        } catch {
+          // 역할 조회 실패 시 기본 홈으로
         }
-
         navigate('/home');
       } else {
         setErrorMessage(response.message || '로그인에 실패했습니다.');
@@ -98,7 +100,7 @@ export default function AuthPage() {
         });
 
         if (loginResponse.isSuccess) {
-          navigate('/home');
+          navigate(userType === 'manager' ? '/manager' : '/home');
         } else {
           // 로그인 실패 시 로그인 탭으로 이동
           setActiveTab('login');

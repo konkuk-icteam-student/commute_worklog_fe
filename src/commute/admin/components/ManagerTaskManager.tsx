@@ -1,12 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { getTasksByDate, createTask, deleteTask } from '../../shared/apis/task.api';
+import type { Task } from '../../shared/types/task.types';
+import type { CreateTaskRequest } from '../../shared/types/task.types';
 
 type TaskType = 'morning' | 'afternoon' | 'irregular';
-
-interface Task {
-  id: number;
-  name: string;
-  checked: boolean;
-}
 
 const TASK_TYPE_LABELS: Record<TaskType, string> = {
   morning: '정기 업무(오전)',
@@ -14,63 +11,92 @@ const TASK_TYPE_LABELS: Record<TaskType, string> = {
   irregular: '비정기 업무',
 };
 
+function getToday(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getRoundedTime(): string {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() + 30);
+  const rounded = Math.ceil(now.getMinutes() / 30) * 30;
+  now.setMinutes(rounded, 0, 0);
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  return `${h}:${m}:00`;
+}
+
 export default function ManagerTaskManager() {
   const [taskType, setTaskType] = useState<TaskType>('morning');
   const [newTaskName, setNewTaskName] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [morningTasks, setMorningTasks] = useState<Task[]>([]);
+  const [afternoonTasks, setAfternoonTasks] = useState<Task[]>([]);
+  const [irregularTasks, setIrregularTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [morningTasks, setMorningTasks] = useState<Task[]>([
-    { id: 1, name: '신문지 가져오기', checked: true },
-    { id: 2, name: '커피머신 청소', checked: false },
-    { id: 3, name: '싱크대 청소', checked: true },
-    { id: 4, name: '회의실 청소', checked: true },
-  ]);
+  const fetchTasks = useCallback(async () => {
+    try {
+      setError(null);
+      const res = await getTasksByDate(getToday());
+      if (res.isSuccess) {
+        const morning = res.details.regularTasks.filter(t => {
+          const hour = parseInt(t.taskTime.split(':')[0], 10);
+          return hour < 12;
+        });
+        const afternoon = res.details.regularTasks.filter(t => {
+          const hour = parseInt(t.taskTime.split(':')[0], 10);
+          return hour >= 12;
+        });
+        setMorningTasks(morning);
+        setAfternoonTasks(afternoon);
+        setIrregularTasks(res.details.irregularTasks);
+      } else {
+        setError(res.message || '업무 목록을 불러올 수 없습니다.');
+      }
+    } catch {
+      setError('업무 목록을 불러올 수 없습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  const [afternoonTasks, setAfternoonTasks] = useState<Task[]>([
-    { id: 5, name: '바닥 쓸기', checked: false },
-    { id: 6, name: '바닥 닦기', checked: true },
-    { id: 7, name: '쓰레기통 비우기', checked: true },
-    { id: 8, name: '물티슈로 먼지 쌓이는 곳 닦기', checked: true },
-  ]);
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
-  const [irregularTasks, setIrregularTasks] = useState<Task[]>([
-    { id: 9, name: '기록물 정리', checked: true },
-  ]);
-
-  const [nextId, setNextId] = useState(10);
-
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!newTaskName.trim()) return;
-    const newTask: Task = { id: nextId, name: newTaskName.trim(), checked: false };
-    setNextId(nextId + 1);
 
-    if (taskType === 'morning') {
-      setMorningTasks([...morningTasks, newTask]);
-    } else if (taskType === 'afternoon') {
-      setAfternoonTasks([...afternoonTasks, newTask]);
-    } else {
-      setIrregularTasks([...irregularTasks, newTask]);
-    }
-    setNewTaskName('');
-  };
+    const request: CreateTaskRequest = {
+      title: newTaskName.trim(),
+      taskDate: getToday(),
+      taskType: taskType === 'irregular' ? 'TT02' : 'TT01',
+      taskTime: taskType === 'morning' ? '09:00:00'
+        : taskType === 'afternoon' ? '13:00:00'
+        : getRoundedTime(),
+    };
 
-  const toggleTask = (type: TaskType, id: number) => {
-    if (type === 'morning') {
-      setMorningTasks(morningTasks.map(t => t.id === id ? { ...t, checked: !t.checked } : t));
-    } else if (type === 'afternoon') {
-      setAfternoonTasks(afternoonTasks.map(t => t.id === id ? { ...t, checked: !t.checked } : t));
-    } else {
-      setIrregularTasks(irregularTasks.map(t => t.id === id ? { ...t, checked: !t.checked } : t));
+    try {
+      await createTask(request);
+      setNewTaskName('');
+      await fetchTasks();
+    } catch {
+      alert('업무 추가에 실패했습니다.');
     }
   };
 
-  const deleteTask = (type: TaskType, id: number) => {
-    if (type === 'morning') {
-      setMorningTasks(morningTasks.filter(t => t.id !== id));
-    } else if (type === 'afternoon') {
-      setAfternoonTasks(afternoonTasks.filter(t => t.id !== id));
-    } else {
-      setIrregularTasks(irregularTasks.filter(t => t.id !== id));
+  const handleDeleteTask = async (taskId: number) => {
+    if (!window.confirm('업무를 삭제하시겠습니까?')) return;
+    try {
+      await deleteTask(taskId);
+      await fetchTasks();
+    } catch {
+      alert('업무 삭제에 실패했습니다.');
     }
   };
 
@@ -78,6 +104,26 @@ export default function ManagerTaskManager() {
     setTaskType(type);
     setDropdownOpen(false);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center gap-[24px] w-full">
+        <div className="flex items-center justify-center w-full h-[200px]">
+          <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] text-[#99a1af]">업무 목록을 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center gap-[24px] w-full">
+        <div className="flex items-center justify-center w-full h-[200px]">
+          <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#fb2c36]">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-[24px] w-full">
@@ -169,9 +215,13 @@ export default function ManagerTaskManager() {
           <div className="flex w-full flex-col gap-[8px]">
             <p className="pl-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] text-[#09121c] opacity-60">오전</p>
             <div className="border-l-[1.6px] border-[rgba(81,168,255,0.2)] pl-[18px]">
-              {morningTasks.map((task) => (
-                <TaskItem key={task.id} task={task} onToggle={() => toggleTask('morning', task.id)} onDelete={() => deleteTask('morning', task.id)} />
-              ))}
+              {morningTasks.length === 0 ? (
+                <p className="py-[12px] px-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#99a1af]">오전 업무가 없습니다.</p>
+              ) : (
+                morningTasks.map((task) => (
+                  <TaskItem key={task.taskId} task={task} onDelete={() => handleDeleteTask(task.taskId)} />
+                ))
+              )}
             </div>
           </div>
 
@@ -179,9 +229,13 @@ export default function ManagerTaskManager() {
           <div className="flex w-full flex-col gap-[8px]">
             <p className="pl-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] text-[#09121c] opacity-60">오후</p>
             <div className="border-l-[1.6px] border-[rgba(81,168,255,0.2)] pl-[18px]">
-              {afternoonTasks.map((task) => (
-                <TaskItem key={task.id} task={task} onToggle={() => toggleTask('afternoon', task.id)} onDelete={() => deleteTask('afternoon', task.id)} />
-              ))}
+              {afternoonTasks.length === 0 ? (
+                <p className="py-[12px] px-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#99a1af]">오후 업무가 없습니다.</p>
+              ) : (
+                afternoonTasks.map((task) => (
+                  <TaskItem key={task.taskId} task={task} onDelete={() => handleDeleteTask(task.taskId)} />
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -204,9 +258,13 @@ export default function ManagerTaskManager() {
           </div>
 
           <div className="border-l-[1.6px] border-[rgba(156,163,175,0.2)] pl-[18px]">
-            {irregularTasks.map((task) => (
-              <TaskItem key={task.id} task={task} onToggle={() => toggleTask('irregular', task.id)} onDelete={() => deleteTask('irregular', task.id)} />
-            ))}
+            {irregularTasks.length === 0 ? (
+              <p className="py-[12px] px-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#99a1af]">비정기 업무가 없습니다.</p>
+            ) : (
+              irregularTasks.map((task) => (
+                <TaskItem key={task.taskId} task={task} onDelete={() => handleDeleteTask(task.taskId)} />
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -214,12 +272,12 @@ export default function ManagerTaskManager() {
   );
 }
 
-function TaskItem({ task, onToggle, onDelete }: { task: Task; onToggle: () => void; onDelete: () => void }) {
+function TaskItem({ task, onDelete }: { task: Task; onDelete: () => void }) {
   return (
     <div className="flex items-center gap-[12px] rounded-[6px] px-[8px] py-[12px] border-b border-[#f0f0f0]">
-      {/* Checkbox */}
-      <button onClick={onToggle} className="relative size-[20px] shrink-0 cursor-pointer">
-        {task.checked ? (
+      {/* Checkbox (read-only) */}
+      <div className="relative size-[20px] shrink-0">
+        {task.isCompleted ? (
           <svg className="size-full" viewBox="0 0 20 20" fill="none">
             <path d="M3.33206 2.49902H16.6607C17.1207 2.49902 17.4937 2.87199 17.4937 3.33206V16.6607C17.4937 17.1207 17.1207 17.4937 16.6607 17.4937H3.33206C2.87199 17.4937 2.49902 17.1207 2.49902 16.6607V3.33206C2.49902 2.87199 2.87199 2.49902 3.33206 2.49902ZM4.1651 4.1651V15.8276H15.8276V4.1651H4.1651Z" fill="#EAEAEA" />
             <path d="M9.47565 10.9764L17.1465 3.33203L18.3267 4.50809L9.47565 13.3285L4.16504 8.03628L5.34518 6.86024L9.47565 10.9764Z" fill="#51A8FF" />
@@ -229,12 +287,12 @@ function TaskItem({ task, onToggle, onDelete }: { task: Task; onToggle: () => vo
             <path d="M3.33206 2.49902H16.6607C17.1207 2.49902 17.4937 2.87199 17.4937 3.33206V16.6607C17.4937 17.1207 17.1207 17.4937 16.6607 17.4937H3.33206C2.87199 17.4937 2.49902 17.1207 2.49902 16.6607V3.33206C2.49902 2.87199 2.87199 2.49902 3.33206 2.49902ZM4.1651 4.1651V15.8276H15.8276V4.1651H4.1651Z" fill="#EAEAEA" />
           </svg>
         )}
-      </button>
+      </div>
 
       {/* Task name */}
       <div className="flex-1 min-w-0">
-        <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[24px] truncate ${task.checked ? 'text-[#51a8ff] line-through' : 'text-[#09121c]'}`}>
-          {task.name}
+        <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[24px] truncate ${task.isCompleted ? 'text-[#51a8ff] line-through' : 'text-[#09121c]'}`}>
+          {task.title}
         </p>
       </div>
 

@@ -92,7 +92,8 @@ export interface WorkScheduleDetail {
  * 전체 스케줄 히스토리 단건 (admin API 응답)
  */
 export interface ScheduleHistoryItem {
-  scheduleId: number;
+  id: number;
+  userName: string;
   start: string; // "2026-01-11T13:00:00"
   end: string; // "2026-01-11T16:00:00"
   status: string;
