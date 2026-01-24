@@ -10,7 +10,6 @@ import ScheduleEditPage from '../../commute/pages/ScheduleEditPage';
 import ScheduleViewPage from '../../commute/pages/ScheduleViewPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
-import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
 import ManagerHomePage from '../../commute/admin/pages/ManagerHomePage';
 import ManagerQRPage from '../../commute/admin/pages/ManagerQRPage';
 import ManagerTaskPage from '../../commute/admin/pages/ManagerTaskPage';
@@ -61,14 +60,6 @@ const router = createBrowserRouter([
   {
     path: '/tasks/today/modify',
     element: <TasksEditPage />,
-  },
-  {
-    path: '/admin',
-    element: <AdminDashboardPage />,
-  },
-  {
-    path: '/admin/dashboard',
-    element: <AdminDashboardPage />,
   },
   {
     path: '/qr-scanner',
