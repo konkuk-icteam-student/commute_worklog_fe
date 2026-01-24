@@ -16,7 +16,12 @@ export type TaskTypeCode = 'TT01' | 'TT02';
 export interface Task {
   taskId: number;
   title: string;
+  assigneeId: number;
+  assigneeName: string;
+  taskDate: string; // "2026-01-22"
   taskTime: string; // "14:00:00"
+  taskType: TaskTypeCode;
+  taskTypeName: string;
   isCompleted: boolean;
 }
 
@@ -37,8 +42,11 @@ export interface TaskDetail {
  * 특정 날짜의 업무 목록 조회 응답 상세
  */
 export interface TasksByDateDetails {
-  date: string; // "2025-10-24"
-  regularTasks: Task[];
+  date: string; // "2026-01-22"
+  regularTasks: {
+    morning: Task[];
+    afternoon: Task[];
+  };
   irregularTasks: Task[];
 }
 

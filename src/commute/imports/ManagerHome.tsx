@@ -38,8 +38,9 @@ export default function ManagerHome({ onNavigate, currentPage }: ManagerHomeProp
 
   const allTasks = tasks
     ? [
-        ...(Array.isArray(tasks.regularTasks) ? tasks.regularTasks : []),
-        ...(Array.isArray(tasks.irregularTasks) ? tasks.irregularTasks : []),
+        ...(tasks.regularTasks?.morning ?? []),
+        ...(tasks.regularTasks?.afternoon ?? []),
+        ...(tasks.irregularTasks ?? []),
       ]
     : [];
   const totalTaskCount = allTasks.length;

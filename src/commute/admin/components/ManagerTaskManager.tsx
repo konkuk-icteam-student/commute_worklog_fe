@@ -44,16 +44,8 @@ export default function ManagerTaskManager() {
       setError(null);
       const res = await getTasksByDate(getToday());
       if (res.isSuccess) {
-        const morning = res.details.regularTasks.filter(t => {
-          const hour = parseInt(t.taskTime.split(':')[0], 10);
-          return hour < 12;
-        });
-        const afternoon = res.details.regularTasks.filter(t => {
-          const hour = parseInt(t.taskTime.split(':')[0], 10);
-          return hour >= 12;
-        });
-        setMorningTasks(morning);
-        setAfternoonTasks(afternoon);
+        setMorningTasks(res.details.regularTasks.morning);
+        setAfternoonTasks(res.details.regularTasks.afternoon);
         setIrregularTasks(res.details.irregularTasks);
       } else {
         setError(res.message || '업무 목록을 불러올 수 없습니다.');
