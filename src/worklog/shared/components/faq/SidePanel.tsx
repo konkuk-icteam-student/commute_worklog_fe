@@ -1,6 +1,7 @@
 import blueX from '../../assets/blueX.svg';
 import house from './house.svg';
 import rightArrow from '../../assets/rightarrow.svg';
+//import x from './x.svg'
 export interface TabData {
   id: string | number;
   label: string; // [추가] 탭 상단에 보여줄 짧은 이름

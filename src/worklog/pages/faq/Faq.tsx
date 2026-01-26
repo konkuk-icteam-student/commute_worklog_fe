@@ -3,7 +3,8 @@ import Header from '@/worklog/shared/components/header/Header';
 import Title from '@/worklog/shared/components/faq/Title';
 import SearchBar from '@/worklog/shared/components/faq/SearchBar';
 import SidePanel, { type TabData } from '@/worklog/shared/components/faq/SidePanel';
-import PanelContent from '@/worklog/shared/components/faq/PanelContent';
+import WriteForm from '@/worklog/shared/components/faq/WriteForm';
+import DetailView from '@/worklog/shared/components/faq/DetailView';
 
 const Faq = () => {
   const [tabs, setTabs] = useState<TabData[]>([]); // 열린 탭 목록
@@ -51,6 +52,7 @@ const Faq = () => {
       label: '글 작성',
       title: '학정시 로그인 오류 작성', // 예시 제목
       type: 'write',
+      content: <WriteForm />,
     };
     addTab(newTab);
   };
@@ -71,7 +73,7 @@ const Faq = () => {
       label: shortTitle,
       title: selectedPost.title,
       type: 'detail',
-      content: <PanelContent />, // 상세 데이터 전달 가능
+      content: <DetailView />, // 상세 데이터 전달 가능
     };
     addTab(newTab);
   };
