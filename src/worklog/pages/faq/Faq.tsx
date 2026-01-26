@@ -48,6 +48,7 @@ const Faq = () => {
     // 고정된 ID 'write-new'를 사용하여 중복 방지 (원하면 매번 새 창 띄우기도 가능)
     const newTab: TabData = {
       id: 'write-new',
+      label: '글 작성',
       title: '학정시 로그인 오류 작성', // 예시 제목
       type: 'write',
     };
@@ -67,7 +68,8 @@ const Faq = () => {
 
     const newTab: TabData = {
       id: id,
-      title: shortTitle,
+      label: shortTitle,
+      title: selectedPost.title,
       type: 'detail',
       content: <PanelContent />, // 상세 데이터 전달 가능
     };

@@ -2,10 +2,11 @@ import blueX from '../../assets/blueX.svg';
 import house from './house.svg';
 import rightArrow from '../../assets/rightarrow.svg';
 export interface TabData {
-  id: string | number; // 탭 고유 ID
-  title: string; // 탭 제목
-  type: 'write' | 'detail'; // 탭 종류 (작성/상세)
-  content?: React.ReactNode; // 나중에 들어갈 데이터
+  id: string | number;
+  label: string; // [추가] 탭 상단에 보여줄 짧은 이름
+  title: string; // [기존] 본문에 보여줄 전체 이름
+  type: 'write' | 'detail';
+  content?: React.ReactNode;
 }
 
 interface SidePanelProps {
@@ -43,7 +44,7 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
               <span
                 className={`relative block truncate text-[13px] font-medium ${isActive ? 'text-[#17191A]' : 'text-[#8C9499]'} `}
               >
-                {tab.title}
+                {tab.label}
               </span>
             </div>
           );
