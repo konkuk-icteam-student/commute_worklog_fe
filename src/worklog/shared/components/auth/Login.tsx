@@ -1,56 +1,71 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios'; // [추가] 에러 타입 import
+import { login } from '../../../../shared/apis/auth.api';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isValid, setIsValid] = useState(false);
-
-  // 에러 메시지 상태 (API 연동 후 사용)
   const [errorMessage, setErrorMessage] = useState('');
 
-  // 유효성 검사 (입력값이 있는지 확인)
   useEffect(() => {
-    // 간단한 체크: 둘 다 비어있지 않으면 활성화
     setIsValid(email.length > 0 && password.length > 0);
   }, [email, password]);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log('로그인 버튼 클릭!');
-    // TODO: API 로그인 요청 로직
-    // 실패 시: setErrorMessage("로그인 정보를 다시 확인해주세요");
+    console.log('🖱️ [Action] 로그인 버튼 클릭');
+    console.log('📤 [Sending Data]:', { email, password });
+    setErrorMessage('');
+
+    try {
+      const response = await login({ email, password });
+
+      if (response.isSuccess) {
+        console.log('✅ [Login Success] Redirecting to /worklog/faq');
+        navigate('/worklog/faq');
+      } else {
+        setErrorMessage(response.message || '로그인 정보를 다시 확인해주세요.');
+      }
+    } catch (error) {
+      // [수정] catch (error: any) 제거하고 내부에서 타입 단언 사용
+      console.error('Login Failed:', error);
+
+      const err = error as AxiosError<{ message: string }>;
+      const msg = err.response?.data?.message || '로그인 중 오류가 발생했습니다.';
+      setErrorMessage(msg);
+    }
   };
 
   return (
-    // [수정] w-[600px]로 변경하여 인풋과 너비 통일
-    // [수정] pt-[40px] 추가: Signup의 라디오버튼 높이만큼 여백을 주어 첫 번째 인풋 위치를 맞춤
     <div className="flex w-[600px] flex-col gap-4 pt-[40px]">
-      {/* 이메일 입력 */}
       <div className="relative">
         <input
           type="email"
           placeholder="이메일"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           className="h-[53px] w-full rounded-[16px] border border-[#E8EEF2] px-6 py-4 text-[14px] outline-none placeholder:text-[#CDCDCD] focus:border-blue-400"
         />
       </div>
 
-      {/* 비밀번호 입력 */}
       <div className="relative">
         <input
           type="password"
           placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           className="h-[53px] w-full rounded-[16px] border border-[#E8EEF2] px-6 py-4 text-[14px] outline-none placeholder:text-[#CDCDCD] focus:border-blue-400"
         />
       </div>
 
-      {/* 로그인 실패 에러 메시지 */}
       {errorMessage && <p className="pl-2 text-[12px] text-red-500">{errorMessage}</p>}
 
-      {/* 로그인 버튼 */}
-      {/* [수정] mt-[60px] 추가하여 인풋란들과 거리두기 */}
       <button
         disabled={!isValid}
         onClick={handleLogin}
