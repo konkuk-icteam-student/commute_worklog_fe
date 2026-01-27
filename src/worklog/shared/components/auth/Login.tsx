@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios'; // [추가] 에러 타입 import
+import { AxiosError } from 'axios';
 import { login } from '../../../../shared/apis/auth.api';
 
 const Login = () => {
@@ -25,13 +25,29 @@ const Login = () => {
       const response = await login({ email, password });
 
       if (response.isSuccess) {
-        console.log('✅ [Login Success] Redirecting to /worklog/faq');
-        navigate('/worklog/faq');
+        console.log('✅ [Login Success] Redirecting to /worklog/home');
+
+        // 구조 분해 할당 (userName, roleCode는 옵셔널이므로 undefined일 수 있음)
+        const { userName, roleCode, accessToken } = response.details;
+
+        // 1. LocalStorage 저장 (값이 없을 경우를 대비해 기본값 '' 처리)
+        // accessToken은 필수값이므로 그대로 저장
+        localStorage.setItem('accessToken', accessToken);
+        // 옵셔널 값들은 ?? 연산자를 사용해 undefined일 경우 빈 문자열로 저장
+        localStorage.setItem('userName', userName ?? '');
+        localStorage.setItem('roleCode', roleCode ?? '');
+
+        // 2. 페이지 이동 및 State 전달
+        navigate('/worklog/home', {
+          state: {
+            userName: userName ?? '', // 값이 없으면 빈 문자열 전달
+            roleCode: roleCode ?? '', // 값이 없으면 빈 문자열 전달
+          },
+        });
       } else {
         setErrorMessage(response.message || '로그인 정보를 다시 확인해주세요.');
       }
     } catch (error) {
-      // [수정] catch (error: any) 제거하고 내부에서 타입 단언 사용
       console.error('Login Failed:', error);
 
       const err = error as AxiosError<{ message: string }>;

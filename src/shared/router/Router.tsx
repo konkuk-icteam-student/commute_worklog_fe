@@ -13,6 +13,7 @@ import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
 import Category from '@/worklog/pages/category/Category';
 import Faq from '@/worklog/pages/faq/Faq';
 import Auth from '@/worklog/pages/auth/Auth';
+import Home from '@/worklog/pages/home/Home';
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
   {
     path: '/worklog/',
     element: <Auth />,
+  },
+  {
+    path: '/worklog/home',
+    element: <Home />,
   },
 ]);
 
