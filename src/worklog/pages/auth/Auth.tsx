@@ -49,7 +49,8 @@ const Auth = () => {
       </section>
 
       {/* 컨텐츠 섹션: 로그인 or 회원가입 폼 */}
-      <div className="flex justify-center pb-20 pt-10">
+      <div className="flex w-full justify-center pb-20 pt-10">
+        {/* 여기서 탭에 따라 컴포넌트 교체 */}
         {tab === 'login' ? <Login /> : <Signup />}
       </div>
     </main>
