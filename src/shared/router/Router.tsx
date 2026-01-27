@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Test from '../../pages/Test';
+//import Test from '../../pages/Test';
 import AuthPage from '../../commute/pages/AuthPage';
 import HomePage from '../../commute/pages/HomePage';
 import MyPage from '../../commute/pages/MyPage';
@@ -12,11 +12,13 @@ import TasksEditPage from '../../commute/pages/TasksEditPage';
 import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
 import Category from '@/worklog/pages/category/Category';
 import Faq from '@/worklog/pages/faq/Faq';
+import Auth from '@/worklog/pages/auth/Auth';
+import Home from '@/worklog/pages/home/Home';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Test />,
+    element: <Auth />,
   },
   {
     path: '/auth',
@@ -69,6 +71,11 @@ const router = createBrowserRouter([
   {
     path: '/worklog/faq',
     element: <Faq />,
+  },
+
+  {
+    path: '/worklog/home',
+    element: <Home />,
   },
 ]);
 

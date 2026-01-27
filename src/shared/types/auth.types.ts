@@ -59,6 +59,10 @@ export interface LoginResponse {
   refreshToken: string;
   tokenType: string;
   expiresAt: number;
+  userId?: number; // ? 추가
+  userName?: string; // ? 추가
+  email?: string; // ? 추가
+  roleCode?: string; // ? 추가
 }
 
 /**
