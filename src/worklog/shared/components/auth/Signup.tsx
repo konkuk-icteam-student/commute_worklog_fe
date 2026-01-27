@@ -10,6 +10,9 @@ import {
 // RegisterRequest 타입을 import 해서 roleCode 타입을 정확히 맞춥니다.
 import type { RegisterRequest } from '../../../../shared/types/auth.types';
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const pwRegex = /^[A-Za-z0-9]{4,16}$/;
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -38,9 +41,6 @@ const Signup = () => {
   const [pwMessage, setPwMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(
     null
   );
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const pwRegex = /^[A-Za-z0-9]{4,16}$/;
 
   // --- API 1. 인증번호 발송 ---
   const handleRequestAuthCode = async () => {
@@ -117,8 +117,8 @@ const Signup = () => {
         try {
           const loginResponse = await login({ email, password });
           if (loginResponse.isSuccess) {
-            //navigate('/worklog/faq');
             alert('회원가입이 완료되었습니다.');
+            window.location.reload();
           } else {
             alert(
               '회원가입은 완료되었으나 자동 로그인에 실패했습니다. 로그인 페이지로 이동합니다.'

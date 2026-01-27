@@ -72,7 +72,7 @@ const router = createBrowserRouter([
     element: <Faq />,
   },
   {
-    path: '/worklog/auth',
+    path: '/worklog/',
     element: <Auth />,
   },
 ]);
