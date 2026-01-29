@@ -14,6 +14,7 @@ import Category from '@/worklog/pages/category/Category';
 import Faq from '@/worklog/pages/faq/Faq';
 import Auth from '@/worklog/pages/auth/Auth';
 import Home from '@/worklog/pages/home/Home';
+import Department from '@/worklog/pages/category/Department';
 
 const router = createBrowserRouter([
   {
@@ -65,7 +66,7 @@ const router = createBrowserRouter([
     element: <AdminDashboardPage />,
   },
   {
-    path: '/worklog/category',
+    path: '/worklog/category/manager',
     element: <Category />,
   },
   {
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
   {
     path: '/worklog/home',
     element: <Home />,
+  },
+  {
+    path: '/worklog/category/department',
+    element: <Department />,
   },
 ]);
 
