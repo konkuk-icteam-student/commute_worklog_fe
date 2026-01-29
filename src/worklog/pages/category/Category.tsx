@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import v from '@/worklog/shared/assets/v.svg';
 import glasses from '@/worklog/shared/assets/glasses.svg';
-import plus from '@/worklog/shared/assets/plus.svg';
+//import plus from '@/worklog/shared/assets/plus.svg';
 import Header from '@/worklog/shared/components/header/Header';
 import Post from '@/worklog/shared/components/posting/Post';
 import ModalAddManager from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
@@ -25,12 +25,12 @@ const Category = () => {
   return (
     <>
       <main className="relative flex h-screen flex-col overflow-hidden bg-white">
-        <Header />
+        <Header showPencil={false} />
         {/* 2. Title Section (Height: 212px) */}
         <section className="flex h-[180px] shrink-0 flex-col items-center justify-center border-b border-[#E8EEF2]">
           <div className="flex w-full max-w-[1200px] flex-col gap-8 px-4">
             {/* Main Title */}
-            <h1 className="text-center text-[40px] font-bold">카테고리 담당자</h1>
+            <h1 className="text-center text-[40px] font-bold">담당자</h1>
 
             {/* Controls: Dropdowns & Search */}
             <div className="flex items-center justify-center gap-3">
@@ -60,6 +60,13 @@ const Category = () => {
               <button className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] text-[#8C9499] hover:bg-gray-50">
                 즐겨찾기만 보기
               </button>
+              {/* Filter Toggle */}
+              <button
+                className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] font-[700] text-[#464A4D] hover:bg-gray-50"
+                onClick={openModal}
+              >
+                추가하기
+              </button>
             </div>
           </div>
         </section>
@@ -81,6 +88,7 @@ const Category = () => {
         </div>
 
         {/* Floating Action Button (FAB) */}
+        {/*}
         <button
           className="fixed bottom-[40px] right-[40px] flex h-[80px] w-[80px] items-center justify-center rounded-full bg-white transition-transform hover:scale-105"
           style={{
@@ -90,6 +98,7 @@ const Category = () => {
         >
           <img src={plus} alt="추가" />
         </button>
+        */}
       </main>
 
       <ModalAddManager isOpen={isModalOpen} onClose={closeModal} />
