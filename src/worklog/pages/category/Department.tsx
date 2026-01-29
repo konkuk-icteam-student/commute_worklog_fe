@@ -1,15 +1,8 @@
-import { useState } from 'react';
-import glasses from '@/worklog/shared/assets/glasses.svg';
+//import { useState } from 'react';
 import Post2 from '@/worklog/shared/components/posting/Post2';
-import ModalAddManager from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout'; // MainLayout import
 
 const Department = () => {
-  // 모달 상태관리
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   // 예시 데이터 배열
   const dummyPosts2 = Array.from({ length: 15 }).map((_, i) => ({
     id: i,
@@ -32,19 +25,14 @@ const Department = () => {
             <div className="flex items-center justify-center gap-3">
               {/* Search Bar */}
               <div className="flex h-[48px] w-[480px] items-center gap-2 rounded-[24px] border border-[#E8EEF2] px-4 focus-within:border-blue-400">
-                <img src={glasses} alt="검색" />
                 <input
                   type="text"
-                  placeholder="검색어를 입력하세요"
                   className="h-full w-full bg-transparent text-[16px] outline-none placeholder:text-[#8C9499]"
                 />
               </div>
 
               {/* Add Button */}
-              <button
-                className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] font-[700] text-[#464A4D] hover:bg-gray-50"
-                onClick={openModal}
-              >
+              <button className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] font-[700] text-[#464A4D] hover:bg-gray-50">
                 추가하기
               </button>
             </div>
@@ -60,8 +48,6 @@ const Department = () => {
           </div>
         </div>
       </div>
-
-      <ModalAddManager isOpen={isModalOpen} onClose={closeModal} />
     </MainLayout>
   );
 };
