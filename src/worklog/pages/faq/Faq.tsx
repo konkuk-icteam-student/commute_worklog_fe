@@ -50,7 +50,6 @@ const Faq = () => {
     const newTab: TabData = {
       id: 'write-new',
       label: '글 작성',
-      title: '학정시 로그인 오류 작성', // 예시 제목
       type: 'write',
       content: <WriteForm />,
     };

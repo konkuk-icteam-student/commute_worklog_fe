@@ -5,7 +5,7 @@ import rightArrow from '../../assets/rightarrow.svg';
 export interface TabData {
   id: string | number;
   label: string; // [추가] 탭 상단에 보여줄 짧은 이름
-  title: string; // [기존] 본문에 보여줄 전체 이름
+  title?: string; // [기존] 본문에 보여줄 전체 이름
   type: 'write' | 'detail';
   content?: React.ReactNode;
 }
@@ -74,11 +74,9 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
           <div className="mt-8">
             <div className="flex flex-row items-center gap-[5px]">
               <img src={house} alt="집 아이콘" className="" />
-              <span className="font-700 text-[14px] text-[#464A4D]">FAQ</span>
+              <span className="text-[14px] font-[700] text-[#464A4D]">FAQ</span>
               <img src={rightArrow} alt="오른쪽 화살표" />
-              <span className="text-[14px] font-[400] text-[#A9AFB2]">team</span>
-              <img src={rightArrow} alt="오른쪽 화살표" />
-              <span className="text-[14px] font-[400] text-[#A9AFB2]">category</span>
+              <span className="text-[14px] font-[400] text-[#A9AFB2]">department</span>
             </div>
             <h2 className="color-[#17191A] mb-4 text-[32px] font-[700]">
               {activeTab.title} {/* 여기서도 바로 activeTab 변수 사용 가능 */}
