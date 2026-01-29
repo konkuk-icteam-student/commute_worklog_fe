@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import glasses from '@/worklog/shared/assets/glasses.svg';
-//import plus from '@/worklog/shared/assets/plus.svg';
-import Header from '@/worklog/shared/components/header/Header';
-import ModalAddManager from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
 import Post2 from '@/worklog/shared/components/posting/Post2';
+import ModalAddManager from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
+import MainLayout from '@/worklog/shared/components/layout/MainLayout'; // MainLayout import
 
 const Department = () => {
-  //모달 상태관리
+  // 모달 상태관리
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -18,16 +17,18 @@ const Department = () => {
   }));
 
   return (
-    <>
-      <main className="relative flex h-screen flex-col overflow-hidden bg-white">
-        <Header showPencil={false} />
-        {/* 2. Title Section (Height: 212px) */}
+    <MainLayout showPencil={false}>
+      {/* MainLayout 내부의 컨텐츠 영역입니다.
+        flex-col과 h-full을 주어 상단 검색 영역과 하단 리스트 영역을 수직으로 배치하고 꽉 채웁니다.
+      */}
+      <div className="flex h-full flex-col">
+        {/* 1. Title Section (Fixed Height: 180px) */}
         <section className="flex h-[180px] shrink-0 flex-col items-center justify-center border-b border-[#E8EEF2]">
           <div className="flex w-full max-w-[1200px] flex-col gap-8 px-4">
             {/* Main Title */}
             <h1 className="text-center text-[40px] font-bold">소속</h1>
 
-            {/* Controls: Dropdowns & Search */}
+            {/* Controls: Search & Buttons */}
             <div className="flex items-center justify-center gap-3">
               {/* Search Bar */}
               <div className="flex h-[48px] w-[480px] items-center gap-2 rounded-[24px] border border-[#E8EEF2] px-4 focus-within:border-blue-400">
@@ -39,7 +40,7 @@ const Department = () => {
                 />
               </div>
 
-              {/* Filter Toggle */}
+              {/* Add Button */}
               <button
                 className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] font-[700] text-[#464A4D] hover:bg-gray-50"
                 onClick={openModal}
@@ -50,7 +51,7 @@ const Department = () => {
           </div>
         </section>
 
-        {/* 3. Contents Section (Scrollable) */}
+        {/* 2. Contents Section (Takes remaining space & Scrollable) */}
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1200px] px-4 py-4">
             {dummyPosts2.map((post) => (
@@ -58,10 +59,10 @@ const Department = () => {
             ))}
           </div>
         </div>
-      </main>
+      </div>
 
       <ModalAddManager isOpen={isModalOpen} onClose={closeModal} />
-    </>
+    </MainLayout>
   );
 };
 

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import Header from '@/worklog/shared/components/header/Header';
 import Title from '@/worklog/shared/components/faq/Title';
 import SearchBar from '@/worklog/shared/components/faq/SearchBar';
 import SidePanel, { type TabData } from '@/worklog/shared/components/faq/SidePanel';
 import WriteForm from '@/worklog/shared/components/faq/WriteForm';
 import DetailView from '@/worklog/shared/components/faq/DetailView';
+import MainLayout from '@/worklog/shared/components/layout/MainLayout';
 
 const Faq = () => {
   const [tabs, setTabs] = useState<TabData[]>([]); // 열린 탭 목록
@@ -101,10 +101,7 @@ const Faq = () => {
   const isPanelOpen = tabs.length > 0;
 
   return (
-    <main>
-      {/* Header에 이벤트 전달 */}
-      <Header onPencilClick={handlePencilClick} />
-
+    <MainLayout onPencilClick={handlePencilClick} showPencil={true}>
       {/* === [우측] 메인 리스트 컨텐츠 === */}
       <div className="flex h-full flex-1 flex-col overflow-hidden bg-white">
         <Title />
@@ -146,7 +143,7 @@ const Faq = () => {
           </div>
         </div>
       </div>
-    </main>
+    </MainLayout>
   );
 };
 
