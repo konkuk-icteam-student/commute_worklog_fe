@@ -1,11 +1,21 @@
 import { useNavigate } from 'react-router-dom';
-
+import { logout } from '../../../../shared/apis/auth.api';
 interface NavProps {
   isOpen: boolean;
 }
 
 const Nav = ({ isOpen }: NavProps) => {
   const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      // 1. 로그아웃 API 호출 (내부적으로 로컬스토리지 토큰 삭제됨)
+      await logout();
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/', { replace: true });
+    }
+  };
 
   return (
     <div
@@ -62,7 +72,7 @@ const Nav = ({ isOpen }: NavProps) => {
           <span className="text-[18px] font-[700] text-[#464A4D]">마이</span>
           <span
             className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
-            onClick={() => console.log('로그아웃 버튼 클릭')}
+            onClick={handleLogout}
           >
             로그아웃
           </span>
