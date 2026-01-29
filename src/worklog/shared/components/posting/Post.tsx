@@ -2,7 +2,7 @@ import { useState } from 'react';
 import star_empty from '../../assets/star_empty.svg';
 import star_filled from '../../assets/star_filled.svg';
 import copy from '../../assets/copy.svg';
-
+import graypencil from '../../assets/graypencil.svg';
 interface PostProps {
   title: string;
   name: string;
@@ -32,7 +32,12 @@ const Post = ({ title, name, department, role, phone }: PostProps) => {
 
         {/* 게시글 정보 */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-[16px] font-bold leading-none text-black">{title}</h3>
+          <div className="flex gap-[6px]">
+            <h3 className="text-[16px] font-bold leading-none text-black">{title}</h3>
+            <button onClick={() => console.log('수정버튼 클릭.')}>
+              <img src={graypencil} alt="연필" />
+            </button>
+          </div>
           <div className="flex items-center gap-2 text-[12px] font-normal leading-none text-[#464A4D]">
             <span>{name}</span>
             <span className="h-[2px] w-[2px] rounded-full bg-[#464A4D]"></span>
