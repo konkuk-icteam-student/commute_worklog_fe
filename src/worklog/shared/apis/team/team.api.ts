@@ -23,8 +23,12 @@ export interface CreateTeamResponse {
 
 /** 소속 조회 응답 타입 */
 export interface GetTeamsResponse {
-  timestamp: string;
-  teams: Team[];
+  isSuccess: boolean;
+  message: string;
+  details: {
+    timestamp: string;
+    teams: Team[];
+  };
 }
 
 /** 소속 삭제 응답 타입 */
