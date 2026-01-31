@@ -106,7 +106,7 @@ const Department = () => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddTeam()} // 엔터키로도 등록 가능
-                  placeholder="소속 이름을 입력하세요" // placeholder 변경 제안
+                  placeholder="추가할 소속 이름을 입력하세요" // placeholder 변경 제안
                   className="h-full w-full bg-transparent text-[16px] outline-none placeholder:text-[#8C9499]"
                 />
               </div>
@@ -146,7 +146,7 @@ const Department = () => {
       {/* 1. 삭제 확인 모달 */}
       <DeleteConfirmationModal
         isOpen={isConfirmModalOpen}
-        teamName={deleteTarget?.name || ''}
+        targetName={deleteTarget?.name || ''}
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleDeleteConfirm}
       />

@@ -54,7 +54,7 @@ const Nav = ({ isOpen }: NavProps) => {
           <span
             className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
             onClick={() => {
-              navigate('/worklog/category/department');
+              navigate('/worklog/category/task');
             }}
           >
             분류관리
