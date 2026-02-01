@@ -37,7 +37,7 @@ export interface GetCategoriesResponse {
   message: string;
   details: {
     timestamp: string;
-    categories: Category[]; 
+    categories: Category[];
   };
 }
 

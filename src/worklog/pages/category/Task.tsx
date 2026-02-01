@@ -11,7 +11,7 @@ import {
   getCategories,
   deleteCategory,
   type Category,
-} from '../../shared/apis/task/task.api';
+} from '../../shared/apis/categories/categories.api';
 
 const Task = () => {
   // 1. 상태 관리
