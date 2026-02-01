@@ -21,16 +21,7 @@ const Category = () => {
 
   return (
     <MainLayout showPencil={false}>
-      {/* MainLayout handles the Header and Nav placement.
-         We just need to structure the main content area here.
-         Since MainLayout's <main> already has 'flex-col', 
-         we can just place the sections directly.
-      */}
-
       <div className="flex h-full flex-col">
-        {' '}
-        {/* [Change] Use flex-col to stack vertically */}
-        {/* 1. Title Section (Fixed Height) */}
         <section className="flex h-[180px] shrink-0 flex-col items-center justify-center border-b border-[#E8EEF2]">
           <div className="flex w-full max-w-[1200px] flex-col gap-8 px-4">
             <h1 className="text-center text-[40px] font-bold">담당자</h1>
