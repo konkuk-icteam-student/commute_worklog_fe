@@ -2,12 +2,25 @@ import { useState } from 'react';
 import v from '@/worklog/shared/assets/v.svg';
 import glasses from '@/worklog/shared/assets/glasses.svg';
 import Post from '@/worklog/shared/components/posting/Post';
-import ModalAddManager from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
+import ModalAddManager, {
+  type ManagerData,
+} from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout';
 
 const Category = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [selectedManager, setSelectedManager] = useState<ManagerData | null>(null);
+  const openAddModal = () => {
+    setModalMode('add');
+    setSelectedManager(null);
+    setIsModalOpen(true);
+  };
+  const openEditModal = (data: ManagerData) => {
+    setModalMode('edit');
+    setSelectedManager(data);
+    setIsModalOpen(true);
+  };
   const closeModal = () => setIsModalOpen(false);
 
   const dummyPosts = Array.from({ length: 15 }).map((_, i) => ({
@@ -15,8 +28,9 @@ const Category = () => {
     title: i % 2 === 0 ? '로그인 오류' : '홈페이지 접속 불가',
     name: '홍길동',
     department: '정보운영팀',
-    role: '주임',
     phone: '02-342-3333',
+    teamId: 1, // [추가됨] 임시 ID (1 또는 실제 테스트하고 싶은 값)
+    categoryId: 1, // [추가됨] 임시 ID
   }));
 
   return (
@@ -52,7 +66,7 @@ const Category = () => {
 
               <button
                 className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] font-[700] text-[#464A4D] hover:bg-gray-50"
-                onClick={openModal}
+                onClick={openAddModal}
               >
                 추가하기
               </button>
@@ -65,18 +79,27 @@ const Category = () => {
             {dummyPosts.map((post) => (
               <Post
                 key={post.id}
+                managerId={post.id} // ID 전달
                 title={post.title}
                 name={post.name}
                 department={post.department}
-                role={post.role}
                 phone={post.phone}
+                teamId={post.teamId} // 데이터 전달
+                categoryId={post.categoryId} // 데이터 전달
+                onEditClick={openEditModal} // 핸들러 전달
               />
             ))}
           </div>
         </div>
       </div>
 
-      <ModalAddManager isOpen={isModalOpen} onClose={closeModal} />
+      <ModalAddManager
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        mode={modalMode}
+        initialData={selectedManager}
+        onSuccess={() => console.log('목록 새로고침 필요')}
+      />
     </MainLayout>
   );
 };

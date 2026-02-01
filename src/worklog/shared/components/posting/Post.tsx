@@ -3,19 +3,53 @@ import star_empty from '../../assets/star_empty.svg';
 import star_filled from '../../assets/star_filled.svg';
 import copy from '../../assets/copy.svg';
 import graypencil from '../../assets/graypencil.svg';
-interface PostProps {
-  title: string;
+
+export interface ManagerEditData {
+  managerId: number;
   name: string;
-  department: string;
-  role: string;
+  teamId: number;
+  categoryId: number;
   phone: string;
 }
 
-const Post = ({ title, name, department, role, phone }: PostProps) => {
+export interface PostProps {
+  managerId: number; // [추가] 수정/삭제 위해 ID 필수
+  title: string; // (참고: API 응답엔 title이 없고 categoryName이 있을텐데, 화면엔 title로 쓰고 있다면 매핑 필요)
+  name: string;
+  department: string; // API: teamName
+  phone: string; // API: phonenum
+  teamId: number; // [추가] 모달에 초기값 채워주기 위해 필요
+  categoryId: number; // [추가]
+  onEditClick: (data: ManagerEditData) => void; // [추가] 부모에게 알리기 위한 함수
+}
+
+const Post = ({
+  managerId,
+  title,
+  name,
+  department,
+  phone,
+  teamId,
+  categoryId,
+  onEditClick,
+}: PostProps) => {
   const [isStarred, setIsStarred] = useState(false);
 
   const toggleStar = () => {
     setIsStarred((prev) => !prev);
+  };
+
+  // 수정 버튼 클릭 핸들러
+  const handleEdit = () => {
+    // 부모에게 현재 데이터를 객체로 전달
+    onEditClick({
+      managerId,
+      name,
+      teamId,
+      categoryId,
+      phone,
+      // role 등 기타 필요한 정보도 함께
+    });
   };
 
   return (
@@ -34,7 +68,7 @@ const Post = ({ title, name, department, role, phone }: PostProps) => {
         <div className="flex flex-col gap-1">
           <div className="flex gap-[6px]">
             <h3 className="text-[16px] font-bold leading-none text-black">{title}</h3>
-            <button onClick={() => console.log('수정버튼 클릭.')}>
+            <button onClick={handleEdit} className="cursor-pointer hover:opacity-70">
               <img src={graypencil} alt="연필" />
             </button>
           </div>
@@ -43,7 +77,6 @@ const Post = ({ title, name, department, role, phone }: PostProps) => {
             <span className="h-[2px] w-[2px] rounded-full bg-[#464A4D]"></span>
             <span>{department}</span>
             <span className="h-[2px] w-[2px] rounded-full bg-[#464A4D]"></span>
-            <span>{role}</span>
           </div>
         </div>
       </div>
