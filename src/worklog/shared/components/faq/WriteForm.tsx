@@ -77,7 +77,12 @@ const WriteForm = () => {
       {/* 6. 답변 */}
       <div className="flex gap-4">
         <div className={labelStyle}>답변</div>
-        <InputField />
+        <div className="relative flex min-h-[200px] flex-1 rounded-[6px] border border-[#E8EEF2] bg-[#E8EEF2] p-3">
+          <textarea
+            className="h-full w-full resize-none bg-transparent text-[14px] outline-none placeholder:text-[#8C9499]"
+            placeholder="내용을 입력하세요"
+          />
+        </div>
       </div>
       {/* 7. 비고 */}
       <div className="flex gap-4">
