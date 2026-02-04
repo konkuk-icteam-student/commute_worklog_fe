@@ -156,7 +156,6 @@ export default function TasksEditPage() {
 
       const response = await createTask({
         title: newTaskInput.trim(),
-        assigneeId: userId,
         taskDate: getTodayDateString(),
         taskTime: taskTime,
         taskType: 'TT01', // 정기 업무로 변경 (요구사항에 맞춤)
