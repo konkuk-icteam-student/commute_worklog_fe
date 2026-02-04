@@ -156,14 +156,15 @@ function Icon3({ active }: { active: boolean }) {
   );
 }
 
-function Button1({ active }: { active: boolean }) {
+function Button1({ active, onClick }: ButtonProps) {
   return (
-    <div
+    <button
+      onClick={onClick}
       className={`absolute left-[87.97px] top-0 flex size-[39.976px] flex-col content-stretch items-start rounded-[18715300px] px-[7.992px] pb-0 pt-[7.992px] ${active ? 'bg-[rgba(81,168,255,0.1)]' : ''}`}
       data-name="Button"
     >
       <Icon3 active={active} />
-    </div>
+    </button>
   );
 }
 
@@ -274,7 +275,7 @@ function BottomNavigation({ onNavigate, currentPage }: BottomNavProps) {
     >
       <div className="relative h-[39.976px] w-full shrink-0" data-name="Container">
         <Button active={currentPage === 'home'} onClick={() => onNavigate('home')} />
-        <Button1 active={currentPage === 'qr'} />
+        <Button1 active={currentPage === 'qr'} onClick={() => onNavigate('qr')} />
         <Button2 active={currentPage === 'task'} onClick={() => onNavigate('task')} />
         <Button3 />
       </div>
