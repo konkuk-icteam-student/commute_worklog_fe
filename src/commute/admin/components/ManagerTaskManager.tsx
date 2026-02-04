@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getTasksByDate, createTask, deleteTask } from '../../shared/apis/task.api';
-import type { Task } from '../../shared/types/task.types';
-import type { CreateTaskRequest } from '../../shared/types/task.types';
+import type { Task, CreateTaskRequest } from '../../shared/types/task.types';
 
 type TaskType = 'morning' | 'afternoon' | 'irregular';
 
@@ -67,10 +66,10 @@ export default function ManagerTaskManager() {
     const request: CreateTaskRequest = {
       title: newTaskName.trim(),
       taskDate: getToday(),
-      taskType: taskType === 'irregular' ? 'TT02' : 'TT01',
       taskTime: taskType === 'morning' ? '09:00:00'
         : taskType === 'afternoon' ? '13:00:00'
         : getRoundedTime(),
+      taskType: taskType === 'irregular' ? 'TT02' : 'TT01',
     };
 
     try {

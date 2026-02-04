@@ -32,9 +32,11 @@ export interface TaskDetail {
   taskId: number;
   title: string;
   assigneeId: number;
-  taskDate: string; // "2025-10-24"
+  assigneeName: string;
+  taskDate: string; // "2026-01-22"
   taskTime: string; // "14:00:00"
   taskType: TaskTypeCode;
+  taskTypeName: string;
   isCompleted: boolean;
 }
 
@@ -82,14 +84,13 @@ export interface ToggleCompleteDetails {
 export type ToggleCompleteResponse = ApiResponse<ToggleCompleteDetails>;
 
 /**
- * 업무 생성 요청 (학생용 비정기 업무)
+ * 업무 생성 요청
  */
 export interface CreateTaskRequest {
   title: string;
-  assigneeId?: number;
   taskDate: string; // "YYYY-MM-DD"
-  taskTime?: string; // "HH:mm:ss"
-  taskType: TaskTypeCode;
+  taskTime: string; // "HH:mm:ss"
+  taskType?: TaskTypeCode;
 }
 
 /**

@@ -6,7 +6,6 @@ import VerificationCodeField from '../shared/components/VerificationCodeField';
 import VerificationButton from '../shared/components/VerificationButton';
 import UserTypeRadio from '../shared/components/UserTypeRadio';
 import { sendVerificationCode, verifyCode, register, login } from '../../shared/apis/auth.api';
-import { getMyInfo } from '../shared/apis/user.api';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -53,18 +52,13 @@ export default function AuthPage() {
         password: loginPassword,
       });
 
-      if (response.isSuccess) {
-        // 로그인 성공 후 역할 확인하여 리다이렉트
-        try {
-          const userInfo = await getMyInfo();
-          if (userInfo.isSuccess && userInfo.details.roleCode === 'RL02') {
-            navigate('/manager');
-            return;
-          }
-        } catch {
-          // 역할 조회 실패 시 기본 홈으로
+      if (response.isSuccess && response.details) {
+        // 로그인 응답에서 역할 코드를 확인하여 리다이렉트
+        if (response.details.roleCode === 'RL02') {
+          navigate('/manager');
+        } else {
+          navigate('/home');
         }
-        navigate('/home');
       } else {
         setErrorMessage(response.message || '로그인에 실패했습니다.');
       }

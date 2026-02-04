@@ -59,6 +59,10 @@ export interface LoginResponse {
   refreshToken: string;
   tokenType: string;
   expiresAt: number;
+  userId: number;
+  userName: string;
+  email: string;
+  roleCode: string;
 }
 
 /**
