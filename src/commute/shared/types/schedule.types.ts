@@ -92,7 +92,8 @@ export interface WorkScheduleDetail {
  * 전체 스케줄 히스토리 단건 (admin API 응답)
  */
 export interface ScheduleHistoryItem {
-  scheduleId: number;
+  id: number;
+  userName: string;
   start: string; // "2026-01-11T13:00:00"
   end: string; // "2026-01-11T16:00:00"
   status: string;
@@ -106,6 +107,32 @@ export interface ScheduleHistoryItem {
  */
 export interface AllScheduleHistoryDetails {
   histories: ScheduleHistoryItem[];
+}
+
+/**
+ * 유저 정보 (관리자 근무 시간 통계 조회용)
+ */
+export interface WorkTimeSummaryUserInfo {
+  userId: number;
+  name: string;
+  email: string;
+  roleCode: string;
+  organizationName: string;
+}
+
+/**
+ * 근무 시간 통계 단건
+ */
+export interface WorkTimeSummaryItem {
+  userInfo: WorkTimeSummaryUserInfo;
+  totalMinutes: number;
+}
+
+/**
+ * 전체 근무 시간 통계 응답 상세
+ */
+export interface WorkTimeSummaryDetails {
+  summaries: WorkTimeSummaryItem[];
 }
 
 /**

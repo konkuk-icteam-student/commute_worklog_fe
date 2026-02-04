@@ -6,9 +6,16 @@
       "Bash(npm install:*)",
       "Bash(pnpm exec tsc:*)",
       "Bash(pnpm list:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(npx vite build)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "includeCoAuthoredBy": false
   }
 }

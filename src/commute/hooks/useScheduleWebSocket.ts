@@ -29,7 +29,6 @@ export const useScheduleWebSocket = ({
                          'http://localhost:8080';
 
       const wsUrl = `${backendUrl}/ws`;
-      console.log('[WebSocket] Connecting to:', wsUrl);
 
       // SockJS 소켓 생성
       const socket = new SockJS(wsUrl);
@@ -40,11 +39,7 @@ export const useScheduleWebSocket = ({
         reconnectDelay: 5000, // 재연결 딜레이 (5초)
         heartbeatIncoming: 10000, // 서버 → 클라이언트 heartbeat (10초)
         heartbeatOutgoing: 10000, // 클라이언트 → 서버 heartbeat (10초)
-        debug: (str) => {
-          console.log('[WebSocket Debug]', str);
-        },
         onConnect: () => {
-          console.log('[WebSocket] Connected');
           isConnectedRef.current = true;
 
           // /topic/schedule-updates 구독
@@ -53,28 +48,22 @@ export const useScheduleWebSocket = ({
               const data: ScheduleUpdateMessage = JSON.parse(message.body);
 
               if (data.type === 'SCHEDULE_UPDATED' && data.updates) {
-                console.log('[WebSocket] Received schedule update:', data.updates);
                 onScheduleUpdate(data.updates);
               }
-            } catch (error) {
-              console.error('[WebSocket] Failed to parse message:', error);
+            } catch {
+              // 메시지 파싱 실패 시 무시
             }
           });
         },
         onDisconnect: () => {
-          console.log('[WebSocket] Disconnected');
           isConnectedRef.current = false;
-        },
-        onStompError: (frame) => {
-          console.error('[WebSocket] STOMP error:', frame.headers['message']);
-          console.error('[WebSocket] Error details:', frame.body);
-        },
+        }
       });
 
       clientRef.current = client;
       client.activate();
-    } catch (error) {
-      console.error('[WebSocket] Connection error:', error);
+    } catch {
+      // 연결 실패 시 무시 (reconnectDelay로 자동 재연결됨)
     }
   }, [enabled, onScheduleUpdate]);
 
@@ -84,7 +73,6 @@ export const useScheduleWebSocket = ({
       clientRef.current.deactivate();
       clientRef.current = null;
       isConnectedRef.current = false;
-      console.log('[WebSocket] Disconnected manually');
     }
   }, []);
 

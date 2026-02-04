@@ -134,186 +134,126 @@ export default function ScheduleModifyPage() {
   return (
     <div className="bg-white relative min-h-screen w-full" data-name="scheduleModify">
       {/* Background Gradient */}
-      <div className="absolute bg-gradient-to-b from-[#f8fbff] h-full left-0 to-[#ffffff] top-0 w-full" data-name="Background" />
+      <div className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] inset-0 -z-10" data-name="Background" />
 
       {/* Header */}
-      <div className="absolute bg-[#51a8ff] box-border content-stretch flex gap-[15.996px] h-[95.476px] items-center left-0 pl-[31.992px] pr-0 py-0 shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.1)] top-0 w-full" data-name="Container">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate('/schedule')}
-          className="relative rounded-[1.81848e+07px] shrink-0 size-[39.986px]"
-          data-name="Button"
-        >
-          <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col items-start pb-0 pt-[7.994px] px-[7.994px] relative size-[39.986px]">
-            <div className="h-[23.998px] overflow-clip relative shrink-0 w-full" data-name="Icon">
-              <div className="absolute bottom-[20.83%] left-[20.83%] right-1/2 top-[20.83%]" data-name="Vector">
-                <div className="absolute inset-[-7.14%_-14.29%]">
-                  <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 9 16">
-                    <path d={svgPathsModify.p34178300} id="Vector" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99985" />
-                  </svg>
-                </div>
-              </div>
-              <div className="absolute bottom-1/2 left-[20.83%] right-[20.83%] top-1/2" data-name="Vector">
-                <div className="absolute inset-[-1px_-7.14%]">
-                  <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 2">
-                    <path d="M14.9989 0.999926H0.999926" id="Vector" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.99985" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </button>
+      <div className="w-full bg-[#51a8ff] shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.1)]" data-name="Container">
+        <div className="max-w-[39.3rem] mx-auto px-[3.2rem] py-[2.4rem]">
+          <div className="flex items-center gap-[1.6rem]">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate('/schedule')}
+              className="shrink-0 size-[4rem] flex items-center justify-center"
+              data-name="Button"
+            >
+              <svg className="size-[2.4rem]" fill="none" viewBox="0 0 24 24">
+                <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M20 12H9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
 
-        <div className="h-[47.48px] relative shrink-0 w-[123.505px]" data-name="Container">
-          <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex flex-col gap-[3.997px] h-[47.48px] items-start relative w-[123.505px]">
-            <div className="h-[23.99px] relative shrink-0 w-full" data-name="Heading 1">
-              <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[24px] left-0 not-italic text-[16px] text-nowrap text-white top-[1.17px] whitespace-pre">근로 시간 수정</p>
-            </div>
-            <div className="h-[19.493px] relative shrink-0 w-full" data-name="Paragraph">
-              <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[19.5px] left-0 not-italic text-[13px] text-[rgba(255,255,255,0.8)] text-nowrap top-[-0.46px] whitespace-pre">10월</p>
+            <div className="flex flex-col gap-[0.4rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] text-white">
+                근로 시간 수정
+              </p>
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
+                10월
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Content - Scrollable */}
-      <div className="absolute left-0 top-[95.476px] right-0 bottom-0 overflow-y-auto pb-[100px]">
-        <div className="content-stretch flex flex-col gap-[12px] items-start px-[24px] pt-[20px] w-full">
+      <div className="w-full overflow-y-auto pb-[10rem]">
+        <div className="max-w-[39.3rem] mx-auto px-[2.4rem] pt-[2rem] flex flex-col gap-[1.2rem]">
           {/* Info Alert */}
-          <div className="bg-[rgba(81,168,255,0.05)] box-border content-stretch flex h-[36px] items-center pl-[12.541px] pr-[12px] py-[0.542px] relative rounded-[10px] shrink-0 w-full" data-name="Container">
-            <div aria-hidden="true" className="absolute border-[0.542px] border-[rgba(81,168,255,0.2)] border-solid inset-0 pointer-events-none rounded-[10px]" />
-            <div className="h-[36px] relative shrink-0 w-full">
-              <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start justify-center relative size-full">
-                <div className="content-stretch flex gap-[7.994px] items-center relative shrink-0" data-name="Container">
-                  <div className="relative shrink-0 size-[13.998px]" data-name="Icon">
-                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 13.9976 13.9976">
-                      <g clipPath="url(#clip0_71_217)" id="Icon">
-                        <path d={svgPathsModify.p2ee58b00} id="Vector" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16646" />
-                        <path d="M6.99878 4.66585V6.99878" id="Vector_2" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16646" />
-                        <path d="M6.99878 9.3317H7.00461" id="Vector_3" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16646" />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_71_217">
-                          <rect fill="white" height="13.9976" width="13.9976" />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </div>
-                  <div className="h-[22px] opacity-70 relative shrink-0" data-name="Paragraph">
-                    <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[18px] not-italic text-[#09121c] text-[12px] tracking-[0.18px] whitespace-pre">수정 요청 승인 대기 중 · 동시 최대 요청 1건</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="w-full bg-[rgba(81,168,255,0.05)] border border-[rgba(81,168,255,0.2)] rounded-[1rem] px-[1.2rem] py-[0.8rem] flex items-center gap-[0.8rem]" data-name="Container">
+            <svg className="shrink-0 size-[1.4rem]" fill="none" viewBox="0 0 14 14">
+              <path d={svgPathsModify.p2ee58b00} stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16646" />
+              <path d="M7 4.67V7" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16646" />
+              <path d="M7 9.33H7.006" stroke="#51A8FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.16646" />
+            </svg>
+            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.2rem] leading-[1.8rem] text-[#09121c] opacity-70">
+              수정 요청 승인 대기 중 · 동시 최대 요청 1건
+            </p>
           </div>
 
           {/* Filter Tabs */}
-          <div className="h-[36px] relative shrink-0 w-full" data-name="Container">
-            <button
-              onClick={() => setFilterTab('all')}
-              className={`absolute h-[35.997px] left-0 rounded-[44px] shadow-[0px_4px_${filterTab === 'all' ? '20' : '25'}px_0px_rgba(${filterTab === 'all' ? '81,168,255' : '5,6,24'},${filterTab === 'all' ? '0.07' : '0.05'})] top-0 w-[59.75px] ${filterTab === 'all' ? 'bg-[#51a8ff]' : 'bg-white'}`}
-              data-name="Button"
-            >
-              <div className="absolute h-[16px] left-[16px] top-[11px] w-[28px]" data-name="Paragraph">
-                <p className={`absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[12px] left-[2px] not-italic text-[13px] text-nowrap top-px tracking-[0.21px] ${filterTab === 'all' ? 'text-white' : 'text-[#09121c]'}`}>전체</p>
-              </div>
-            </button>
-            <button
-              onClick={() => setFilterTab('pending')}
-              className={`absolute h-[35.997px] left-[69.74px] rounded-[44px] shadow-[0px_4px_${filterTab === 'pending' ? '20' : '25'}px_0px_rgba(${filterTab === 'pending' ? '81,168,255' : '5,6,24'},${filterTab === 'pending' ? '0.07' : '0.05'})] top-0 w-[62.036px] ${filterTab === 'pending' ? 'bg-[#51a8ff]' : 'bg-white'}`}
-              data-name="Button"
-            >
-              <div className="absolute h-[16px] left-[17.26px] top-[11px] w-[28px]" data-name="Paragraph">
-                <p className={`absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[12px] left-[-4px] not-italic text-[13px] text-nowrap top-px tracking-[0.21px] ${filterTab === 'pending' ? 'text-white' : 'text-[#09121c]'}`}>대기중</p>
-              </div>
-            </button>
-            <button
-              onClick={() => setFilterTab('approved')}
-              className={`absolute h-[35.997px] left-[142px] rounded-[44px] shadow-[0px_4px_${filterTab === 'approved' ? '20' : '25'}px_0px_rgba(${filterTab === 'approved' ? '81,168,255' : '5,6,24'},${filterTab === 'approved' ? '0.07' : '0.05'})] top-0 w-[62.036px] ${filterTab === 'approved' ? 'bg-[#51a8ff]' : 'bg-white'}`}
-              data-name="Button"
-            >
-              <div className="absolute h-[16px] left-[17.26px] top-[11px] w-[28px]" data-name="Paragraph">
-                <p className={`absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[12px] left-[-4px] not-italic text-[13px] text-nowrap top-px tracking-[0.21px] ${filterTab === 'approved' ? 'text-white' : 'text-[#09121c]'}`}>승인됨</p>
-              </div>
-            </button>
-            <button
-              onClick={() => setFilterTab('rejected')}
-              className={`absolute h-[35.997px] left-[214px] rounded-[44px] shadow-[0px_4px_${filterTab === 'rejected' ? '20' : '25'}px_0px_rgba(${filterTab === 'rejected' ? '81,168,255' : '5,6,24'},${filterTab === 'rejected' ? '0.07' : '0.05'})] top-0 w-[62.036px] ${filterTab === 'rejected' ? 'bg-[#51a8ff]' : 'bg-white'}`}
-              data-name="Button"
-            >
-              <div className="absolute h-[16px] left-[17.26px] top-[11px] w-[28px]" data-name="Paragraph">
-                <p className={`absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[12px] left-[-4px] not-italic text-[13px] text-nowrap top-px tracking-[0.21px] ${filterTab === 'rejected' ? 'text-white' : 'text-[#09121c]'}`}>거부됨</p>
-              </div>
-            </button>
+          <div className="flex gap-[1rem] w-full" data-name="Container">
+            {(['all', 'pending', 'approved', 'rejected'] as const).map((tab) => {
+              const isActive = filterTab === tab;
+              const labels: Record<FilterTab, string> = {
+                all: '전체',
+                pending: '대기중',
+                approved: '승인됨',
+                rejected: '거부됨',
+              };
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setFilterTab(tab)}
+                  className={`h-[3.6rem] px-[1.6rem] rounded-[4.4rem] transition-all duration-200 ${
+                    isActive
+                      ? 'bg-[#51a8ff] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]'
+                      : 'bg-white shadow-[0px_4px_25px_0px_rgba(5,6,24,0.05)]'
+                  }`}
+                  data-name="Button"
+                >
+                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.2rem] tracking-[0.021rem] ${
+                    isActive ? 'text-white' : 'text-[#09121c]'
+                  }`}>
+                    {labels[tab]}
+                  </p>
+                </button>
+              );
+            })}
           </div>
 
           {/* Request Cards */}
           {filteredRequests.map((request, index) => {
             const colors = getStatusColors(request.status);
             return (
-              <div key={index} className="bg-white h-[236px] relative rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] shrink-0 w-full">
-                <div className="overflow-clip rounded-[inherit] size-full">
-                  <div className="content-stretch flex flex-col items-start p-[0.542px] relative size-full">
-                    <div className="h-[235px] relative shrink-0 w-full" data-name="Container">
-                      <div className="absolute h-[20px] left-[20.46px] top-[15.91px] w-[304px]" data-name="Container">
-                        <div className="absolute content-stretch flex flex-col h-[56.481px] items-start left-0 top-0 w-[284.397px]" data-name="Container">
-                          <div className="content-stretch flex h-[19.493px] items-center relative shrink-0 w-full" data-name="Container">
-                            <div className="relative shrink-0 h-[19.493px] w-[77.177px]">
-                              <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[19.5px] left-0 not-italic text-[#09121c] text-[13px] text-nowrap top-[-0.46px]">{request.id}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="absolute content-stretch flex flex-col gap-[8px] items-start left-[20.46px] top-[44.01px] w-[304.39px]">
-                        {/* Status Badge */}
-                        <div className={`${colors.bg} content-stretch flex flex-col gap-[3.997px] h-[52.561px] items-start pb-[0.542px] pt-[8.536px] px-[12.541px] relative rounded-[10px] shrink-0 w-[304.39px]`} data-name="Container">
-                          <div aria-hidden="true" className={`absolute ${colors.border} border-[0.542px] border-solid inset-0 pointer-events-none rounded-[10px]`} />
-                          <div className="h-[16.496px] relative shrink-0 w-full" data-name="Paragraph">
-                            <p className={`absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[16.5px] left-0 not-italic ${colors.titleColor} text-[11px] text-nowrap top-[-0.46px]`}>{request.statusLabel}</p>
-                          </div>
-                          <div className="h-[14.997px] relative shrink-0 w-full" data-name="Paragraph">
-                            <p className={`absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[15px] left-0 not-italic ${colors.descColor} text-[10px] text-nowrap top-[-0.46px]`}>{request.statusDescription}</p>
-                          </div>
-                        </div>
+              <div key={index} className="w-full bg-white rounded-[1.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] p-[2rem]">
+                {/* Header with ID and Arrow */}
+                <div className="flex items-center justify-between mb-[1.2rem]">
+                  <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.3rem] leading-[1.95rem] text-[#09121c]">
+                    {request.id}
+                  </p>
+                  <svg className="size-[1.6rem] rotate-[-90deg]" fill="none" viewBox="0 0 16 16">
+                    <path d={svgPathsModify.p351ca610} stroke="#09121C" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
+                  </svg>
+                </div>
 
-                        {/* Application Date */}
-                        <div className="bg-[#f9fafb] h-[51.477px] relative rounded-[10px] shrink-0 w-full">
-                          <div className="content-stretch flex flex-col gap-[3.997px] items-start pb-0 pt-[7.994px] px-[11.999px] relative size-full">
-                            <div className="h-[14.997px] relative shrink-0 w-full">
-                              <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[15px] left-0 not-italic text-[#09121c] text-[10px] text-nowrap top-[-0.46px]">신청일</p>
-                            </div>
-                            <div className="h-[16.496px] opacity-70 relative shrink-0 w-full">
-                              <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[16.5px] left-0 not-italic text-[#09121c] text-[11px] text-nowrap top-[-0.46px]">{request.applicationDate}</p>
-                            </div>
-                          </div>
-                        </div>
+                <div className="flex flex-col gap-[0.8rem]">
+                  {/* Status Badge */}
+                  <div className={`${colors.bg} border ${colors.border} rounded-[1rem] px-[1.2rem] py-[0.8rem]`}>
+                    <p className={`font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.1rem] leading-[1.65rem] ${colors.titleColor}`}>
+                      {request.statusLabel}
+                    </p>
+                    <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1rem] leading-[1.5rem] ${colors.descColor}`}>
+                      {request.statusDescription}
+                    </p>
+                  </div>
 
-                        {/* Modification Reason */}
-                        <div className="bg-[#f9fafb] h-[51.477px] relative rounded-[10px] shrink-0 w-full">
-                          <div className="content-stretch flex flex-col gap-[3.997px] items-start pb-0 pt-[7.994px] px-[11.999px] relative size-full">
-                            <div className="h-[14.997px] relative shrink-0 w-full">
-                              <p className="absolute font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[15px] left-0 not-italic text-[#09121c] text-[10px] text-nowrap top-[-0.46px]">수정 사유</p>
-                            </div>
-                            <div className="h-[16.496px] opacity-70 relative shrink-0 w-full">
-                              <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[16.5px] left-0 not-italic text-[#09121c] text-[11px] text-nowrap top-[-0.46px]">{request.modificationReason}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                  {/* Application Date */}
+                  <div className="bg-[#f9fafb] rounded-[1rem] px-[1.2rem] py-[0.8rem]">
+                    <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1rem] leading-[1.5rem] text-[#09121c]">
+                      신청일
+                    </p>
+                    <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] leading-[1.65rem] text-[#09121c] opacity-70">
+                      {request.applicationDate}
+                    </p>
+                  </div>
 
-                      {/* Expand Arrow */}
-                      <div style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties} className="absolute flex items-center justify-center left-[308.46px] size-[15.996px] top-[17.46px]">
-                        <div className="flex-none rotate-[270deg]">
-                          <div className="relative size-[15.996px]">
-                            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 15.996 15.996">
-                              <g id="Icon">
-                                <path d={svgPathsModify.p351ca610} id="Vector" stroke="#09121C" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
-                              </g>
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  {/* Modification Reason */}
+                  <div className="bg-[#f9fafb] rounded-[1rem] px-[1.2rem] py-[0.8rem]">
+                    <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1rem] leading-[1.5rem] text-[#09121c]">
+                      수정 사유
+                    </p>
+                    <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] leading-[1.65rem] text-[#09121c] opacity-70">
+                      {request.modificationReason}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -321,58 +261,42 @@ export default function ScheduleModifyPage() {
           })}
 
           {/* Action Button - Cancel or Modify based on most recent request status */}
-          {showModifyButton ? (
-            <button
-              onClick={handleModifySchedule}
-              className="bg-[#51a8ff] content-stretch flex flex-col h-[55.982px] items-start rounded-[46px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] w-full"
-              data-name="Button"
-            >
-              <div className="flex items-center justify-center size-full">
-                <div className="h-[24px] relative shrink-0 w-full" data-name="Paragraph">
-                  <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] left-1/2 -translate-x-1/2 not-italic text-[16px] text-nowrap text-white top-0 tracking-[0.24px]">수정하기</p>
-                </div>
-              </div>
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowCancelModal(true)}
-              className="bg-[#51a8ff] content-stretch flex flex-col h-[55.982px] items-start rounded-[46px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] w-full"
-              data-name="Button"
-            >
-              <div className="flex items-center justify-center size-full">
-                <div className="h-[24px] relative shrink-0 w-full" data-name="Paragraph">
-                  <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] left-1/2 -translate-x-1/2 not-italic text-[16px] text-nowrap text-white top-0 tracking-[0.24px]">요청 취소하기</p>
-                </div>
-              </div>
-            </button>
-          )}
+          <button
+            onClick={showModifyButton ? handleModifySchedule : () => setShowCancelModal(true)}
+            className="w-full h-[5.6rem] bg-[#51a8ff] rounded-[4.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] flex items-center justify-center"
+            data-name="Button"
+          >
+            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] text-white">
+              {showModifyButton ? '수정하기' : '요청 취소하기'}
+            </p>
+          </button>
         </div>
       </div>
 
       {/* Cancel Confirmation Modal */}
       {showCancelModal && (
-        <div className="absolute backdrop-blur-[2px] backdrop-filter bg-[rgba(9,18,28,0.4)] h-full left-0 overflow-clip top-0 w-full z-50" data-name="pop-up">
-          <div className="absolute content-stretch flex flex-col gap-[24px] items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[312px]">
+        <div className="fixed inset-0 backdrop-blur-[2px] bg-[rgba(9,18,28,0.4)] z-50 flex items-center justify-center" data-name="pop-up">
+          <div className="flex flex-col gap-[2.4rem] items-center w-[31.2rem]">
             {/* Confirmation Message */}
-            <div className="relative shrink-0 w-full text-center">
-              <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[28px] not-italic text-white text-[18px] tracking-[0.24px]">수정 요청을 취소하시겠습니까?</p>
-            </div>
+            <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.8rem] leading-[2.8rem] tracking-[0.024rem] text-white text-center">
+              수정 요청을 취소하시겠습니까?
+            </p>
 
             {/* Buttons */}
-            <div className="content-stretch flex gap-[12px] items-center relative shrink-0 w-full">
+            <div className="flex gap-[1.2rem] w-full">
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="bg-white content-stretch flex flex-col h-[52px] items-center justify-center relative rounded-[46px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] shrink-0 w-[150px]"
+                className="flex-1 h-[5.2rem] bg-white rounded-[4.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] flex items-center justify-center"
                 data-name="Button"
               >
-                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[24px] not-italic relative shrink-0 text-[#09121c] text-[16px] text-nowrap tracking-[0.24px]">닫기</p>
+                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] text-[#09121c]">닫기</p>
               </button>
               <button
                 onClick={handleCancelRequest}
-                className="bg-[#51a8ff] content-stretch flex flex-col h-[52px] items-center justify-center relative rounded-[46px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] shrink-0 w-[150px]"
+                className="flex-1 h-[5.2rem] bg-[#51a8ff] rounded-[4.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] flex items-center justify-center"
                 data-name="Button"
               >
-                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] leading-[24px] not-italic relative shrink-0 text-[16px] text-nowrap text-white tracking-[0.24px]">취소</p>
+                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] text-white">취소</p>
               </button>
             </div>
           </div>

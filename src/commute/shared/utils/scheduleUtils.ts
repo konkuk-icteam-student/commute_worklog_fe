@@ -63,7 +63,7 @@ export const convertSlotsToTimeSlots = (
   selectedSlots: string[],
   selectedWeek: number,
   year: number = 2026,
-  month: number = 1
+  month: number = 2
 ): TimeSlot[] => {
   // monthlyScheduleDates에서 날짜 정보 가져오기
   const monthData =
@@ -169,7 +169,8 @@ export const convertSchedulesToSlots = (
   year: number,
   month: number
 ): string[] => {
-  const slots: string[] = [];
+  // Set을 사용하여 중복 방지
+  const slotsSet = new Set<string>();
 
   // 해당 주차의 날짜 정보 가져오기
   const monthData =
@@ -210,9 +211,10 @@ export const convertSchedulesToSlots = (
       const minute = min % 60;
       const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
 
-      slots.push(`${dayIndex}-${timeStr}`);
+      slotsSet.add(`${dayIndex}-${timeStr}`);
     }
   });
 
-  return slots;
+  // Set을 배열로 변환하여 반환 (중복 자동 제거)
+  return Array.from(slotsSet);
 };
