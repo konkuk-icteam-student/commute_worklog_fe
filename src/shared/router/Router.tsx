@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Test from '../../pages/Test';
+//import Test from '../../pages/Test';
 import AuthPage from '../../commute/pages/AuthPage';
 import HomePage from '../../commute/pages/HomePage';
 import MyPage from '../../commute/pages/MyPage';
@@ -15,11 +15,16 @@ import ManagerQRPage from '../../commute/admin/pages/ManagerQRPage';
 import ManagerTaskPage from '../../commute/admin/pages/ManagerTaskPage';
 import QRScannerPage from '../../commute/pages/QRScannerPage';
 import Category from '@/worklog/pages/category/Category';
+import Faq from '@/worklog/pages/faq/Faq';
+import Auth from '@/worklog/pages/auth/Auth';
+import Home from '@/worklog/pages/home/Home';
+import Department from '@/worklog/pages/category/Department';
+import Task from '@/worklog/pages/category/Task';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Test />,
+    element: <Auth />,
   },
   {
     path: '/auth',
@@ -66,11 +71,7 @@ const router = createBrowserRouter([
     element: <QRScannerPage />,
   },
   {
-    path: '/worklog/category',
-    element: <Category />,
-  },
-  {
-    path: '/manager',
+     path: '/manager',
     element: <ManagerHomePage />,
   },
   {
@@ -85,6 +86,27 @@ const router = createBrowserRouter([
     path: '/manager/task',
     element: <ManagerTaskPage />,
   },
+  {
+    path: '/worklog/category/manager',
+    element: <Category />,
+  },
+  {
+    path: '/worklog/faq',
+    element: <Faq />,
+  },
+  {
+    path: '/worklog/home',
+    element: <Home />,
+  },
+  {
+    path: '/worklog/category/department',
+    element: <Department />,
+  },
+  {
+    path: '/worklog/category/task',
+    element: <Task />,
+  },
+  
 ]);
 
 export default router;

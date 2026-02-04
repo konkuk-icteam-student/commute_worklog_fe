@@ -1,0 +1,15 @@
+services:
+  # React 프론트엔드 (Nginx), Port:80
+  frontend:
+    network_mode: "host"
+    image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
+    container_name: commutemate-frontend
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Seoul
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
