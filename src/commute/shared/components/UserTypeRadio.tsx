@@ -1,5 +1,4 @@
 // UserTypeRadio.tsx - 관리자/학생 선택 라디오 버튼
-import React from 'react';
 
 type UserTypeRadioProps = {
   value: 'student' | 'manager';

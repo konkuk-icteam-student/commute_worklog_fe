@@ -162,12 +162,7 @@ export default function TasksEditPage() {
       });
 
       if (response.isSuccess && response.details) {
-        const newTask = mapApiTaskToDisplay({
-          taskId: response.details.taskId,
-          title: response.details.title,
-          taskTime: response.details.taskTime || '00:00:00',
-          isCompleted: response.details.isCompleted,
-        });
+        const newTask = mapApiTaskToDisplay(response.details);
         setIrregularTasks((prev) => [...prev, newTask]);
         setNewTaskInput('');
       }

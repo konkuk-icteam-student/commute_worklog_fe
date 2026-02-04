@@ -1,5 +1,4 @@
 // DeleteConfirmPopup.tsx - 업무 삭제 재확인 모달
-import React from 'react';
 
 type PopupProps = {
   isOpen: boolean;
