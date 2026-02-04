@@ -21,7 +21,7 @@ export default function ScheduleViewPage() {
 
   // 현재 연도/월
   const currentYear = 2026;
-  const currentMonth = 1;
+  const currentMonth = 2;
   const MAX_CAPACITY = 5; // 최대 신청 가능 인원수
 
   /**
@@ -230,7 +230,7 @@ export default function ScheduleViewPage() {
                 근로 시간 조회
               </p>
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                1월
+                2월
               </p>
             </div>
           </div>

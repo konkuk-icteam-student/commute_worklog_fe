@@ -30,7 +30,7 @@ export default function ScheduleApplyPage() {
 
   // 현재 연도/월
   const currentYear = 2026;
-  const currentMonth = 1;
+  const currentMonth = 2;
   const MAX_CAPACITY = 5; // 최대 신청 가능 인원수
 
   /**
@@ -429,7 +429,7 @@ export default function ScheduleApplyPage() {
       // 모든 주차의 신규 슬롯을 TimeSlot 배열로 변환
       const allTimeSlots: TimeSlot[] = [];
       for (const { week, slots } of allNewSlots) {
-        const timeSlots = convertSlotsToTimeSlots(slots, week, 2026, 1);
+        const timeSlots = convertSlotsToTimeSlots(slots, week, 2026, 2);
         allTimeSlots.push(...timeSlots);
       }
 
@@ -510,7 +510,7 @@ export default function ScheduleApplyPage() {
                   근로 시간 신청
                 </p>
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                  2026년 1월
+                  2026년 2월
                 </p>
               </div>
             </div>
@@ -570,7 +570,7 @@ export default function ScheduleApplyPage() {
                 근로 시간 신청
               </p>
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                1월
+                2월
               </p>
             </div>
           </div>

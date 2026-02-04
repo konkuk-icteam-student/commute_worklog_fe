@@ -4,6 +4,9 @@ import monthlyScheduleDates from '../../constants/monthlyScheduleDates.json';
 type SlotStatus = 'available' | 'selected' | 'disabled';
 type RandomStyle = 'white' | 'pink' | 'blue';
 
+// 2026년 2월 설날 연휴 (근로 불가)
+const HOLIDAYS_2026_02 = ['2/16', '2/17', '2/18'];
+
 const TIMES = [
   '10:00', '10:30', '11:00', '11:30',
   '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
@@ -43,7 +46,7 @@ export default function WeeklyTimeTableNew({
   const getWeekDates = (week: number) => {
     // TODO: 나중에 동적으로 year/month 받아오기
     const year = '2026';
-    const month = '1';
+    const month = '2';
 
     const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2026']];
     if (!monthData) return ['-', '-', '-', '-', '-'];
@@ -141,6 +144,11 @@ export default function WeeklyTimeTableNew({
 
     // 날짜가 배정되지 않은 경우 (예: 1월 1일 이전)
     if (dates[dayIndex] === '-') {
+      return 'disabled';
+    }
+
+    // 설날 연휴 (2/16, 2/17, 2/18)는 disabled
+    if (HOLIDAYS_2026_02.includes(dates[dayIndex])) {
       return 'disabled';
     }
 
@@ -324,12 +332,13 @@ export default function WeeklyTimeTableNew({
                 // 현재 신청 인원수
                 const currentCapacity = getSlotCapacity(dayIndex, time);
                 const isLunchTime = time >= '11:30' && time < '13:00';
+                const isHoliday = HOLIDAYS_2026_02.includes(dates[dayIndex]);
                 const isFull = isSlotFull(dayIndex, time);
 
-                // readOnly 모드에서는 점심시간만 title 표시
+                // readOnly 모드에서는 점심시간/연휴만 title 표시
                 const titleText = readOnly
-                  ? (isLunchTime ? '점심시간' : undefined)
-                  : (isLunchTime ? '점심시간' : isFull ? '마감' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity})`);
+                  ? (isHoliday ? '설날 연휴' : isLunchTime ? '점심시간' : undefined)
+                  : (isHoliday ? '설날 연휴' : isLunchTime ? '점심시간' : isFull ? '마감' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity})`);
 
                 // 4/5명 또는 5/5명일 때 특별 스타일 적용
                 const getCapacityStyle = (): React.CSSProperties | undefined => {
@@ -370,10 +379,10 @@ export default function WeeklyTimeTableNew({
                       onMouseLeave={() => setHoveredSlot(null)}
                       title={titleText}
                     >
-                      {/* Tooltip on hover (readOnly 모드에서는 점심시간만 표시) */}
-                      {isHovered && (!readOnly || isLunchTime) && (
+                      {/* Tooltip on hover (readOnly 모드에서는 점심시간/연휴만 표시) */}
+                      {isHovered && (!readOnly || isLunchTime || isHoliday) && (
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.6rem] py-[0.3rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">
-                          {readOnly ? '점심시간' : (isLunchTime ? '점심시간' : isFull ? '마감됨' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity}명)`)}
+                          {readOnly ? (isHoliday ? '설날 연휴' : '점심시간') : (isHoliday ? '설날 연휴' : isLunchTime ? '점심시간' : isFull ? '마감됨' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity}명)`)}
                         </div>
                       )}
                     </div>

@@ -5,9 +5,9 @@ interface WeeklySummaryCardProps {
 }
 
 export default function WeeklySummaryCard({ weeklyHours = {} }: WeeklySummaryCardProps) {
-  // TODO: 현재는 2026년 1월 하드코딩, 나중에 동적으로 year/month 받아오기
+  // TODO: 현재는 2026년 2월 하드코딩, 나중에 동적으로 year/month 받아오기
   const year = '2026';
-  const month = '1';
+  const month = '2';
 
   const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2026']];
 

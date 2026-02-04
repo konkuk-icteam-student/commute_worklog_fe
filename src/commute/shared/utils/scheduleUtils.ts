@@ -63,7 +63,7 @@ export const convertSlotsToTimeSlots = (
   selectedSlots: string[],
   selectedWeek: number,
   year: number = 2026,
-  month: number = 1
+  month: number = 2
 ): TimeSlot[] => {
   // monthlyScheduleDates에서 날짜 정보 가져오기
   const monthData =
