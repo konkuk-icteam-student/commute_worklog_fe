@@ -57,7 +57,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex w-[600px] flex-col gap-4 pt-[40px]">
+    <div className="flex w-full max-w-[600px] flex-col gap-4 px-[20px] pt-[40px]">
       <div className="relative">
         <input
           type="email"
