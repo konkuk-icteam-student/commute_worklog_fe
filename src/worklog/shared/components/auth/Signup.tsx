@@ -163,7 +163,7 @@ const Signup = () => {
   const isSignupBtnEnabled = isAuthVerified && password.length > 0 && pwRegex.test(password);
 
   return (
-    <div className="flex w-[600px] flex-col gap-4">
+    <div className="flex w-full max-w-[600px] flex-col gap-4 px-[20px]">
       {/* 1. 사용자 유형 선택 */}
       <div className="mb-2 flex h-[24px] items-center justify-center gap-8">
         <label className="flex cursor-pointer items-center gap-2">
