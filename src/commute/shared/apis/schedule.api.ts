@@ -36,13 +36,11 @@ export const applyWorkSchedule = async (
  * @param data 취소할 일정 ID, 신청할 슬롯, 사유
  * @returns API 응답
  */
+// TODO: api 연동 기능 구현 필요
 export const modifyWorkSchedule = async (
   data: ModifyWorkScheduleRequest
 ): Promise<ApiResponse<null>> => {
-  const response = await apiClient.patch<ApiResponse<null>>(
-    '/api/v1/work-schedules/modify',
-    data
-  );
+  const response = await apiClient.patch<ApiResponse<null>>('/api/v1/work-schedules/modify', data);
   return response.data;
 };
 
@@ -71,6 +69,7 @@ export const getMySchedules = async (
  * @param month 조회할 월 (1~12)
  * @returns API 응답 (근무 이력 목록)
  */
+// TODO: api 연동 기능 구현 필요
 export const getMyHistory = async (
   year: number,
   month: number
@@ -89,6 +88,7 @@ export const getMyHistory = async (
  * @param scheduleId 조회할 일정 ID
  * @returns API 응답 (근무 일정 상세)
  */
+// TODO: api 연동 기능 구현 필요
 export const getWorkScheduleDetail = async (
   scheduleId: number
 ): Promise<ApiResponse<WorkScheduleDetail>> => {
@@ -103,6 +103,7 @@ export const getWorkScheduleDetail = async (
  * @param scheduleId 취소할 일정 ID
  * @returns API 응답
  */
+// TODO: api 연동 기능 구현 필요
 export const deleteWorkSchedule = async (scheduleId: number): Promise<ApiResponse<null>> => {
   const response = await apiClient.delete<ApiResponse<null>>(
     `/api/v1/work-schedules/${scheduleId}`
@@ -135,6 +136,7 @@ export const getAllScheduleHistory = async (
  * @param month 조회할 월 (1~12)
  * @returns API 응답 (사용자별 근무 시간 통계)
  */
+// TODO: api 연동 기능 구현 필요
 export const getWorkTimeSummary = async (
   year: number,
   month: number

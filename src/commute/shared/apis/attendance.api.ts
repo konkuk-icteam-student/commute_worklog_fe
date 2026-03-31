@@ -12,13 +12,8 @@ import type {
  * @param data QR 토큰 정보
  * @returns API 응답
  */
-export const checkIn = async (
-  data: CheckInOutRequest
-): Promise<ApiResponse<null>> => {
-  const response = await apiClient.post<ApiResponse<null>>(
-    '/api/v1/attendance/check-in',
-    data
-  );
+export const checkIn = async (data: CheckInOutRequest): Promise<ApiResponse<null>> => {
+  const response = await apiClient.post<ApiResponse<null>>('/api/v1/attendance/check-in', data);
   return response.data;
 };
 
@@ -27,13 +22,8 @@ export const checkIn = async (
  * @param data QR 토큰 정보
  * @returns API 응답
  */
-export const checkOut = async (
-  data: CheckInOutRequest
-): Promise<ApiResponse<null>> => {
-  const response = await apiClient.post<ApiResponse<null>>(
-    '/api/v1/attendance/check-out',
-    data
-  );
+export const checkOut = async (data: CheckInOutRequest): Promise<ApiResponse<null>> => {
+  const response = await apiClient.post<ApiResponse<null>>('/api/v1/attendance/check-out', data);
   return response.data;
 };
 
@@ -41,6 +31,7 @@ export const checkOut = async (
  * 오늘의 출퇴근 기록 조회
  * @returns API 응답 (오늘의 출퇴근 기록 목록)
  */
+// TODO: api 연동 기능 구현 필요
 export const getTodayHistory = async (): Promise<ApiResponse<TodayAttendanceHistoryDetails>> => {
   const response = await apiClient.get<ApiResponse<TodayAttendanceHistoryDetails>>(
     '/api/v1/attendance/today'
@@ -53,9 +44,7 @@ export const getTodayHistory = async (): Promise<ApiResponse<TodayAttendanceHist
  * @returns API 응답 (QR 토큰 정보)
  */
 export const getQrToken = async (): Promise<ApiResponse<QrTokenDetails>> => {
-  const response = await apiClient.get<ApiResponse<QrTokenDetails>>(
-    '/api/v1/attendance/qr-token'
-  );
+  const response = await apiClient.get<ApiResponse<QrTokenDetails>>('/api/v1/attendance/qr-token');
   return response.data;
 };
 
@@ -64,6 +53,7 @@ export const getQrToken = async (): Promise<ApiResponse<QrTokenDetails>> => {
  * @param date 조회할 날짜 (YYYY-MM-DD 형식)
  * @returns API 응답 (출퇴근 기록 목록)
  */
+// TODO: api 연동 기능 구현 필요
 export const getAttendanceHistory = async (
   date: string
 ): Promise<ApiResponse<AttendanceHistoryDetails>> => {
