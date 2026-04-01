@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
       global: 'globalThis',
     },
     server: {
+      host: true,
       proxy: {
         '/api': {
           target: env.VITE_PROXY_TARGET || 'http://localhost:8080',

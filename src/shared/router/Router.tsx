@@ -7,9 +7,13 @@ import SchedulePage from '../../commute/pages/SchedulePage';
 import ScheduleApplyPage from '../../commute/pages/ScheduleApplyPage';
 import ScheduleModifyPage from '../../commute/pages/ScheduleModifyPage';
 import ScheduleEditPage from '../../commute/pages/ScheduleEditPage';
+import ScheduleViewPage from '../../commute/pages/ScheduleViewPage';
 import TasksPage from '../../commute/pages/TasksPage';
 import TasksEditPage from '../../commute/pages/TasksEditPage';
-import AdminDashboardPage from '../../commute/admin/pages/AdminDashboardPage';
+import ManagerHomePage from '../../commute/admin/pages/ManagerHomePage';
+import ManagerQRPage from '../../commute/admin/pages/ManagerQRPage';
+import ManagerTaskPage from '../../commute/admin/pages/ManagerTaskPage';
+import QRScannerPage from '../../commute/pages/QRScannerPage';
 import Category from '@/worklog/pages/category/Category';
 import Faq from '@/worklog/pages/faq/Faq';
 import Auth from '@/worklog/pages/auth/Auth';
@@ -51,6 +55,10 @@ const router = createBrowserRouter([
     element: <ScheduleEditPage />,
   },
   {
+    path: '/schedule/view',
+    element: <ScheduleViewPage />,
+  },
+  {
     path: '/tasks',
     element: <TasksPage />,
   },
@@ -59,12 +67,24 @@ const router = createBrowserRouter([
     element: <TasksEditPage />,
   },
   {
-    path: '/admin',
-    element: <AdminDashboardPage />,
+    path: '/qr-scanner',
+    element: <QRScannerPage />,
   },
   {
-    path: '/admin/dashboard',
-    element: <AdminDashboardPage />,
+     path: '/manager',
+    element: <ManagerHomePage />,
+  },
+  {
+    path: '/manager/home',
+    element: <ManagerHomePage />,
+  },
+  {
+    path: '/manager/qr',
+    element: <ManagerQRPage />,
+  },
+  {
+    path: '/manager/task',
+    element: <ManagerTaskPage />,
   },
   {
     path: '/worklog/category/manager',
@@ -74,7 +94,6 @@ const router = createBrowserRouter([
     path: '/worklog/faq',
     element: <Faq />,
   },
-
   {
     path: '/worklog/home',
     element: <Home />,
@@ -87,6 +106,7 @@ const router = createBrowserRouter([
     path: '/worklog/category/task',
     element: <Task />,
   },
+  
 ]);
 
 export default router;

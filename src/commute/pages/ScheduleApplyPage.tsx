@@ -17,6 +17,7 @@ export default function ScheduleApplyPage() {
   const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+  const [pendingSlotsByWeek, setPendingSlotsByWeek] = useState<Record<number, string[]>>({}); // 주차별 선택 슬롯 저장
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,14 +25,17 @@ export default function ScheduleApplyPage() {
   const [allSchedules, setAllSchedules] = useState<WorkSchedule[]>([]); // 전체 월의 스케줄
   const [slotCapacityMap, setSlotCapacityMap] = useState<Map<string, number>>(new Map()); // 슬롯별 신청 인원수
   const [isLoadingCapacity, setIsLoadingCapacity] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false); // 초기화 여부
+  const [originalSlotsByWeek, setOriginalSlotsByWeek] = useState<Record<number, Set<string>>>({}); // 주차별 API에서 가져온 원본 슬롯 (신규 슬롯 계산용)
 
   // 현재 연도/월
   const currentYear = 2026;
-  const currentMonth = 1;
+  const currentMonth = 2;
   const MAX_CAPACITY = 5; // 최대 신청 가능 인원수
 
   /**
    * API 응답을 슬롯별 신청 인원수로 변환
+   * 전체 시간 범위(예: 09:00~18:00)를 30분 단위 슬롯으로 분해하여 카운트
    * @param histories 전체 스케줄 히스토리 배열
    * @returns Map<슬롯키, 신청인원수>
    */
@@ -39,12 +43,35 @@ export default function ScheduleApplyPage() {
     const capacityMap = new Map<string, number>();
 
     histories.forEach((history) => {
-      // start + end를 key로 사용
-      const slotKey = `${history.start}_${history.end}`;
+      // start: "2026-01-11T09:00:00", end: "2026-01-11T18:00:00"
+      const startDate = new Date(history.start);
+      const endDate = new Date(history.end);
 
-      // 기존 카운트에 +1
-      const currentCount = capacityMap.get(slotKey) || 0;
-      capacityMap.set(slotKey, currentCount + 1);
+      // 30분 단위로 슬롯 분해
+      let currentSlotStart = new Date(startDate);
+      while (currentSlotStart < endDate) {
+        // 슬롯 종료 시간 (30분 후)
+        const currentSlotEnd = new Date(currentSlotStart.getTime() + 30 * 60 * 1000);
+
+        // ISO 형식으로 슬롯 키 생성 (시간대 정보 제거)
+        const formatDateTime = (date: Date): string => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+        };
+
+        const slotKey = `${formatDateTime(currentSlotStart)}_${formatDateTime(currentSlotEnd)}`;
+
+        // 기존 카운트에 +1
+        const currentCount = capacityMap.get(slotKey) || 0;
+        capacityMap.set(slotKey, currentCount + 1);
+
+        // 다음 30분 슬롯으로 이동
+        currentSlotStart = currentSlotEnd;
+      }
     });
 
     return capacityMap;
@@ -135,7 +162,7 @@ export default function ScheduleApplyPage() {
     enabled: true, // 백엔드 CORS 설정 완료 후 동작
   });
 
-  // 내 스케줄 조회 함수
+  // 내 스케줄 조회 함수 (초기 로드용)
   const fetchMySchedules = useCallback(async () => {
     try {
       const response = await getMySchedules(currentYear, currentMonth);
@@ -144,36 +171,77 @@ export default function ScheduleApplyPage() {
         // 전체 스케줄 저장
         setAllSchedules(response.details.schedules);
 
-        // 현재 주차의 슬롯만 selectedSlots에 저장
-        const slots = convertSchedulesToSlots(
-          response.details.schedules,
-          selectedWeek,
-          currentYear,
-          currentMonth
-        );
-        setSelectedSlots(slots);
+        // 초기화: 각 주차별 API 슬롯을 pendingSlotsByWeek에 저장
+        const initialPendingSlots: Record<number, string[]> = {};
+        const initialOriginalSlots: Record<number, Set<string>> = {};
+        for (let week = 1; week <= 5; week++) {
+          const slots = convertSchedulesToSlots(
+            response.details.schedules,
+            week,
+            currentYear,
+            currentMonth
+          );
+          initialPendingSlots[week] = slots;
+          // 원본 슬롯을 Set으로 저장 (신규 슬롯 계산용)
+          initialOriginalSlots[week] = new Set(slots);
+        }
+        setPendingSlotsByWeek(initialPendingSlots);
+        setOriginalSlotsByWeek(initialOriginalSlots);
+
+        // 현재 주차의 슬롯을 selectedSlots에 설정
+        setSelectedSlots(initialPendingSlots[selectedWeek] || []);
+        setIsInitialized(true);
       } else {
         setAllSchedules([]);
+        setPendingSlotsByWeek({});
+        setOriginalSlotsByWeek({});
         setSelectedSlots([]);
+        setIsInitialized(true);
       }
     } catch (err) {
       console.error('스케줄 조회 에러:', err);
       setAllSchedules([]);
+      setPendingSlotsByWeek({});
+      setOriginalSlotsByWeek({});
       setSelectedSlots([]);
+      setIsInitialized(true);
     }
-  }, [selectedWeek, currentYear, currentMonth]);
+  }, [currentYear, currentMonth, selectedWeek]);
+
+  // 주차 변경 핸들러
+  const handleWeekChange = (newWeek: number) => {
+    if (newWeek === selectedWeek) return;
+
+    // 현재 주차의 선택 슬롯을 저장
+    setPendingSlotsByWeek(prev => ({
+      ...prev,
+      [selectedWeek]: selectedSlots
+    }));
+
+    // 새 주차로 변경
+    setSelectedWeek(newWeek);
+
+    // 새 주차의 저장된 슬롯 불러오기
+    const newWeekSlots = pendingSlotsByWeek[newWeek] || convertSchedulesToSlots(
+      allSchedules,
+      newWeek,
+      currentYear,
+      currentMonth
+    );
+    setSelectedSlots(newWeekSlots);
+  };
 
   // 1단계: 페이지 로드 시 전체 슬롯 인원수 조회 (한 번만 실행)
   useEffect(() => {
     fetchAllScheduleCapacity();
   }, [fetchAllScheduleCapacity]);
 
-  // 2단계: 전체 슬롯 인원수 로드 완료 후, 주차 변경 시마다 내 스케줄 조회
+  // 2단계: 전체 슬롯 인원수 로드 완료 후, 초기 스케줄 조회 (한 번만)
   useEffect(() => {
-    if (!isLoadingCapacity) {
+    if (!isLoadingCapacity && !isInitialized) {
       fetchMySchedules();
     }
-  }, [isLoadingCapacity, fetchMySchedules]);
+  }, [isLoadingCapacity, isInitialized, fetchMySchedules]);
 
   const handleSlotClick = (dayIndex: number, time: string) => {
     const slotKey = `${dayIndex}-${time}`;
@@ -191,38 +259,188 @@ export default function ScheduleApplyPage() {
       // 현재 선택된 주차는 selectedSlots 사용 (사용자가 추가/제거한 것 포함)
       return selectedSlots.length * 0.5;
     } else {
-      // 다른 주차는 API에서 가져온 데이터만 사용
-      const weekSlots = convertSchedulesToSlots(allSchedules, week, currentYear, currentMonth);
+      // 다른 주차는 pendingSlotsByWeek에서 가져오기 (없으면 API 데이터)
+      const weekSlots = pendingSlotsByWeek[week] || convertSchedulesToSlots(allSchedules, week, currentYear, currentMonth);
       return weekSlots.length * 0.5;
     }
   };
 
   const currentWeekHours = calculateWeekHours(selectedWeek);
 
+  // 주차별 시간 데이터 (WeeklySummaryCard에 전달)
+  const weeklyHours: Record<number, number> = {
+    1: calculateWeekHours(1),
+    2: calculateWeekHours(2),
+    3: calculateWeekHours(3),
+    4: calculateWeekHours(4),
+    5: calculateWeekHours(5),
+  };
+
   // 월별 총 시간 계산 (모든 주차의 시간 합산)
-  const totalMonthHours = [1, 2, 3, 4, 5].reduce((total, week) => {
-    return total + calculateWeekHours(week);
-  }, 0);
+  const totalMonthHours = Object.values(weeklyHours).reduce((total, hours) => total + hours, 0);
+
+  // 최대 근무시간 상수
+  const MAX_WEEK_HOURS = 13;
+  const MAX_MONTH_HOURS = 27;
+  const MIN_CONSECUTIVE_HOURS = 2;
+
+  /**
+   * 연속 2시간 이상 선택 여부 검사 결과
+   */
+  interface ConsecutiveHoursResult {
+    isValid: boolean;
+    invalidDay?: number; // 문제가 있는 요일 인덱스
+    invalidBlock?: string; // 문제가 있는 시간대
+    slotCount?: number; // 해당 블록의 슬롯 수
+  }
+
+  /**
+   * 연속 2시간 이상 선택 여부 검사
+   * 각 요일별로 선택된 슬롯이 연속 2시간(4슬롯) 이상인지 확인
+   */
+  const checkConsecutiveHours = (): ConsecutiveHoursResult => {
+    if (selectedSlots.length === 0) return { isValid: true };
+
+    // 요일별로 슬롯 그룹화
+    const slotsByDay: Record<number, string[]> = {};
+    selectedSlots.forEach(slot => {
+      const [dayStr, time] = slot.split('-');
+      const day = parseInt(dayStr);
+      if (!slotsByDay[day]) slotsByDay[day] = [];
+      slotsByDay[day].push(time);
+    });
+
+    // 시간을 분으로 변환하는 함수
+    const timeToMinutes = (time: string): number => {
+      const [hour, minute] = time.split(':').map(Number);
+      return hour * 60 + minute;
+    };
+
+    // 각 요일별로 연속 블록 검사
+    for (const day in slotsByDay) {
+      const dayIndex = parseInt(day);
+      const times = slotsByDay[day].sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
+
+      let consecutiveCount = 1;
+      let blockStartTime = times[0];
+
+      for (let i = 1; i < times.length; i++) {
+        const prevMinutes = timeToMinutes(times[i - 1]);
+        const currMinutes = timeToMinutes(times[i]);
+
+        // 30분 간격이면 연속
+        if (currMinutes - prevMinutes === 30) {
+          consecutiveCount++;
+        } else {
+          // 연속이 끊김 - 이전 블록 검사
+          if (consecutiveCount < 4) {
+            return {
+              isValid: false,
+              invalidDay: dayIndex,
+              invalidBlock: `${blockStartTime}~${times[i - 1]}`,
+              slotCount: consecutiveCount,
+            };
+          }
+          consecutiveCount = 1;
+          blockStartTime = times[i];
+        }
+      }
+
+      // 마지막 블록 검사
+      if (consecutiveCount < 4) {
+        return {
+          isValid: false,
+          invalidDay: dayIndex,
+          invalidBlock: `${blockStartTime}~${times[times.length - 1]}`,
+          slotCount: consecutiveCount,
+        };
+      }
+    }
+
+    return { isValid: true };
+  };
+
+  // 유효성 검사
+  const isWeekHoursExceeded = currentWeekHours > MAX_WEEK_HOURS;
+  const isMonthHoursExceeded = totalMonthHours > MAX_MONTH_HOURS;
+  const consecutiveHoursResult = checkConsecutiveHours();
+
+  // 요일 인덱스를 요일명으로 변환
+  const getDayName = (dayIndex: number): string => {
+    const days = ['월', '화', '수', '목', '금'];
+    return days[dayIndex] || `${dayIndex}`;
+  };
+
+  // 유효성 검사 경고 메시지
+  const getValidationWarning = (): string | null => {
+    if (isWeekHoursExceeded) {
+      return `현재 주 최대 근무 가능시간 ${MAX_WEEK_HOURS}시간을 초과하였습니다.`;
+    }
+    if (isMonthHoursExceeded) {
+      return `현재 월 최대 근무 가능시간 ${MAX_MONTH_HOURS}시간을 초과하였습니다.`;
+    }
+    if (!consecutiveHoursResult.isValid && selectedSlots.length > 0) {
+      const dayName = consecutiveHoursResult.invalidDay !== undefined
+        ? getDayName(consecutiveHoursResult.invalidDay)
+        : '';
+      const blockInfo = consecutiveHoursResult.invalidBlock || '';
+      const slotCount = consecutiveHoursResult.slotCount || 0;
+      const hours = slotCount * 0.5;
+      return `${dayName}요일 ${blockInfo} 구간이 ${hours}시간입니다. 최소 ${MIN_CONSECUTIVE_HOURS}시간 이상 선택해주세요.`;
+    }
+    return null;
+  };
+
+  const validationWarning = getValidationWarning();
+
+  // 모든 주차의 신규 슬롯 계산 (선택된 슬롯 - 원본 슬롯)
+  const getAllNewSlots = (): { week: number; slots: string[] }[] => {
+    const allNewSlots: { week: number; slots: string[] }[] = [];
+
+    // 현재 주차는 selectedSlots에서, 다른 주차는 pendingSlotsByWeek에서 가져오기
+    for (let week = 1; week <= 5; week++) {
+      const originalSlots = originalSlotsByWeek[week] || new Set<string>();
+      const currentSlots = week === selectedWeek
+        ? selectedSlots
+        : (pendingSlotsByWeek[week] || []);
+
+      const newSlots = currentSlots.filter(slot => !originalSlots.has(slot));
+      if (newSlots.length > 0) {
+        allNewSlots.push({ week, slots: newSlots });
+      }
+    }
+
+    return allNewSlots;
+  };
+
+  const allNewSlots = getAllNewSlots();
+  const hasNewSlots = allNewSlots.length > 0;
+
+  const isSubmitDisabled = !hasNewSlots || isLoading || validationWarning !== null;
 
   const handleSubmit = async () => {
-    if (selectedSlots.length === 0) return;
+    if (!hasNewSlots) return;
 
     setIsLoading(true);
     setError(null);
     setFailedSlots([]);
 
     try {
-      // 선택된 슬롯을 TimeSlot 배열로 변환
-      const timeSlots = convertSlotsToTimeSlots(selectedSlots, selectedWeek, 2026, 1);
+      // 모든 주차의 신규 슬롯을 TimeSlot 배열로 변환
+      const allTimeSlots: TimeSlot[] = [];
+      for (const { week, slots } of allNewSlots) {
+        const timeSlots = convertSlotsToTimeSlots(slots, week, 2026, 2);
+        allTimeSlots.push(...timeSlots);
+      }
 
-      if (timeSlots.length === 0) {
-        setError('유효한 일정이 없습니다.');
+      if (allTimeSlots.length === 0) {
+        setError('신규로 추가된 일정이 없습니다.');
         setIsLoading(false);
         return;
       }
 
-      // API 호출
-      const response = await applyWorkSchedule({ slots: timeSlots });
+      // API 호출 (신규 슬롯만 전송)
+      const response = await applyWorkSchedule({ slots: allTimeSlots });
 
       if (response.isSuccess) {
         // 부분 실패가 있는 경우 (207 Multi-Status)
@@ -292,7 +510,7 @@ export default function ScheduleApplyPage() {
                   근로 시간 신청
                 </p>
                 <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                  2026년 1월
+                  2026년 2월
                 </p>
               </div>
             </div>
@@ -352,7 +570,7 @@ export default function ScheduleApplyPage() {
                 근로 시간 신청
               </p>
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-[rgba(255,255,255,0.8)]">
-                1월
+                2월
               </p>
             </div>
           </div>
@@ -375,7 +593,7 @@ export default function ScheduleApplyPage() {
               return (
                 <button
                   key={week}
-                  onClick={() => setSelectedWeek(week)}
+                  onClick={() => handleWeekChange(week)}
                   className={`flex-1 h-[3.6rem] rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
                   data-name="Button"
                 >
@@ -412,8 +630,17 @@ export default function ScheduleApplyPage() {
 
           {/* Week Summary List */}
           <div className="w-full">
-            <WeeklySummaryCard />
+            <WeeklySummaryCard weeklyHours={weeklyHours} />
           </div>
+
+          {/* Validation Warning */}
+          {validationWarning && (
+            <div className="w-full px-[1.6rem] py-[1.2rem] bg-yellow-50 border border-yellow-300 rounded-[1.2rem]">
+              <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-yellow-700">
+                {validationWarning}
+              </p>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
@@ -440,16 +667,16 @@ export default function ScheduleApplyPage() {
           <div className="w-full bg-white py-[2rem]">
             <button
               onClick={handleSubmit}
-              disabled={selectedSlots.length === 0 || isLoading}
+              disabled={isSubmitDisabled}
               className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
-                selectedSlots.length > 0 && !isLoading
+                !isSubmitDisabled
                   ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
                   : 'bg-[#eaeaea]'
               }`}
               data-name="Button"
             >
               <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
-                selectedSlots.length > 0 && !isLoading ? 'text-white' : 'text-[#cdcdcd]'
+                !isSubmitDisabled ? 'text-white' : 'text-[#cdcdcd]'
               }`}>
                 {isLoading ? '신청 중...' : '신청하기'}
               </p>
