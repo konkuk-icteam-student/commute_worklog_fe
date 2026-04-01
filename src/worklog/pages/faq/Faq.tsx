@@ -5,19 +5,32 @@ import SidePanel, { type TabData } from '@/worklog/shared/components/faq/SidePan
 import WriteForm from '@/worklog/shared/components/faq/WriteForm';
 import DetailView from '@/worklog/shared/components/faq/DetailView';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout';
+import Pagination from '@/worklog/shared/components/faq/Pagination';
 
 const Faq = () => {
   const [tabs, setTabs] = useState<TabData[]>([]); // 열린 탭 목록
   const [activeTabId, setActiveTabId] = useState<string | number>(0); // 현재 보고있는 탭 ID
   // 예시 데이터 배열
-  const dummyPosts = Array.from({ length: 15 }).map((_, i) => ({
-    id: i,
+  const dummyPosts = Array.from({ length: 50 }).map((_, i) => ({
+    id: i + 1,
     title:
       i % 2 === 0
-        ? '부서 계정으로 로그인 하려고 하는데 장시간 접속을 안해서 불가능하다는 문구가 뜬다고 합니다.'
-        : '홈페이지 접속 불가',
+        ? `[${i + 1}] 부서 계정으로 로그인 하려고 하는데 장시간 접속을 안해서 불가능하다는 문구가 뜬다고 합니다.`
+        : `[${i + 1}] 홈페이지 접속 불가`,
     date: '2023-10-0' + ((i % 9) + 1),
   }));
+
+  const ITEMS_PER_PAGE = 10;
+
+  // [추가] 페이지네이션 상태
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // [추가] 현재 페이지에 보여줄 데이터 슬라이싱
+  const totalPages = Math.ceil(dummyPosts.length / ITEMS_PER_PAGE);
+  const currentPosts = dummyPosts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   // 2. 탭 추가 로직 (핵심: Max 5개, FIFO)
   const addTab = (newTab: TabData) => {
@@ -130,7 +143,7 @@ const Faq = () => {
               </div>
 
               {/* 리스트 렌더링 */}
-              {dummyPosts.map((post) => (
+              {currentPosts.map((post) => (
                 <SearchBar
                   key={post.id}
                   id={post.id}
@@ -139,6 +152,13 @@ const Faq = () => {
                   onClick={handleItemClick} // 클릭 이벤트 전달
                 />
               ))}
+              <div className="mt-auto pb-4">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -13,9 +13,11 @@
     "@stomp/stompjs": "^7.2.1",
     "@yudiel/react-qr-scanner": "^2.5.0",
     "axios": "^1.13.2",
+    "date-fns": "^4.1.0",
     "lottie-react": "^2.4.1",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
+    "react-day-picker": "^9.13.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",
     "sockjs-client": "^1.6.1"
