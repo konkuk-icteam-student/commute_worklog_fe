@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" },
+    { "source": "/commute/:path*", "destination": "https://commute-fe.vercel.app/commute/:path*" }
+  ]
 }
