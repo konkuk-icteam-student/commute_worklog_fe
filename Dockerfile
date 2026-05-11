@@ -6,7 +6,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # pnpm 설치
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.20.0 --activate
 
 # 의존성 파일 복사 (캐시 최적화)
 COPY package.json pnpm-lock.yaml ./
