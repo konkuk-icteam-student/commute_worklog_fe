@@ -21,7 +21,7 @@ const Home = () => {
 
   // [Handlers]
   const goToCommute = () => {
-    navigate('/home');
+    navigate('/commute');
   };
 
   const goToWorklog = () => {

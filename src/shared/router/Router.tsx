@@ -71,7 +71,7 @@ const router = createBrowserRouter([
     element: <QRScannerPage />,
   },
   {
-     path: '/manager',
+    path: '/manager',
     element: <ManagerHomePage />,
   },
   {
@@ -95,7 +95,7 @@ const router = createBrowserRouter([
     element: <Faq />,
   },
   {
-    path: '/worklog/home',
+    path: '/branch',
     element: <Home />,
   },
   {
@@ -106,7 +106,6 @@ const router = createBrowserRouter([
     path: '/worklog/category/task',
     element: <Task />,
   },
-  
 ]);
 
 export default router;

@@ -25,7 +25,7 @@ const Login = () => {
       const response = await login({ email, password });
 
       if (response.isSuccess) {
-        console.log('✅ [Login Success] Redirecting to /worklog/home');
+        console.log('✅ [Login Success] Redirecting to /branch');
 
         // 구조 분해 할당 (userName, roleCode는 옵셔널이므로 undefined일 수 있음)
         const { userName, roleCode, accessToken } = response.details;
@@ -38,7 +38,7 @@ const Login = () => {
         localStorage.setItem('roleCode', roleCode ?? '');
 
         // 2. 페이지 이동 및 State 전달
-        navigate('/worklog/home', {
+        navigate('/branch', {
           state: {
             userName: userName ?? '', // 값이 없으면 빈 문자열 전달
             roleCode: roleCode ?? '', // 값이 없으면 빈 문자열 전달
