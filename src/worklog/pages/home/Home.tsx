@@ -20,8 +20,9 @@ const Home = () => {
   const roleText = roleCode === 'RL02' ? 'Manager' : 'Student';
 
   // [Handlers]
+  // 해당 이벤트 핸들러 실행 시 출근부 프로젝트로 가게 됨
   const goToCommute = () => {
-    navigate('/commute');
+    window.location.href = '/commute';
   };
 
   const goToWorklog = () => {
