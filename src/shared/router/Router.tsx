@@ -20,6 +20,7 @@ import Auth from '@/worklog/pages/auth/Auth';
 import Home from '@/worklog/pages/home/Home';
 import Department from '@/worklog/pages/category/Department';
 import Task from '@/worklog/pages/category/Task';
+import Mypage from '@/worklog/pages/mypage/Mypage';
 
 const router = createBrowserRouter([
   {
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
   {
     path: '/worklog/category/task',
     element: <Task />,
+  },
+  {
+    path: '/worklog/mypage',
+    element: <Mypage />,
   },
 ]);
 
