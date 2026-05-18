@@ -1,5 +1,5 @@
 import MainLayout from '@/worklog/shared/components/layout/MainLayout';
-import Logout from '@/worklog/shared/components/mypage/logout';
+import Logout from '@/worklog/shared/components/mypage/Logout';
 import ProfileBox from '@/worklog/shared/components/mypage/ProfileBox';
 import WorkLogList from '@/worklog/shared/components/mypage/WorkLogList';
 const Mypage = () => {
