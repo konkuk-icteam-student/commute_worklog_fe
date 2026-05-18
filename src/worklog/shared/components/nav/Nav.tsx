@@ -72,6 +72,14 @@ const Nav = ({ isOpen }: NavProps) => {
           <span className="text-[18px] font-[700] text-[#464A4D]">마이</span>
           <span
             className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
+            onClick={() => {
+              navigate('/worklog/mypage');
+            }}
+          >
+            마이페이지
+          </span>
+          <span
+            className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
             onClick={handleLogout}
           >
             로그아웃
