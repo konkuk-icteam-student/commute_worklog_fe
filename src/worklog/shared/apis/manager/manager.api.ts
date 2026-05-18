@@ -11,15 +11,15 @@ export interface Manager {
   managerId: number;
   managerName: string;
   managerFavorite: boolean;
-  teamId: number;
-  teamName: string;
+  organizationId: number;
+  organizationName: string;
   phonenum: string;
 }
 
 /** 1. 담당자 등록 요청 타입 */
 export interface CreateManagerRequest {
   name: string;
-  teamId: number;
+  organizationId: number;
   categoryId: number;
   phonenum: string;
 }
@@ -27,7 +27,7 @@ export interface CreateManagerRequest {
 /** 2. 담당자 목록 조회 요청 파라미터 타입 */
 export interface GetManagersParams {
   categoryId?: number;
-  teamId?: number;
+  organizationId?: number;
   favoriteOnly?: boolean; // default: false
 }
 
@@ -82,21 +82,21 @@ export interface ToggleFavoriteResponse {
 /**
  * 1. 담당자 등록
  * Method: POST
- * Path: /api/v1/manager
+ * Path: /api/manager
  */
 export const createManager = async (data: CreateManagerRequest): Promise<CreateManagerResponse> => {
-  const response = await apiClient.post<CreateManagerResponse>('/api/v1/manager', data);
+  const response = await apiClient.post<CreateManagerResponse>('/api/manager', data);
   return response.data;
 };
 
 /**
  * 2. 담당자 목록 조회
  * Method: GET
- * Path: /api/v1/manager
- * Params: categoryId, teamId, favoriteOnly
+ * Path: /api/manager
+ * Params: categoryId, organizationId, favoriteOnly
  */
 export const getManagers = async (params?: GetManagersParams): Promise<GetManagersResponse> => {
-  const response = await apiClient.get<GetManagersResponse>('/api/v1/manager', {
+  const response = await apiClient.get<GetManagersResponse>('/api/manager', {
     params: {
       ...params,
       favoriteOnly: params?.favoriteOnly ?? false, // 기본값 false 설정
@@ -108,17 +108,17 @@ export const getManagers = async (params?: GetManagersParams): Promise<GetManage
 /**
  * 3. 담당자 삭제
  * Method: DELETE
- * Path: /api/v1/manager/{managerId}
+ * Path: /api/manager/{managerId}
  */
 export const deleteManager = async (managerId: number): Promise<DeleteManagerResponse> => {
-  const response = await apiClient.delete<DeleteManagerResponse>(`/api/v1/manager/${managerId}`);
+  const response = await apiClient.delete<DeleteManagerResponse>(`/api/manager/${managerId}`);
   return response.data;
 };
 
 /**
  * 4. 담당자 즐겨찾기 등록 및 해제
  * Method: PATCH
- * Path: /api/v1/manager/{managerId}/category/{categoryId}
+ * Path: /api/manager/{managerId}/category/{categoryId}
  * Query: favorite (boolean)
  */
 export const toggleFavorite = async (
@@ -127,7 +127,7 @@ export const toggleFavorite = async (
   favorite: boolean
 ): Promise<ToggleFavoriteResponse> => {
   const response = await apiClient.patch<ToggleFavoriteResponse>(
-    `/api/v1/manager/${managerId}/category/${categoryId}`,
+    `/api/manager/${managerId}/category/${categoryId}`,
     null, // Patch body 없음
     {
       params: { favorite },

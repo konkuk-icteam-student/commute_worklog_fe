@@ -113,10 +113,10 @@ const Category = () => {
                   managerId={manager.managerId}
                   categoryName={manager.categoryName} // title -> categoryName (분류)
                   managerName={manager.managerName} // name -> managerName (성함)
-                  teamName={manager.teamName} // department -> teamName (소속)
+                  organizationName={manager.organizationName} // department -> organizationName (소속)
                   phonenum={manager.phonenum} // phone -> phonenum (번호)
                   // 수정 모달을 위한 ID값들 전달
-                  teamId={manager.teamId}
+                  organizationId={manager.organizationId}
                   categoryId={manager.categoryId}
                   onEditClick={openEditModal}
                 />

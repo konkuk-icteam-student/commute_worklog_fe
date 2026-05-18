@@ -3,10 +3,15 @@ import Post2 from '@/worklog/shared/components/posting/Post2';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout'; // MainLayout import
 import DeleteConfirmationModal from '@/worklog/shared/components/modal/DeleteConfirmationModal';
 import DeleteFailureModal from '@/worklog/shared/components/modal/DeleteFailureModal';
-import { createTeam, getTeams, deleteTeam, type Team } from '../../shared/apis/team/team.api';
+import {
+  createOrganization,
+  getOrganizations,
+  deleteOrganization,
+  type Organization,
+} from '../../shared/apis/organization/Organization.api';
 
 const Department = () => {
-  const [teams, setTeams] = useState<Team[]>([]); // 서버에서 받아온 소속 리스트
+  const [organizations, setOrganizations] = useState<Organization[]>([]); // 서버에서 받아온 소속 리스트
   const [inputValue, setInputValue] = useState(''); // 입력창 값
 
   // 모달 상태
@@ -15,23 +20,23 @@ const Department = () => {
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
 
   // 2. 초기 데이터 조회 (GET)
-  const fetchTeams = async () => {
-    console.log('🔄 [Action] 소속 목록 조회 시작 (fetchTeams)'); // [로그] 조회 시작
+  const fetchOrganizations = async () => {
+    console.log('🔄 [Action] 소속 목록 조회 시작 (fetchOrganizations)'); // [로그] 조회 시작
     try {
-      const response = await getTeams();
-      console.log('📥 [API Response] 조회된 소속 리스트:', response.details.teams); // [로그] 응답 데이터 확인
-      setTeams(response.details.teams || []);
+      const response = await getOrganizations();
+      console.log('📥 [API Response] 조회된 소속 리스트:', response.details.organizations); // [로그] 응답 데이터 확인
+      setOrganizations(response.details.organizations || []);
     } catch (error) {
       console.error('소속 목록 조회 실패:', error);
     }
   };
 
   useEffect(() => {
-    fetchTeams();
+    fetchOrganizations();
   }, []);
 
   // 3. 소속 등록 (POST)
-  const handleAddTeam = async () => {
+  const handleAddOrganization = async () => {
     console.log('🖱️ [Action] 추가하기 버튼 클릭 / 입력값:', inputValue);
     if (!inputValue.trim()) {
       alert('소속 이름을 입력해주세요.');
@@ -39,15 +44,15 @@ const Department = () => {
     }
 
     try {
-      const requestData = { teamName: inputValue };
+      const requestData = { organizationName: inputValue };
       console.log('📤 [API Request] 소속 등록 요청 데이터:', requestData);
 
       // 3. API 호출
-      const response = await createTeam(requestData);
+      const response = await createOrganization(requestData);
       console.log('✅ [API Success] 소속 등록 성공:', response);
 
       setInputValue(''); // 입력창 초기화
-      await fetchTeams(); // 목록 새로고침
+      await fetchOrganizations(); // 목록 새로고침
     } catch (error) {
       console.error('소속 등록 실패:', error);
       alert('등록 중 오류가 발생했습니다.');
@@ -68,14 +73,14 @@ const Department = () => {
     console.log(`[API Request] 소속 삭제 요청 ID: ${deleteTarget.id}`);
 
     try {
-      const response = await deleteTeam(deleteTarget.id);
+      const response = await deleteOrganization(deleteTarget.id);
       console.log('✅ [API Success] 소속 삭제 결과:', response);
 
       if (response.isSuccess) {
         // 성공 시: 모달 닫고 목록 새로고침
         setIsConfirmModalOpen(false);
         setDeleteTarget(null);
-        await fetchTeams();
+        await fetchOrganizations();
       } else {
         console.log('⚠️ [API Warning] 삭제 실패 (서버 로직):', response.message);
         // 실패 시 (isSuccess가 false인 경우): 실패 모달 띄우기
@@ -105,7 +110,7 @@ const Department = () => {
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddTeam()} // 엔터키로도 등록 가능
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddOrganization()} // 엔터키로도 등록 가능
                   placeholder="추가할 소속 이름을 입력하세요" // placeholder 변경 제안
                   className="h-full w-full bg-transparent text-[16px] outline-none placeholder:text-[#8C9499]"
                 />
@@ -113,7 +118,7 @@ const Department = () => {
 
               {/* Add Button */}
               <button
-                onClick={handleAddTeam}
+                onClick={handleAddOrganization}
                 className="h-[48px] rounded-[24px] border border-[#E8EEF2] px-6 text-[16px] font-[700] text-[#464A4D] hover:bg-gray-50"
               >
                 추가하기
@@ -125,12 +130,12 @@ const Department = () => {
         {/* 2. Contents Section */}
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1200px] px-4 py-4">
-            {teams.length > 0 ? (
-              teams.map((team) => (
+            {organizations.length > 0 ? (
+              organizations.map((org) => (
                 <Post2
-                  key={team.teamId}
-                  id={team.teamId}
-                  title={team.teamName}
+                  key={org.organizationId}
+                  id={org.organizationId}
+                  title={org.organizationName}
                   onDelete={handleDeleteRequest}
                 />
               ))

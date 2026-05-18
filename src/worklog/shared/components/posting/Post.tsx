@@ -8,7 +8,7 @@ import graypencil from '@/worklog/shared/assets/graypencil.svg';
 export interface ManagerEditData {
   managerId: number;
   name: string; // form 데이터는 name
-  teamId: number;
+  organizationId: number;
   categoryId: number;
   phone: string; // form 데이터는 phone
 }
@@ -17,9 +17,9 @@ export interface PostProps {
   managerId: number;
   categoryName: string; // 분류 (Post의 큰 제목)
   managerName: string; // 담당자 성함
-  teamName: string; // 소속
+  organizationName: string; // 소속
   phonenum: string; // 전화번호
-  teamId: number; // 수정용
+  organizationId: number; // 수정용
   categoryId: number; // 수정용
   onEditClick: (data: ManagerEditData) => void;
 }
@@ -28,9 +28,9 @@ const Post = ({
   managerId,
   categoryName,
   managerName,
-  teamName,
+  organizationName,
   phonenum,
-  teamId,
+  organizationId,
   categoryId,
   onEditClick,
 }: PostProps) => {
@@ -45,7 +45,7 @@ const Post = ({
     onEditClick({
       managerId,
       name: managerName, // UI props -> Form data 매핑
-      teamId,
+      organizationId,
       categoryId,
       phone: phonenum, // UI props -> Form data 매핑
     });
@@ -78,7 +78,7 @@ const Post = ({
             <span>{managerName}</span>
             <span className="h-[2px] w-[2px] rounded-full bg-[#464A4D]"></span>
             {/* 소속 */}
-            <span>{teamName}</span>
+            <span>{organizationName}</span>
             {/* 직급(role)은 API에 없어서 제거됨 */}
           </div>
         </div>
