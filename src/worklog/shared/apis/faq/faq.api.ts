@@ -7,7 +7,7 @@ import apiClient from '../../../../shared/apis/apiClient';
 /** 담당자 요약 정보 타입 (상세 조회용) */
 export interface ManagerSummary {
   managerName: string;
-  teamName: string;
+  organizationName: string;
   categoryName: string;
 }
 
@@ -85,11 +85,11 @@ export interface FaqSuccessResponse {
 /**
  * 1. FAQ 상세 조회
  * Method: GET
- * Path: /api/v1/faq/{faqId}
+ * Path: /api/faq/{faqId}
  * Query: date (yyyy-MM-dd)
  */
 export const getFaqDetail = async (faqId: number, date: string): Promise<FaqDetailResponse> => {
-  const response = await apiClient.get<FaqDetailResponse>(`/api/v1/faq/${faqId}`, {
+  const response = await apiClient.get<FaqDetailResponse>(`/api/faq/${faqId}`, {
     params: { date },
   });
   return response.data;
@@ -98,31 +98,31 @@ export const getFaqDetail = async (faqId: number, date: string): Promise<FaqDeta
 /**
  * 2. FAQ 수정
  * Method: PUT
- * Path: /api/v1/faq/{faqId}
+ * Path: /api/faq/{faqId}
  */
 export const updateFaq = async (faqId: number, data: FaqRequest): Promise<FaqSuccessResponse> => {
-  const response = await apiClient.put<FaqSuccessResponse>(`/api/v1/faq/${faqId}`, data);
+  const response = await apiClient.put<FaqSuccessResponse>(`/api/faq/${faqId}`, data);
   return response.data;
 };
 
 /**
  * 3. FAQ 삭제
  * Method: DELETE
- * Path: /api/v1/faq/{faqId}
+ * Path: /api/faq/{faqId}
  */
 export const deleteFaq = async (faqId: number): Promise<FaqSuccessResponse> => {
-  const response = await apiClient.delete<FaqSuccessResponse>(`/api/v1/faq/${faqId}`);
+  const response = await apiClient.delete<FaqSuccessResponse>(`/api/faq/${faqId}`);
   return response.data;
 };
 
 /**
  * 4. FAQ 목록 조회
  * Method: GET
- * Path: /api/v1/faq
+ * Path: /api/faq
  */
 export const getFaqList = async (params?: GetFaqListParams): Promise<FaqListResponse> => {
   const serverPage = Math.max(0, (params?.page || 1) - 1);
-  const response = await apiClient.get<FaqListResponse>('/api/v1/faq', {
+  const response = await apiClient.get<FaqListResponse>('/api/faq', {
     params: {
       ...params,
       page: serverPage, // 기본값 0 설정
@@ -137,9 +137,9 @@ export const getFaqList = async (params?: GetFaqListParams): Promise<FaqListResp
 /**
  * 5. FAQ 작성 (등록)
  * Method: POST
- * Path: /api/v1/faq
+ * Path: /api/faq
  */
 export const createFaq = async (data: FaqRequest): Promise<FaqSuccessResponse> => {
-  const response = await apiClient.post<FaqSuccessResponse>('/api/v1/faq', data);
+  const response = await apiClient.post<FaqSuccessResponse>('/api/faq', data);
   return response.data;
 };

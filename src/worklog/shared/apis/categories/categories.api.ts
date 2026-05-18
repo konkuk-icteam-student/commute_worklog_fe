@@ -61,7 +61,7 @@ export const updateCategory = async (
   data: CategoryRequest
 ): Promise<UpdateCategoryResponse> => {
   const response = await apiClient.put<UpdateCategoryResponse>(
-    `/api/v1/categories/${categoryId}`,
+    `/api/categories/${categoryId}`,
     data
   );
   return response.data;
@@ -73,9 +73,7 @@ export const updateCategory = async (
  * Path: /api/v1/categories/{categoryId}
  */
 export const deleteCategory = async (categoryId: number): Promise<DeleteCategoryResponse> => {
-  const response = await apiClient.delete<DeleteCategoryResponse>(
-    `/api/v1/categories/${categoryId}`
-  );
+  const response = await apiClient.delete<DeleteCategoryResponse>(`/api/categories/${categoryId}`);
   return response.data;
 };
 
@@ -85,7 +83,7 @@ export const deleteCategory = async (categoryId: number): Promise<DeleteCategory
  * Path: /api/v1/categories
  */
 export const getCategories = async (): Promise<GetCategoriesResponse> => {
-  const response = await apiClient.get<GetCategoriesResponse>('/api/v1/categories');
+  const response = await apiClient.get<GetCategoriesResponse>('/api/categories');
   return response.data;
 };
 
@@ -95,6 +93,6 @@ export const getCategories = async (): Promise<GetCategoriesResponse> => {
  * Path: /api/v1/categories
  */
 export const createCategory = async (data: CategoryRequest): Promise<CreateCategoryResponse> => {
-  const response = await apiClient.post<CreateCategoryResponse>('/api/v1/categories', data);
+  const response = await apiClient.post<CreateCategoryResponse>('/api/categories', data);
   return response.data;
 };

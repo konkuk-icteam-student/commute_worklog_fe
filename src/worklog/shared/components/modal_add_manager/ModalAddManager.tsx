@@ -3,14 +3,17 @@ import blueX from '@/worklog/shared/assets/blueX.svg';
 import DeleteConfirmationModal from '@/worklog/shared/components/modal/DeleteConfirmationModal';
 
 // API import
-import { getTeams, type Team } from '@/worklog/shared/apis/team/team.api';
+import {
+  getOrganizations,
+  type Organization,
+} from '@/worklog/shared/apis/organization/Organization.api';
 import { getCategories, type Category } from '@/worklog/shared/apis/categories/categories.api';
 import { createManager, deleteManager } from '@/worklog/shared/apis/manager/manager.api';
 
 export interface ManagerData {
   managerId?: number;
   name: string;
-  teamId: number;
+  organizationId: number;
   categoryId: number;
   phone: string;
 }
@@ -33,13 +36,13 @@ const ModalAddManager = ({
   // Form 상태
   const [formData, setFormData] = useState<ManagerData>({
     name: '',
-    teamId: 0,
+    organizationId: 0,
     categoryId: 0,
     phone: '',
   });
 
   // Dropdown 데이터 상태
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
   // 삭제 확인 모달 상태
@@ -51,10 +54,10 @@ const ModalAddManager = ({
       // 1. 소속/분류 목록 조회
       const fetchData = async () => {
         try {
-          const [teamRes, catRes] = await Promise.all([getTeams(), getCategories()]);
+          const [orgRes, catRes] = await Promise.all([getOrganizations(), getCategories()]);
 
-          if (teamRes.isSuccess && teamRes.details) {
-            setTeams(teamRes.details.teams || []);
+          if (orgRes.isSuccess && orgRes.details) {
+            setOrganizations(orgRes.details.organizations || []);
           }
           // [주의] Category API는 details.categories에 데이터가 있었죠? (이전 질문 참고)
           if (catRes.isSuccess && catRes.details) {
@@ -70,7 +73,7 @@ const ModalAddManager = ({
       if (mode === 'edit' && initialData) {
         setFormData(initialData);
       } else {
-        setFormData({ name: '', teamId: 0, categoryId: 0, phone: '' });
+        setFormData({ name: '', organizationId: 0, categoryId: 0, phone: '' });
       }
     }
   }, [isOpen, mode, initialData]);
@@ -80,15 +83,15 @@ const ModalAddManager = ({
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      // teamId, categoryId는 숫자로 변환
-      [name]: name === 'teamId' || name === 'categoryId' ? Number(value) : value,
+      // organizationId, categoryId는 숫자로 변환
+      [name]: name === 'organizationId' || name === 'categoryId' ? Number(value) : value,
     }));
   };
 
   // 등록 / 수정 핸들러
   const handleSubmit = async () => {
     // 유효성 검사
-    if (!formData.name || !formData.teamId || !formData.categoryId || !formData.phone) {
+    if (!formData.name || !formData.organizationId || !formData.categoryId || !formData.phone) {
       alert('모든 필드를 입력해주세요.');
       return;
     }
@@ -100,7 +103,7 @@ const ModalAddManager = ({
         // createManager API 호출
         const response = await createManager({
           name: formData.name,
-          teamId: formData.teamId,
+          organizationId: formData.organizationId,
           categoryId: formData.categoryId,
           phonenum: formData.phone,
         });
@@ -201,17 +204,17 @@ const ModalAddManager = ({
             <div>
               <label className={labelStyle}>소속</label>
               <select
-                name="teamId"
-                value={formData.teamId}
+                name="organizationId"
+                value={formData.organizationId}
                 onChange={handleChange}
                 className={inputStyle}
               >
                 <option value={0} disabled>
                   선택해주세요
                 </option>
-                {teams.map((t) => (
-                  <option key={t.teamId} value={t.teamId}>
-                    {t.teamName}
+                {organizations.map((org) => (
+                  <option key={org.organizationId} value={org.organizationId}>
+                    {org.organizationName}
                   </option>
                 ))}
               </select>
