@@ -52,7 +52,7 @@ export interface FaqDetailResponse {
 
 /** 4. FAQ 목록 조회 요청 파라미터 타입 */
 export interface GetFaqListParams {
-  teamId?: number;
+  organizationId?: number;
   categoryId?: number;
   keyword?: string;
   searchScope?: 'TITLE_CONTENT' | 'TITLE' | 'CONTENT' | 'WRITER';
