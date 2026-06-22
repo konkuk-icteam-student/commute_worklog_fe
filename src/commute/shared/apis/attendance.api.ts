@@ -13,7 +13,7 @@ import type {
  * @returns API 응답
  */
 export const checkIn = async (data: CheckInOutRequest): Promise<ApiResponse<null>> => {
-  const response = await apiClient.post<ApiResponse<null>>('/api/v1/attendance/check-in', data);
+  const response = await apiClient.post<ApiResponse<null>>('/api/attendance/check-in', data);
   return response.data;
 };
 
@@ -23,7 +23,7 @@ export const checkIn = async (data: CheckInOutRequest): Promise<ApiResponse<null
  * @returns API 응답
  */
 export const checkOut = async (data: CheckInOutRequest): Promise<ApiResponse<null>> => {
-  const response = await apiClient.post<ApiResponse<null>>('/api/v1/attendance/check-out', data);
+  const response = await apiClient.post<ApiResponse<null>>('/api/attendance/check-out', data);
   return response.data;
 };
 
@@ -33,9 +33,8 @@ export const checkOut = async (data: CheckInOutRequest): Promise<ApiResponse<nul
  */
 // TODO: api 연동 기능 구현 필요
 export const getTodayHistory = async (): Promise<ApiResponse<TodayAttendanceHistoryDetails>> => {
-  const response = await apiClient.get<ApiResponse<TodayAttendanceHistoryDetails>>(
-    '/api/v1/attendance/today'
-  );
+  const response =
+    await apiClient.get<ApiResponse<TodayAttendanceHistoryDetails>>('/api/attendance/today');
   return response.data;
 };
 
@@ -44,7 +43,7 @@ export const getTodayHistory = async (): Promise<ApiResponse<TodayAttendanceHist
  * @returns API 응답 (QR 토큰 정보)
  */
 export const getQrToken = async (): Promise<ApiResponse<QrTokenDetails>> => {
-  const response = await apiClient.get<ApiResponse<QrTokenDetails>>('/api/v1/attendance/qr-token');
+  const response = await apiClient.get<ApiResponse<QrTokenDetails>>('/api/attendance/qr-token');
   return response.data;
 };
 
@@ -58,7 +57,7 @@ export const getAttendanceHistory = async (
   date: string
 ): Promise<ApiResponse<AttendanceHistoryDetails>> => {
   const response = await apiClient.get<ApiResponse<AttendanceHistoryDetails>>(
-    '/api/v1/attendance/history',
+    '/api/attendance/history',
     {
       params: { date },
     }
