@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 
 // SVG path for dropdown arrow
 const svgPaths = {
-  p351ca610: "M4 6L8 10L12 6"
+  p351ca610: 'M4 6L8 10L12 6',
 };
 
 interface UserSelectProps {
@@ -19,7 +19,7 @@ export default function UserSelect({ value, onChange, options }: UserSelectProps
 
   // Filter options based on search text
   const filteredOptions = searchText
-    ? options.filter(option => option.includes(searchText))
+    ? options.filter((option) => option.includes(searchText))
     : options;
 
   useEffect(() => {
@@ -57,20 +57,40 @@ export default function UserSelect({ value, onChange, options }: UserSelectProps
       {/* Select Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-white h-[37.064px] relative rounded-[10px] shrink-0 w-[143.871px]"
+        className="relative h-[37.064px] w-[143.871px] shrink-0 rounded-[10px] bg-white"
         data-name="CustomSelect"
       >
-        <div aria-hidden="true" className="absolute border-[0.542px] border-gray-200 border-solid inset-0 pointer-events-none rounded-[10px]" />
-        <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[37.064px] items-center justify-between px-[12.541px] py-[0.542px] relative w-[143.871px]">
-          <div className="basis-0 grow h-[28px] min-h-px min-w-px relative shrink-0" data-name="Text">
-            <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border h-[28px] overflow-clip relative rounded-[inherit] w-full">
-              <p className="absolute font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] left-0 not-italic text-[#09121c] text-[16px] text-nowrap top-[1.17px] tracking-[0.18px] whitespace-pre">{value}</p>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-[10px] border-[0.542px] border-solid border-gray-200"
+        />
+        <div className="relative box-border flex h-[37.064px] w-[143.871px] content-stretch items-center justify-between border-0 border-solid border-[transparent] bg-clip-padding px-[12.541px] py-[0.542px]">
+          <div
+            className="relative h-[28px] min-h-px min-w-px shrink-0 grow basis-0"
+            data-name="Text"
+          >
+            <div className="relative box-border h-[28px] w-full overflow-clip rounded-[inherit] border-0 border-solid border-[transparent] bg-clip-padding">
+              <p className="absolute left-0 top-[1.17px] whitespace-pre text-nowrap font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] not-italic leading-[24px] tracking-[0.18px] text-[#09121c]">
+                {value}
+              </p>
             </div>
           </div>
-          <div className="relative shrink-0 size-[15.996px]" data-name="Icon">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
+          <div className="relative size-[15.996px] shrink-0" data-name="Icon">
+            <svg
+              className="block size-full"
+              fill="none"
+              preserveAspectRatio="none"
+              viewBox="0 0 16 16"
+            >
               <g id="Icon">
-                <path d={svgPaths.p351ca610} id="Vector" stroke="#09121C" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" />
+                <path
+                  d={svgPaths.p351ca610}
+                  id="Vector"
+                  stroke="#09121C"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.333"
+                />
               </g>
             </svg>
           </div>
@@ -79,41 +99,48 @@ export default function UserSelect({ value, onChange, options }: UserSelectProps
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute bg-white left-0 mt-[4px] rounded-[10px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.15)] top-full w-[143.871px] z-50" data-name="Dropdown">
-          <div className="content-stretch flex flex-col items-start p-[8px] relative w-full">
+        <div
+          className="absolute left-0 top-full z-50 mt-[4px] w-[143.871px] rounded-[10px] bg-white shadow-[0px_4px_20px_0px_rgba(81,168,255,0.15)]"
+          data-name="Dropdown"
+        >
+          <div className="relative flex w-full flex-col content-stretch items-start p-[8px]">
             {/* Search Input */}
-            <div className="h-[40px] relative shrink-0 w-full" data-name="SearchInput">
+            <div className="relative h-[40px] w-full shrink-0" data-name="SearchInput">
               <input
                 ref={inputRef}
                 type="text"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder="이름 검색"
-                className="w-full h-full px-[12px] py-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#09121c] placeholder-gray-400 border-b border-gray-100 outline-none"
+                className="h-full w-full border-b border-gray-100 px-[12px] py-[8px] font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#09121c] placeholder-gray-400 outline-none"
               />
             </div>
 
             {/* Options */}
-            <div className="max-h-[160px] overflow-y-auto w-full scrollbar-hide">
+            <div className="scrollbar-hide max-h-[160px] w-full overflow-y-auto">
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <button
                     key={option}
                     onClick={() => handleSelect(option)}
-                    className={`h-[40px] relative shrink-0 w-full hover:bg-gray-50 ${
+                    className={`relative h-[40px] w-full shrink-0 hover:bg-gray-50 ${
                       value === option ? 'bg-[#f1f8ff]' : ''
                     }`}
                     data-name="Option"
                   >
-                    <div className="bg-clip-padding border-0 border-[transparent] border-solid box-border content-stretch flex h-[40px] items-center px-[12px] py-[8px] relative w-full">
-                      <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] leading-[24px] not-italic text-[16px] text-nowrap tracking-[0.18px] whitespace-pre ${
-                        value === option ? 'text-[#51a8ff]' : 'text-[#09121c]'
-                      }`}>{option}</p>
+                    <div className="relative box-border flex h-[40px] w-full content-stretch items-center border-0 border-solid border-[transparent] bg-clip-padding px-[12px] py-[8px]">
+                      <p
+                        className={`whitespace-pre text-nowrap font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] not-italic leading-[24px] tracking-[0.18px] ${
+                          value === option ? 'text-[#51a8ff]' : 'text-[#09121c]'
+                        }`}
+                      >
+                        {option}
+                      </p>
                     </div>
                   </button>
                 ))
               ) : (
-                <div className="h-[40px] flex items-center justify-center">
+                <div className="flex h-[40px] items-center justify-center">
                   <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-gray-400">
                     결과 없음
                   </p>

@@ -21,7 +21,7 @@ export const sendVerificationCode = async (
   data: SendVerificationCodeRequest
 ): Promise<ApiResponse<null>> => {
   const response = await apiClient.post<ApiResponse<null>>(
-    '/api/v1/auth/send-verification-code',
+    '/api/auth/send-verification-code',
     data
   );
   return response.data;
@@ -33,7 +33,7 @@ export const sendVerificationCode = async (
  * @returns API 응답
  */
 export const verifyCode = async (data: VerifyCodeRequest): Promise<ApiResponse<null>> => {
-  const response = await apiClient.post<ApiResponse<null>>('/api/v1/auth/verify-code', data);
+  const response = await apiClient.post<ApiResponse<null>>('/api/auth/verify-code', data);
   return response.data;
 };
 
@@ -42,13 +42,8 @@ export const verifyCode = async (data: VerifyCodeRequest): Promise<ApiResponse<n
  * @param data 회원가입 정보
  * @returns API 응답 (사용자 정보 포함)
  */
-export const register = async (
-  data: RegisterRequest
-): Promise<ApiResponse<RegisterResponse>> => {
-  const response = await apiClient.post<ApiResponse<RegisterResponse>>(
-    '/api/v1/auth/register',
-    data
-  );
+export const register = async (data: RegisterRequest): Promise<ApiResponse<RegisterResponse>> => {
+  const response = await apiClient.post<ApiResponse<RegisterResponse>>('/api/auth/register', data);
   return response.data;
 };
 
@@ -58,7 +53,7 @@ export const register = async (
  * @returns API 응답 (토큰 정보 포함)
  */
 export const login = async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
-  const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/v1/auth/login', data);
+  const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/auth/login', data);
 
   // 로그인 성공 시 토큰 저장
   if (response.data.isSuccess && response.data.details) {
@@ -75,7 +70,7 @@ export const login = async (data: LoginRequest): Promise<ApiResponse<LoginRespon
  */
 export const logout = async (): Promise<ApiResponse<null>> => {
   try {
-    const response = await apiClient.post<ApiResponse<null>>('/api/v1/auth/logout');
+    const response = await apiClient.post<ApiResponse<null>>('/api/auth/logout');
 
     // 로그아웃 성공 시 로컬 스토리지의 토큰 삭제
     if (response.data.isSuccess) {
@@ -99,7 +94,7 @@ export const refreshToken = async (
   data: RefreshTokenRequest
 ): Promise<ApiResponse<RefreshTokenResponse>> => {
   const response = await apiClient.post<ApiResponse<RefreshTokenResponse>>(
-    '/api/v1/auth/refresh-token',
+    '/api/auth/refresh-token',
     data
   );
 

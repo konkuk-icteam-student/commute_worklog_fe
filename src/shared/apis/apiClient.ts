@@ -1,11 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import {
-  getAccessToken,
-  getRefreshToken,
-  clearTokens,
-  saveLoginInfo,
-} from '../utils/tokenManager';
+import { getAccessToken, getRefreshToken, clearTokens, saveLoginInfo } from '../utils/tokenManager';
 
 /**
  * API 베이스 URL
@@ -52,7 +47,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    const response = await axios.post('/api/v1/auth/refresh-token', {
+    const response = await axios.post('/api/auth/refresh-token', {
       refreshToken,
     });
 

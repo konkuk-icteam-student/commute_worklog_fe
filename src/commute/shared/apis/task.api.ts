@@ -15,7 +15,7 @@ import type {
  * @returns API 응답 (정규/비정규 업무 목록)
  */
 export const getTasksByDate = async (date: string): Promise<ApiResponse<TasksByDateDetails>> => {
-  const response = await apiClient.get<ApiResponse<TasksByDateDetails>>('/api/v1/tasks', {
+  const response = await apiClient.get<ApiResponse<TasksByDateDetails>>('/api/tasks', {
     params: { date },
   });
   return response.data;
@@ -28,7 +28,7 @@ export const getTasksByDate = async (date: string): Promise<ApiResponse<TasksByD
  */
 // TODO: api 연동 기능 구현 필요
 export const getTaskDetail = async (taskId: number): Promise<ApiResponse<TaskDetail>> => {
-  const response = await apiClient.get<ApiResponse<TaskDetail>>(`/api/v1/tasks/${taskId}`);
+  const response = await apiClient.get<ApiResponse<TaskDetail>>(`/api/tasks/${taskId}`);
   return response.data;
 };
 
@@ -41,7 +41,7 @@ export const toggleTaskComplete = async (
   taskId: number
 ): Promise<ApiResponse<ToggleCompleteDetails>> => {
   const response = await apiClient.patch<ApiResponse<ToggleCompleteDetails>>(
-    `/api/v1/tasks/${taskId}/toggle-complete`
+    `/api/tasks/${taskId}/toggle-complete`
   );
   return response.data;
 };
@@ -52,7 +52,7 @@ export const toggleTaskComplete = async (
  * @returns API 응답 (생성된 업무 상세)
  */
 export const createTask = async (data: CreateTaskRequest): Promise<ApiResponse<TaskDetail>> => {
-  const response = await apiClient.post<ApiResponse<TaskDetail>>('/api/v1/tasks', data);
+  const response = await apiClient.post<ApiResponse<TaskDetail>>('/api/tasks', data);
   return response.data;
 };
 
@@ -67,7 +67,7 @@ export const updateTask = async (
   taskId: number,
   data: UpdateTaskRequest
 ): Promise<ApiResponse<TaskDetail>> => {
-  const response = await apiClient.patch<ApiResponse<TaskDetail>>(`/api/v1/tasks/${taskId}`, data);
+  const response = await apiClient.patch<ApiResponse<TaskDetail>>(`/api/tasks/${taskId}`, data);
   return response.data;
 };
 
@@ -83,7 +83,7 @@ export const setTaskComplete = async (
   data: SetTaskCompleteRequest
 ): Promise<ApiResponse<ToggleCompleteDetails>> => {
   const response = await apiClient.patch<ApiResponse<ToggleCompleteDetails>>(
-    `/api/v1/tasks/${taskId}/complete`,
+    `/api/tasks/${taskId}/complete`,
     data
   );
   return response.data;
@@ -95,6 +95,6 @@ export const setTaskComplete = async (
  * @returns API 응답 (details: null)
  */
 export const deleteTask = async (taskId: number): Promise<ApiResponse<null>> => {
-  const response = await apiClient.delete<ApiResponse<null>>(`/api/v1/tasks/${taskId}`);
+  const response = await apiClient.delete<ApiResponse<null>>(`/api/tasks/${taskId}`);
   return response.data;
 };

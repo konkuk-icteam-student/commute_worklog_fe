@@ -3,6 +3,7 @@
 이 문서는 회원가입/로그인 API 연동 코드의 사용 방법을 설명합니다.
 
 ## 목차
+
 1. [설정](#설정)
 2. [API 함수 사용법](#api-함수-사용법)
 3. [토큰 관리](#토큰-관리)
@@ -56,7 +57,7 @@ import { sendVerificationCode } from '@/shared/apis';
 const handleSendCode = async () => {
   try {
     const response = await sendVerificationCode({
-      email: 'user@example.com'
+      email: 'user@example.com',
     });
 
     if (response.isSuccess) {
@@ -77,7 +78,7 @@ const handleVerifyCode = async () => {
   try {
     const response = await verifyCode({
       email: 'user@example.com',
-      code: '123456'
+      code: '123456',
     });
 
     if (response.isSuccess) {
@@ -103,7 +104,7 @@ const handleRegister = async () => {
       password: 'securePass123',
       name: '홍길동',
       roleCode: 'RL01', // RL01: 학생/사원, RL02: 관리자
-      organizationId: 1
+      organizationId: 1,
     };
 
     const response = await register(data);
@@ -127,7 +128,7 @@ const handleLogin = async () => {
   try {
     const response = await login({
       email: 'user@example.com',
-      password: 'password123'
+      password: 'password123',
     });
 
     if (response.isSuccess && response.details) {
@@ -172,12 +173,7 @@ const handleLogout = async () => {
 ### 토큰 관리 함수
 
 ```typescript
-import {
-  getAccessToken,
-  getRefreshToken,
-  isLoggedIn,
-  clearTokens
-} from '@/shared/utils';
+import { getAccessToken, getRefreshToken, isLoggedIn, clearTokens } from '@/shared/utils';
 
 // 로그인 여부 확인
 if (isLoggedIn()) {

@@ -20,7 +20,7 @@ export const applyWorkSchedule = async (
   data: ApplyWorkScheduleRequest
 ): Promise<ApiResponse<ApplyWorkScheduleDetails>> => {
   const response = await apiClient.post<ApiResponse<ApplyWorkScheduleDetails>>(
-    '/api/v1/work-schedules/apply',
+    '/api/work-schedules/apply',
     data,
     {
       // 422 응답도 정상 응답으로 처리 (백엔드가 의도적으로 반환하는 응답)
@@ -40,7 +40,7 @@ export const applyWorkSchedule = async (
 export const modifyWorkSchedule = async (
   data: ModifyWorkScheduleRequest
 ): Promise<ApiResponse<null>> => {
-  const response = await apiClient.patch<ApiResponse<null>>('/api/v1/work-schedules/modify', data);
+  const response = await apiClient.patch<ApiResponse<null>>('/api/work-schedules/modify', data);
   return response.data;
 };
 
@@ -55,7 +55,7 @@ export const getMySchedules = async (
   month: number
 ): Promise<ApiResponse<WorkScheduleListDetails>> => {
   const response = await apiClient.get<ApiResponse<WorkScheduleListDetails>>(
-    '/api/v1/work-schedules',
+    '/api/work-schedules',
     {
       params: { year, month },
     }
@@ -75,7 +75,7 @@ export const getMyHistory = async (
   month: number
 ): Promise<ApiResponse<WorkHistoryListDetails>> => {
   const response = await apiClient.get<ApiResponse<WorkHistoryListDetails>>(
-    '/api/v1/work-schedules/history',
+    '/api/work-schedules/history',
     {
       params: { year, month },
     }
@@ -93,7 +93,7 @@ export const getWorkScheduleDetail = async (
   scheduleId: number
 ): Promise<ApiResponse<WorkScheduleDetail>> => {
   const response = await apiClient.get<ApiResponse<WorkScheduleDetail>>(
-    `/api/v1/work-schedules/${scheduleId}`
+    `/api/work-schedules/${scheduleId}`
   );
   return response.data;
 };
@@ -105,9 +105,7 @@ export const getWorkScheduleDetail = async (
  */
 // TODO: api 연동 기능 구현 필요
 export const deleteWorkSchedule = async (scheduleId: number): Promise<ApiResponse<null>> => {
-  const response = await apiClient.delete<ApiResponse<null>>(
-    `/api/v1/work-schedules/${scheduleId}`
-  );
+  const response = await apiClient.delete<ApiResponse<null>>(`/api/work-schedules/${scheduleId}`);
   return response.data;
 };
 
@@ -122,7 +120,7 @@ export const getAllScheduleHistory = async (
   month: number
 ): Promise<ApiResponse<AllScheduleHistoryDetails>> => {
   const response = await apiClient.get<ApiResponse<AllScheduleHistoryDetails>>(
-    '/api/v1/admin/schedule/history/all',
+    '/api/admin/schedule/history/all',
     {
       params: { year, month },
     }
@@ -142,7 +140,7 @@ export const getWorkTimeSummary = async (
   month: number
 ): Promise<ApiResponse<WorkTimeSummaryDetails>> => {
   const response = await apiClient.get<ApiResponse<WorkTimeSummaryDetails>>(
-    '/api/v1/admin/schedule/work-time/summary',
+    '/api/admin/schedule/work-time/summary',
     {
       params: { year, month },
     }

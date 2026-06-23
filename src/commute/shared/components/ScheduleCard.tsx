@@ -38,21 +38,21 @@ export default function ScheduleCard({ type, selected = false, onClick }: Schedu
   return (
     <button
       onClick={onClick}
-      className={`w-full ${config.bgColor} rounded-[1.6rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] p-[2.4rem] hover:shadow-[0rem_0.6rem_2.4rem_0rem_rgba(81,168,255,0.12)] transition-all duration-200 cursor-pointer`}
+      className={`w-full ${config.bgColor} cursor-pointer rounded-[1.6rem] p-[2.4rem] shadow-[0rem_0.4rem_2rem_0rem_rgba(81,168,255,0.07)] transition-all duration-200 hover:shadow-[0rem_0.6rem_2.4rem_0rem_rgba(81,168,255,0.12)]`}
       data-name="ScheduleCard"
     >
       <div className="flex items-center gap-[2rem]">
         {/* Icon */}
         <div className="shrink-0" data-name="IconContainer">
-          <img src={config.icon} alt={config.title} className="w-[4rem] h-[4rem]" />
+          <img src={config.icon} alt={config.title} className="h-[4rem] w-[4rem]" />
         </div>
 
         {/* Content */}
-        <div className="flex flex-col items-start gap-[0.4rem] flex-1">
-          <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] text-[#09121c] text-left">
+        <div className="flex flex-1 flex-col items-start gap-[0.4rem]">
+          <p className="text-left font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[1.6rem] leading-[2.4rem] text-[#09121c]">
             {config.title}
           </p>
-          <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.9rem] text-[#4a5565] opacity-70 text-left">
+          <p className="text-left font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.9rem] text-[#4a5565] opacity-70">
             {config.description}
           </p>
         </div>
@@ -62,7 +62,7 @@ export default function ScheduleCard({ type, selected = false, onClick }: Schedu
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M9 18L15 12L9 6"
-              stroke={selected ? "#51A8FF" : "#9CA3AF"}
+              stroke={selected ? '#51A8FF' : '#9CA3AF'}
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"

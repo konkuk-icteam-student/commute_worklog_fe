@@ -8,9 +8,20 @@ type RandomStyle = 'white' | 'pink' | 'blue';
 const HOLIDAYS_2026_02 = ['2/16', '2/17', '2/18'];
 
 const TIMES = [
-  '10:00', '10:30', '11:00', '11:30',
-  '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-  '15:00', '15:30', '16:00', '16:30'
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
 ];
 
 interface WeeklyTimeTableNewProps {
@@ -28,7 +39,7 @@ export default function WeeklyTimeTableNew({
   onSlotClick = () => {},
   slotCapacityMap = new Map(),
   maxCapacity = 5,
-  readOnly = false
+  readOnly = false,
 }: WeeklyTimeTableNewProps) {
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
   const [randomStyleSlots, setRandomStyleSlots] = useState<Record<string, RandomStyle>>({});
@@ -38,7 +49,7 @@ export default function WeeklyTimeTableNew({
 
   // Calculate hours per day based on selected slots (0.5h per slot)
   const calculateDayHours = (dayIndex: number) => {
-    const count = selectedSlots.filter(slot => slot.startsWith(`${dayIndex}-`)).length;
+    const count = selectedSlots.filter((slot) => slot.startsWith(`${dayIndex}-`)).length;
     return count * 0.5;
   };
 
@@ -48,20 +59,48 @@ export default function WeeklyTimeTableNew({
     const year = '2026';
     const month = '2';
 
-    const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2026']];
+    const monthData =
+      monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[
+        month as keyof (typeof monthlyScheduleDates)['2026']
+      ];
     if (!monthData) return ['-', '-', '-', '-', '-'];
 
-    const weekData = monthData.weeks.find(w => w.week === week);
+    const weekData = monthData.weeks.find((w) => w.week === week);
     return weekData?.dates || ['-', '-', '-', '-', '-'];
   };
 
   const dates = getWeekDates(selectedWeek);
   const weekDays = [
-    { day: '월', date: dates[0], hours: calculateDayHours(0) > 0 ? `${calculateDayHours(0)}h` : '', color: calculateDayHours(0) > 0 ? '#51a8ff' : '' },
-    { day: '화', date: dates[1], hours: calculateDayHours(1) > 0 ? `${calculateDayHours(1)}h` : '', color: calculateDayHours(1) > 0 ? '#51a8ff' : '' },
-    { day: '수', date: dates[2], hours: calculateDayHours(2) > 0 ? `${calculateDayHours(2)}h` : '', color: calculateDayHours(2) > 0 ? '#51a8ff' : '' },
-    { day: '목', date: dates[3], hours: calculateDayHours(3) > 0 ? `${calculateDayHours(3)}h` : '', color: calculateDayHours(3) > 0 ? '#51a8ff' : '' },
-    { day: '금', date: dates[4], hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '', color: calculateDayHours(4) > 0 ? '#51a8ff' : '' },
+    {
+      day: '월',
+      date: dates[0],
+      hours: calculateDayHours(0) > 0 ? `${calculateDayHours(0)}h` : '',
+      color: calculateDayHours(0) > 0 ? '#51a8ff' : '',
+    },
+    {
+      day: '화',
+      date: dates[1],
+      hours: calculateDayHours(1) > 0 ? `${calculateDayHours(1)}h` : '',
+      color: calculateDayHours(1) > 0 ? '#51a8ff' : '',
+    },
+    {
+      day: '수',
+      date: dates[2],
+      hours: calculateDayHours(2) > 0 ? `${calculateDayHours(2)}h` : '',
+      color: calculateDayHours(2) > 0 ? '#51a8ff' : '',
+    },
+    {
+      day: '목',
+      date: dates[3],
+      hours: calculateDayHours(3) > 0 ? `${calculateDayHours(3)}h` : '',
+      color: calculateDayHours(3) > 0 ? '#51a8ff' : '',
+    },
+    {
+      day: '금',
+      date: dates[4],
+      hours: calculateDayHours(4) > 0 ? `${calculateDayHours(4)}h` : '',
+      color: calculateDayHours(4) > 0 ? '#51a8ff' : '',
+    },
   ];
 
   /**
@@ -132,7 +171,7 @@ export default function WeeklyTimeTableNew({
     const selected = shuffled.slice(0, 10);
 
     // Assign random styles (only white)
-    selected.forEach(slot => {
+    selected.forEach((slot) => {
       slots[slot] = 'white';
     });
 
@@ -175,7 +214,7 @@ export default function WeeklyTimeTableNew({
     const cursorClass = readOnly ? 'cursor-default' : 'cursor-pointer';
 
     // readOnly 모드에서는 hover 효과 제거
-    const hoverEffect = readOnly ? '' : (isHovered ? 'shadow-sm' : '');
+    const hoverEffect = readOnly ? '' : isHovered ? 'shadow-sm' : '';
 
     // Check for random style (only apply to available slots)
     const randomStyle = randomStyleSlots[slotKey];
@@ -189,7 +228,7 @@ export default function WeeklyTimeTableNew({
       case 'disabled':
         return `${baseClasses} bg-[#f5f5f5] border border-[#e0e0e0] ${readOnly ? 'cursor-default' : 'cursor-not-allowed'}`;
       default:
-        return `${baseClasses} ${cursorClass} bg-white border border-[#e0e0e0] ${readOnly ? '' : (isHovered ? 'border-[#51a8ff] shadow-sm' : '')}`;
+        return `${baseClasses} ${cursorClass} bg-white border border-[#e0e0e0] ${readOnly ? '' : isHovered ? 'border-[#51a8ff] shadow-sm' : ''}`;
     }
   };
 
@@ -201,7 +240,7 @@ export default function WeeklyTimeTableNew({
     return {
       border: '1px solid #EAEAEA',
       background: '#FFF',
-      borderColor: isHovered ? '#51a8ff' : '#EAEAEA'
+      borderColor: isHovered ? '#51a8ff' : '#EAEAEA',
     };
   };
 
@@ -234,7 +273,7 @@ export default function WeeklyTimeTableNew({
     }
 
     const slotKey = `${dayIndex}-${time}`;
-    setDraggedSlots(prev => new Set([...prev, slotKey]));
+    setDraggedSlots((prev) => new Set([...prev, slotKey]));
   };
 
   const handleMouseUp = useCallback(() => {
@@ -248,7 +287,7 @@ export default function WeeklyTimeTableNew({
       onSlotClick(dayIndex, time);
     } else {
       // Multiple slots dragged - apply based on drag mode
-      draggedSlots.forEach(slotKey => {
+      draggedSlots.forEach((slotKey) => {
         const [dayStr, time] = slotKey.split('-');
         const dayIndex = parseInt(dayStr);
         const isCurrentlySelected = selectedSlots.includes(slotKey);
@@ -281,9 +320,12 @@ export default function WeeklyTimeTableNew({
 
   return (
     <div className="w-full select-none" data-name="WeeklyTimeTable">
-      <div className="bg-white rounded-[1.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] py-[1.6rem] pr-[1.6rem]">
+      <div className="rounded-[1.6rem] bg-white py-[1.6rem] pr-[1.6rem] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]">
         {/* Header - Week Days */}
-        <div className="grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem] mb-[1.2rem]" data-name="WeekHeader">
+        <div
+          className="mb-[1.2rem] grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem]"
+          data-name="WeekHeader"
+        >
           <div></div>
           {weekDays.map((day, index) => (
             <div key={index} className="flex flex-col items-center gap-[0.4rem]">
@@ -310,7 +352,7 @@ export default function WeeklyTimeTableNew({
           {TIMES.map((time) => (
             <div
               key={time}
-              className="grid grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem] h-[2.4rem]"
+              className="grid h-[2.4rem] grid-cols-[6rem_1fr_1fr_1fr_1fr_1fr] gap-[0.4rem]"
               data-name={`TimeRow-${time}`}
             >
               {/* Time Label - only show hourly times (not :30) */}
@@ -337,8 +379,20 @@ export default function WeeklyTimeTableNew({
 
                 // readOnly 모드에서는 점심시간/연휴만 title 표시
                 const titleText = readOnly
-                  ? (isHoliday ? '설날 연휴' : isLunchTime ? '점심시간' : undefined)
-                  : (isHoliday ? '설날 연휴' : isLunchTime ? '점심시간' : isFull ? '마감' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity})`);
+                  ? isHoliday
+                    ? '설날 연휴'
+                    : isLunchTime
+                      ? '점심시간'
+                      : undefined
+                  : isHoliday
+                    ? '설날 연휴'
+                    : isLunchTime
+                      ? '점심시간'
+                      : isFull
+                        ? '마감'
+                        : status === 'selected'
+                          ? '선택됨'
+                          : `신청 가능 (${currentCapacity}/${maxCapacity})`;
 
                 // 4/5명 또는 5/5명일 때 특별 스타일 적용
                 const getCapacityStyle = (): React.CSSProperties | undefined => {
@@ -364,7 +418,9 @@ export default function WeeklyTimeTableNew({
                 };
 
                 const capacityStyle = getCapacityStyle();
-                const slotStyle = capacityStyle || (status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined);
+                const slotStyle =
+                  capacityStyle ||
+                  (status === 'available' ? getRandomStyle(slotKey, isHovered) : undefined);
 
                 return (
                   <div key={slotKey} className="relative">
@@ -381,8 +437,20 @@ export default function WeeklyTimeTableNew({
                     >
                       {/* Tooltip on hover (readOnly 모드에서는 점심시간/연휴만 표시) */}
                       {isHovered && (!readOnly || isLunchTime || isHoliday) && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[0.1rem] px-[0.6rem] py-[0.3rem] bg-[#09121c] text-white text-[1rem] rounded whitespace-nowrap z-10">
-                          {readOnly ? (isHoliday ? '설날 연휴' : '점심시간') : (isHoliday ? '설날 연휴' : isLunchTime ? '점심시간' : isFull ? '마감됨' : status === 'selected' ? '선택됨' : `신청 가능 (${currentCapacity}/${maxCapacity}명)`)}
+                        <div className="absolute bottom-full left-1/2 z-10 mb-[0.1rem] -translate-x-1/2 transform whitespace-nowrap rounded bg-[#09121c] px-[0.6rem] py-[0.3rem] text-[1rem] text-white">
+                          {readOnly
+                            ? isHoliday
+                              ? '설날 연휴'
+                              : '점심시간'
+                            : isHoliday
+                              ? '설날 연휴'
+                              : isLunchTime
+                                ? '점심시간'
+                                : isFull
+                                  ? '마감됨'
+                                  : status === 'selected'
+                                    ? '선택됨'
+                                    : `신청 가능 (${currentCapacity}/${maxCapacity}명)`}
                         </div>
                       )}
                     </div>

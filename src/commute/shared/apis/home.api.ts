@@ -11,7 +11,7 @@ import type {
  */
 // TODO: api 연동 기능 구현 필요
 export const getTodayWorkTime = async (): Promise<ApiResponse<TodayWorkTimeDetails>> => {
-  const response = await apiClient.get<ApiResponse<TodayWorkTimeDetails>>('/api/v1/home/work-time');
+  const response = await apiClient.get<ApiResponse<TodayWorkTimeDetails>>('/api/home/work-time');
   return response.data;
 };
 
@@ -22,7 +22,7 @@ export const getTodayWorkTime = async (): Promise<ApiResponse<TodayWorkTimeDetai
 // TODO: api 연동 기능 구현 필요
 export const getAttendanceStatus = async (): Promise<ApiResponse<AttendanceStatusDetails>> => {
   const response = await apiClient.get<ApiResponse<AttendanceStatusDetails>>(
-    '/api/v1/home/attendance-status'
+    '/api/home/attendance-status'
   );
   return response.data;
 };

@@ -141,12 +141,16 @@ export default function ManagerQR() {
               출근 QR
             </p>
             {isLoading ? (
-              <div className="flex size-[400px] items-center justify-center bg-[#f5f5f5] rounded-[8px]">
-                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] text-[#99a1af]">QR 로딩 중...</p>
+              <div className="flex size-[400px] items-center justify-center rounded-[8px] bg-[#f5f5f5]">
+                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] text-[#99a1af]">
+                  QR 로딩 중...
+                </p>
               </div>
             ) : error ? (
-              <div className="flex size-[400px] items-center justify-center bg-[#fff0f0] rounded-[8px]">
-                <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#fb2c36] text-center px-[20px]">{error}</p>
+              <div className="flex size-[400px] items-center justify-center rounded-[8px] bg-[#fff0f0]">
+                <p className="px-[20px] text-center font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[14px] text-[#fb2c36]">
+                  {error}
+                </p>
               </div>
             ) : (
               <QRCodeSVG value={token} size={400} />

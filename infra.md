@@ -36,18 +36,18 @@
 
 ## 컨테이너 구성
 
-| 컨테이너 | 이미지 | 포트 | 역할 |
-|----------|--------|------|------|
-| `commutemate-frontend` | Nginx + React 빌드 | 80 | 프론트엔드 서빙, API/WS 프록시 |
-| `commutemate-backend` | Spring Boot | 8080 | REST API, WebSocket 서버 |
-| `commutemate-postgres` | PostgreSQL 18 | 5432 | 데이터베이스 |
+| 컨테이너               | 이미지             | 포트 | 역할                           |
+| ---------------------- | ------------------ | ---- | ------------------------------ |
+| `commutemate-frontend` | Nginx + React 빌드 | 80   | 프론트엔드 서빙, API/WS 프록시 |
+| `commutemate-backend`  | Spring Boot        | 8080 | REST API, WebSocket 서버       |
+| `commutemate-postgres` | PostgreSQL 18      | 5432 | 데이터베이스                   |
 
 ## 네트워크 모드
 
 모든 컨테이너가 `network_mode: "host"`를 사용합니다.
 
 ```yaml
-network_mode: "host"
+network_mode: 'host'
 ```
 
 ### 왜 host 모드인가?
@@ -60,32 +60,39 @@ network_mode: "host"
 ## Nginx 역할
 
 ### 1. 정적 파일 서버
+
 ```nginx
 root /usr/share/nginx/html;
 index index.html;
 ```
+
 - React 빌드 결과물 서빙
 - JS, CSS, 이미지 등 정적 리소스 제공
 
 ### 2. SPA 라우팅 처리
+
 ```nginx
 location / {
     try_files $uri $uri/ /index.html;
 }
 ```
+
 - 모든 경로에서 `index.html` 반환
 - React Router가 클라이언트에서 라우팅 처리
 
 ### 3. API 리버스 프록시
+
 ```nginx
 location /api {
     proxy_pass http://localhost:8080;
 }
 ```
+
 - `/api/*` 요청을 백엔드로 전달
 - CORS 문제 해결 (같은 origin으로 인식)
 
 ### 4. WebSocket 프록시
+
 ```nginx
 location /ws {
     proxy_pass http://localhost:8080;
@@ -94,6 +101,7 @@ location /ws {
     proxy_set_header Connection "upgrade";
 }
 ```
+
 - STOMP/SockJS WebSocket 연결 지원
 - 실시간 스케줄 업데이트에 사용
 
@@ -114,43 +122,46 @@ location /ws {
 
 ## 배포 경로
 
-| 서비스 | 배포 경로 | Docker Compose 파일 |
-|--------|-----------|---------------------|
-| 프론트엔드 | `$DEPLOY_PATH_FRONTEND` | `docker-compose.yaml` |
-| 백엔드 | `$DEPLOY_PATH` | `docker-compose.yaml` (백엔드 저장소) |
+| 서비스     | 배포 경로               | Docker Compose 파일                   |
+| ---------- | ----------------------- | ------------------------------------- |
+| 프론트엔드 | `$DEPLOY_PATH_FRONTEND` | `docker-compose.yaml`                 |
+| 백엔드     | `$DEPLOY_PATH`          | `docker-compose.yaml` (백엔드 저장소) |
 
 ## GitHub Secrets 설정
 
 ### 공통
-| Secret | 설명 |
-|--------|------|
-| `SSH_HOST` | 배포 서버 IP 또는 호스트 |
-| `SSH_USER` | SSH 사용자명 |
-| `SSH_PASSWORD` | SSH 비밀번호 |
+
+| Secret         | 설명                     |
+| -------------- | ------------------------ |
+| `SSH_HOST`     | 배포 서버 IP 또는 호스트 |
+| `SSH_USER`     | SSH 사용자명             |
+| `SSH_PASSWORD` | SSH 비밀번호             |
 
 ### 프론트엔드
-| Secret | 설명 |
-|--------|------|
+
+| Secret                 | 설명                 |
+| ---------------------- | -------------------- |
 | `DEPLOY_PATH_FRONTEND` | 프론트엔드 배포 경로 |
 
 ### 백엔드
-| Secret | 설명 |
-|--------|------|
-| `DEPLOY_PATH` | 백엔드 배포 경로 |
-| `DB_NAME` | PostgreSQL 데이터베이스명 |
-| `DB_USERNAME` | PostgreSQL 사용자명 |
-| `DB_PASSWORD` | PostgreSQL 비밀번호 |
-| `JWT_SECRET` | JWT 서명 키 |
-| `MAIL_USERNAME` | 메일 발송 계정 |
-| `MAIL_PASSWORD` | 메일 발송 비밀번호 |
+
+| Secret          | 설명                      |
+| --------------- | ------------------------- |
+| `DEPLOY_PATH`   | 백엔드 배포 경로          |
+| `DB_NAME`       | PostgreSQL 데이터베이스명 |
+| `DB_USERNAME`   | PostgreSQL 사용자명       |
+| `DB_PASSWORD`   | PostgreSQL 비밀번호       |
+| `JWT_SECRET`    | JWT 서명 키               |
+| `MAIL_USERNAME` | 메일 발송 계정            |
+| `MAIL_PASSWORD` | 메일 발송 비밀번호        |
 
 ## 헬스체크
 
-| 서비스 | 엔드포인트 | 체크 주기 |
-|--------|------------|-----------|
-| 프론트엔드 | `http://localhost:80/health` | 30초 |
-| 백엔드 | `http://localhost:8080/actuator/health` | 30초 |
-| PostgreSQL | `pg_isready` 명령어 | 10초 |
+| 서비스     | 엔드포인트                              | 체크 주기 |
+| ---------- | --------------------------------------- | --------- |
+| 프론트엔드 | `http://localhost:80/health`            | 30초      |
+| 백엔드     | `http://localhost:8080/actuator/health` | 30초      |
+| PostgreSQL | `pg_isready` 명령어                     | 10초      |
 
 ## 배포 명령어 (수동)
 
