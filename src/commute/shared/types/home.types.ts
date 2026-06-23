@@ -7,9 +7,9 @@ export type { ApiResponse };
  * 출퇴근 버튼 상태
  */
 export type AttendanceStatusType =
-  | 'CHECK_IN_AVAILABLE'   // 출근 가능
-  | 'CHECK_OUT_AVAILABLE'  // 퇴근 가능
-  | 'COMPLETED';           // 금일 출퇴근 완료
+  | 'CHECK_IN_AVAILABLE' // 출근 가능
+  | 'CHECK_OUT_AVAILABLE' // 퇴근 가능
+  | 'COMPLETED'; // 금일 출퇴근 완료
 
 /**
  * 오늘의 근무 시간 및 예정 스케줄 수 조회 응답 상세

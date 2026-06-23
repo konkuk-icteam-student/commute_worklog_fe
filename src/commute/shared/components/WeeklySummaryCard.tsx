@@ -9,23 +9,30 @@ export default function WeeklySummaryCard({ weeklyHours = {} }: WeeklySummaryCar
   const year = '2026';
   const month = '2';
 
-  const monthData = monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[month as keyof typeof monthlyScheduleDates['2026']];
+  const monthData =
+    monthlyScheduleDates[year as keyof typeof monthlyScheduleDates]?.[
+      month as keyof (typeof monthlyScheduleDates)['2026']
+    ];
 
-  const weeklyData = monthData?.weeks.map(weekInfo => {
-    const hours = weeklyHours[weekInfo.week] || 0;
-    return {
-      week: weekInfo.week,
-      hours,
-      status: hours > 0 ? '신청' : '미신청',
-      dateRange: weekInfo.dateRange
-    };
-  }) || [];
+  const weeklyData =
+    monthData?.weeks.map((weekInfo) => {
+      const hours = weeklyHours[weekInfo.week] || 0;
+      return {
+        week: weekInfo.week,
+        hours,
+        status: hours > 0 ? '신청' : '미신청',
+        dateRange: weekInfo.dateRange,
+      };
+    }) || [];
 
   return (
-    <div className="bg-white relative rounded-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)] size-full p-[16px]" data-name="WeeklySummaryCard">
+    <div
+      className="relative size-full rounded-[16px] bg-white p-[16px] shadow-[0px_4px_20px_0px_rgba(81,168,255,0.07)]"
+      data-name="WeeklySummaryCard"
+    >
       <div className="flex flex-col gap-[12px]">
         {/* Header */}
-        <div className="pb-[8px] border-b border-[#eaeaea]">
+        <div className="border-b border-[#eaeaea] pb-[8px]">
           <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[14px] text-[#09121c]">
             주차별 요약
           </p>
@@ -34,10 +41,7 @@ export default function WeeklySummaryCard({ weeklyHours = {} }: WeeklySummaryCar
         {/* Week List */}
         <div className="flex flex-col gap-[8px]">
           {weeklyData.map((data) => (
-            <div
-              key={data.week}
-              className="flex items-center justify-between py-[6px]"
-            >
+            <div key={data.week} className="flex items-center justify-between py-[6px]">
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[13px] text-[#09121c]">
                 {data.week}주차 ({data.dateRange})
               </p>

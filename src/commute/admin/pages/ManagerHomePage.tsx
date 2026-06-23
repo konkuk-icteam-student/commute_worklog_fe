@@ -19,12 +19,9 @@ export default function ManagerHomePage() {
   };
 
   return (
-    <div className="w-full min-h-screen flex justify-center bg-white">
-      <div className="w-full max-w-[1920px] relative">
-        <ManagerHome
-          onNavigate={handleNavigate}
-          currentPage="home"
-        />
+    <div className="flex min-h-screen w-full justify-center bg-white">
+      <div className="relative w-full max-w-[1920px]">
+        <ManagerHome onNavigate={handleNavigate} currentPage="home" />
       </div>
     </div>
   );

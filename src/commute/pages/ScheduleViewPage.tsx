@@ -8,7 +8,11 @@ import WeeklySummaryCard from '../shared/components/WeeklySummaryCard';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import { getMySchedules, getAllScheduleHistory } from '../shared/apis/schedule.api';
 import { convertSchedulesToSlots } from '../shared/utils/scheduleUtils';
-import type { WorkSchedule, ScheduleHistoryItem, ScheduleUpdateItem } from '../shared/types/schedule.types';
+import type {
+  WorkSchedule,
+  ScheduleHistoryItem,
+  ScheduleUpdateItem,
+} from '../shared/types/schedule.types';
 import { useScheduleWebSocket } from '../hooks/useScheduleWebSocket';
 
 export default function ScheduleViewPage() {
@@ -29,7 +33,9 @@ export default function ScheduleViewPage() {
    * @param histories 전체 스케줄 히스토리 배열
    * @returns Map<슬롯키, 신청인원수>
    */
-  const processScheduleHistoryToCapacity = (histories: ScheduleHistoryItem[]): Map<string, number> => {
+  const processScheduleHistoryToCapacity = (
+    histories: ScheduleHistoryItem[]
+  ): Map<string, number> => {
     const capacityMap = new Map<string, number>();
 
     histories.forEach((history) => {
@@ -171,9 +177,9 @@ export default function ScheduleViewPage() {
 
   const handleSlotClick = (dayIndex: number, time: string) => {
     const slotKey = `${dayIndex}-${time}`;
-    setSelectedSlots(prev => {
+    setSelectedSlots((prev) => {
       if (prev.includes(slotKey)) {
-        return prev.filter(s => s !== slotKey);
+        return prev.filter((s) => s !== slotKey);
       } else {
         return [...prev, slotKey];
       }
@@ -206,22 +212,34 @@ export default function ScheduleViewPage() {
   const totalMonthHours = Object.values(weeklyHours).reduce((total, hours) => total + hours, 0);
 
   return (
-    <div className="bg-white relative min-h-screen w-full" data-name="scheduleView">
+    <div className="relative min-h-screen w-full bg-white" data-name="scheduleView">
       {/* Background Gradient */}
-      <div className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] inset-0 -z-10" data-name="Background" />
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f8fbff] to-[#ffffff]"
+        data-name="Background"
+      />
 
       {/* Header */}
-      <div className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]" data-name="Container">
-        <div className="max-w-[39.3rem] mx-auto px-[3.2rem] py-[2.4rem]">
+      <div
+        className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]"
+        data-name="Container"
+      >
+        <div className="mx-auto max-w-[39.3rem] px-[3.2rem] py-[2.4rem]">
           <div className="flex items-center gap-[1.6rem]">
             {/* Back Button */}
             <button
               onClick={() => navigate('/schedule')}
-              className="shrink-0 size-[4rem] flex items-center justify-center"
+              className="flex size-[4rem] shrink-0 items-center justify-center"
               data-name="Button"
             >
               <svg className="size-[2.4rem]" fill="none" viewBox="0 0 24 24">
-                <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
 
@@ -239,14 +257,14 @@ export default function ScheduleViewPage() {
 
       {/* Content - Scrollable */}
       <div className="w-full">
-        <div className="max-w-[39.3rem] mx-auto px-[2.4rem] pt-[3.2rem] pb-[3.2rem] flex flex-col gap-[2rem]">
+        <div className="mx-auto flex max-w-[39.3rem] flex-col gap-[2rem] px-[2.4rem] pb-[3.2rem] pt-[3.2rem]">
           {/* Info Box */}
           <div className="w-full">
             <ScheduleInfoCard />
           </div>
 
           {/* Week Tabs */}
-          <div className="flex gap-[1rem] w-full" data-name="Container">
+          <div className="flex w-full gap-[1rem]" data-name="Container">
             {[1, 2, 3, 4, 5].map((week) => {
               const isActive = selectedWeek === week;
 
@@ -254,10 +272,12 @@ export default function ScheduleViewPage() {
                 <button
                   key={week}
                   onClick={() => setSelectedWeek(week)}
-                  className={`flex-1 h-[3.6rem] rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
+                  className={`h-[3.6rem] flex-1 rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
                   data-name="Button"
                 >
-                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.2rem] tracking-[0.021rem] ${isActive ? 'text-white' : 'text-[#09121c]'}`}>
+                  <p
+                    className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.2rem] tracking-[0.021rem] ${isActive ? 'text-white' : 'text-[#09121c]'}`}
+                  >
                     {week}주차
                   </p>
                 </button>
@@ -267,11 +287,7 @@ export default function ScheduleViewPage() {
 
           {/* Weekly Hours Card */}
           <div className="w-full">
-            <WeekTotalCard
-              week={selectedWeek}
-              currentHours={currentWeekHours}
-              maxHours={13}
-            />
+            <WeekTotalCard week={selectedWeek} currentHours={currentWeekHours} maxHours={13} />
           </div>
 
           {/* Time Table Label */}

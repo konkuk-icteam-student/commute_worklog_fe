@@ -305,13 +305,18 @@ export default function ManagerTaskPage() {
       <div className="relative w-full max-w-[1920px]">
         {/* Header */}
         <div className="absolute left-0 right-0 top-0 h-[76px] w-full bg-[#51a8ff]">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-[0_0_-0.5px_0] border-b border-solid border-[#e8eef2]" />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-[0_0_-0.5px_0] border-b border-solid border-[#e8eef2]"
+          />
           <div className="relative mx-auto flex h-full max-w-[1920px] items-center justify-center">
-            <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[20px] text-white">정보운영팀 출근부 · 업무 관리</p>
+            <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[20px] text-white">
+              정보운영팀 출근부 · 업무 관리
+            </p>
           </div>
         </div>
         {/* Content */}
-        <div className="pt-[76px] pb-[120px]">
+        <div className="pb-[120px] pt-[76px]">
           <div className="mx-auto w-full max-w-[1200px] px-[20px] pt-[40px]">
             <ManagerTaskManager />
           </div>

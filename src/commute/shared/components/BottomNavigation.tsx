@@ -38,15 +38,15 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
 
   return (
     <div
-      className="fixed bottom-[2rem] left-1/2 -translate-x-1/2 w-[90%] max-w-[39.3rem]"
+      className="fixed bottom-[2rem] left-1/2 w-[90%] max-w-[39.3rem] -translate-x-1/2"
       data-name="BottomNavigation"
     >
-      <div className="bg-white rounded-[5rem] shadow-[0rem_0.4rem_3rem_0rem_rgba(81,168,255,0.2)] px-[3.2rem] py-[1.6rem]">
+      <div className="rounded-[5rem] bg-white px-[3.2rem] py-[1.6rem] shadow-[0rem_0.4rem_3rem_0rem_rgba(81,168,255,0.2)]">
         <div className="flex items-center justify-between gap-[2rem]">
           {/* Home Button */}
           <button
             onClick={() => handleNavigation('home')}
-            className={`flex items-center justify-center rounded-full size-[4rem] transition-all ${
+            className={`flex size-[4rem] items-center justify-center rounded-full transition-all ${
               activePage === 'home' ? 'bg-[rgba(81,168,255,0.1)]' : 'hover:bg-gray-50'
             }`}
             data-name="Button"
@@ -54,14 +54,14 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
             <img
               src={activePage === 'home' ? SelectedHomeButton : HomeButton}
               alt="Home"
-              className="w-[2.4rem] h-[2.4rem]"
+              className="h-[2.4rem] w-[2.4rem]"
             />
           </button>
 
           {/* Calendar Button */}
           <button
             onClick={() => handleNavigation('calendar')}
-            className={`flex items-center justify-center rounded-full size-[4rem] transition-all ${
+            className={`flex size-[4rem] items-center justify-center rounded-full transition-all ${
               activePage === 'calendar' ? 'bg-[rgba(81,168,255,0.1)]' : 'hover:bg-gray-50'
             }`}
             data-name="Button"
@@ -69,14 +69,14 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
             <img
               src={activePage === 'calendar' ? SelectedCalendarButton : CalendarButton}
               alt="Calendar"
-              className="w-[2.4rem] h-[2.4rem]"
+              className="h-[2.4rem] w-[2.4rem]"
             />
           </button>
 
           {/* Tasks Button */}
           <button
             onClick={() => handleNavigation('tasks')}
-            className={`flex items-center justify-center rounded-full size-[4rem] transition-all ${
+            className={`flex size-[4rem] items-center justify-center rounded-full transition-all ${
               activePage === 'tasks' ? 'bg-[rgba(81,168,255,0.1)]' : 'hover:bg-gray-50'
             }`}
             data-name="Button"
@@ -84,14 +84,14 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
             <img
               src={activePage === 'tasks' ? SelectedMessageButton : MessageButton}
               alt="Tasks"
-              className="w-[2.4rem] h-[2.4rem]"
+              className="h-[2.4rem] w-[2.4rem]"
             />
           </button>
 
           {/* Profile Button */}
           <button
             onClick={() => handleNavigation('mypage')}
-            className={`flex items-center justify-center rounded-full size-[4rem] transition-all ${
+            className={`flex size-[4rem] items-center justify-center rounded-full transition-all ${
               activePage === 'mypage' ? 'bg-[rgba(81,168,255,0.1)]' : 'hover:bg-gray-50'
             }`}
             data-name="Button"
@@ -99,7 +99,7 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
             <img
               src={activePage === 'mypage' ? SelectedProfileButton : ProfileButton}
               alt="Profile"
-              className="w-[2.4rem] h-[2.4rem]"
+              className="h-[2.4rem] w-[2.4rem]"
             />
           </button>
         </div>

@@ -1,9 +1,9 @@
 ---
 name: 이슈 템플릿 예시 ✏️
 about: 해당 템플릿으로 이슈를 작성해주세요!
-title: ""
-labels: ""
-assignees: ""
+title: ''
+labels: ''
+assignees: ''
 ---
 
 ## 🛠 Task Description

@@ -38,20 +38,21 @@ src/commute/
 > **상태**: ✅ 완료
 
 ### 파일 위치
+
 - Types: `src/commute/shared/types/schedule.types.ts`
 - API: `src/commute/shared/apis/schedule.api.ts`
 
 ### 구현된 함수
 
-| 함수명 | HTTP 메서드 | 엔드포인트 | 설명 |
-|--------|-------------|------------|------|
-| `applyWorkSchedule` | POST | `/api/v1/work-schedules/apply` | 근무 일정 일괄 신청 |
-| `modifyWorkSchedule` | PATCH | `/api/v1/work-schedules/modify` | 근무 일정 수정 |
-| `getMySchedules` | GET | `/api/v1/work-schedules` | 나의 근무 일정 조회 |
-| `getMyHistory` | GET | `/api/v1/work-schedules/history` | 나의 지난 근무 이력 조회 |
-| `getWorkScheduleDetail` | GET | `/api/v1/work-schedules/{scheduleId}` | 특정 근무 일정 상세 조회 |
-| `deleteWorkSchedule` | DELETE | `/api/v1/work-schedules/{scheduleId}` | 근무 일정 취소/삭제 |
-| `getAllScheduleHistory` | GET | `/api/v1/admin/schedule/history/all` | 전체 근무 이력 조회 (관리자) |
+| 함수명                  | HTTP 메서드 | 엔드포인트                            | 설명                         |
+| ----------------------- | ----------- | ------------------------------------- | ---------------------------- |
+| `applyWorkSchedule`     | POST        | `/api/v1/work-schedules/apply`        | 근무 일정 일괄 신청          |
+| `modifyWorkSchedule`    | PATCH       | `/api/v1/work-schedules/modify`       | 근무 일정 수정               |
+| `getMySchedules`        | GET         | `/api/v1/work-schedules`              | 나의 근무 일정 조회          |
+| `getMyHistory`          | GET         | `/api/v1/work-schedules/history`      | 나의 지난 근무 이력 조회     |
+| `getWorkScheduleDetail` | GET         | `/api/v1/work-schedules/{scheduleId}` | 특정 근무 일정 상세 조회     |
+| `deleteWorkSchedule`    | DELETE      | `/api/v1/work-schedules/{scheduleId}` | 근무 일정 취소/삭제          |
+| `getAllScheduleHistory` | GET         | `/api/v1/admin/schedule/history/all`  | 전체 근무 이력 조회 (관리자) |
 
 ### 사용 예시
 
@@ -66,9 +67,7 @@ if (response.isSuccess) {
 
 // 근무 일정 신청
 const applyResponse = await applyWorkSchedule({
-  slots: [
-    { start: "2026-01-11T09:00:00", end: "2026-01-11T12:00:00" }
-  ]
+  slots: [{ start: '2026-01-11T09:00:00', end: '2026-01-11T12:00:00' }],
 });
 ```
 
@@ -79,16 +78,17 @@ const applyResponse = await applyWorkSchedule({
 > **상태**: ✅ 완료
 
 ### 파일 위치
+
 - Types: `src/commute/shared/types/attendance.types.ts`
 - API: `src/commute/shared/apis/attendance.api.ts`
 
 ### 구현된 함수
 
-| 함수명 | HTTP 메서드 | 엔드포인트 | 설명 |
-|--------|-------------|------------|------|
-| `checkIn` | POST | `/api/v1/attendance/check-in` | QR 코드를 통한 출근 체크 |
-| `checkOut` | POST | `/api/v1/attendance/check-out` | QR 코드를 통한 퇴근 체크 |
-| `getTodayHistory` | GET | `/api/v1/attendance/today` | 오늘의 출퇴근 기록 조회 |
+| 함수명            | HTTP 메서드 | 엔드포인트                     | 설명                     |
+| ----------------- | ----------- | ------------------------------ | ------------------------ |
+| `checkIn`         | POST        | `/api/v1/attendance/check-in`  | QR 코드를 통한 출근 체크 |
+| `checkOut`        | POST        | `/api/v1/attendance/check-out` | QR 코드를 통한 퇴근 체크 |
+| `getTodayHistory` | GET         | `/api/v1/attendance/today`     | 오늘의 출퇴근 기록 조회  |
 
 ### 타입 정의
 
@@ -137,16 +137,17 @@ if (historyResponse.isSuccess) {
 > **상태**: ✅ 완료
 
 ### 파일 위치
+
 - Types: `src/commute/shared/types/user.types.ts`
 - API: `src/commute/shared/apis/user.api.ts`
 
 ### 구현된 함수
 
-| 함수명 | HTTP 메서드 | 엔드포인트 | 설명 |
-|--------|-------------|------------|------|
-| `getMyInfo` | GET | `/api/v1/users/me` | 내 정보 조회 |
-| `getWeeklyWorkTime` | GET | `/api/v1/users/me/work-time/weekly` | 주간 근무 시간 조회 |
-| `getMonthlyWorkTime` | GET | `/api/v1/users/me/work-time/monthly` | 월간 근무 시간 조회 |
+| 함수명               | HTTP 메서드 | 엔드포인트                           | 설명                |
+| -------------------- | ----------- | ------------------------------------ | ------------------- |
+| `getMyInfo`          | GET         | `/api/v1/users/me`                   | 내 정보 조회        |
+| `getWeeklyWorkTime`  | GET         | `/api/v1/users/me/work-time/weekly`  | 주간 근무 시간 조회 |
+| `getMonthlyWorkTime` | GET         | `/api/v1/users/me/work-time/monthly` | 월간 근무 시간 조회 |
 
 ### 타입 정의
 
@@ -206,24 +207,25 @@ if (monthlyResponse.isSuccess) {
 > **상태**: ✅ 완료
 
 ### 파일 위치
+
 - Types: `src/commute/shared/types/home.types.ts`
 - API: `src/commute/shared/apis/home.api.ts`
 
 ### 구현된 함수
 
-| 함수명 | HTTP 메서드 | 엔드포인트 | 설명 |
-|--------|-------------|------------|------|
-| `getTodayWorkTime` | GET | `/api/v1/home/work-time` | 오늘의 근무 시간 및 예정 스케줄 수 조회 |
-| `getAttendanceStatus` | GET | `/api/v1/home/attendance-status` | 현재 출퇴근 버튼 상태 조회 |
+| 함수명                | HTTP 메서드 | 엔드포인트                       | 설명                                    |
+| --------------------- | ----------- | -------------------------------- | --------------------------------------- |
+| `getTodayWorkTime`    | GET         | `/api/v1/home/work-time`         | 오늘의 근무 시간 및 예정 스케줄 수 조회 |
+| `getAttendanceStatus` | GET         | `/api/v1/home/attendance-status` | 현재 출퇴근 버튼 상태 조회              |
 
 ### 타입 정의
 
 ```typescript
 // 출퇴근 버튼 상태
 type AttendanceStatusType =
-  | 'CHECK_IN_AVAILABLE'   // 출근 가능
-  | 'CHECK_OUT_AVAILABLE'  // 퇴근 가능
-  | 'COMPLETED';           // 금일 출퇴근 완료
+  | 'CHECK_IN_AVAILABLE' // 출근 가능
+  | 'CHECK_OUT_AVAILABLE' // 퇴근 가능
+  | 'COMPLETED'; // 금일 출퇴근 완료
 
 // 오늘의 근무 시간 및 스케줄 수
 interface TodayWorkTimeDetails {
@@ -282,15 +284,16 @@ if (statusResponse.isSuccess) {
 > **상태**: ✅ 완료
 
 ### 파일 위치
+
 - Types: `src/commute/shared/types/task.types.ts`
 - API: `src/commute/shared/apis/task.api.ts`
 
 ### 구현된 함수
 
-| 함수명 | HTTP 메서드 | 엔드포인트 | 설명 |
-|--------|-------------|------------|------|
-| `getTasksByDate` | GET | `/api/v1/tasks?date={date}` | 특정 날짜의 업무 목록 조회 |
-| `getTaskDetail` | GET | `/api/v1/tasks/{taskId}` | 특정 업무의 상세 정보 조회 |
+| 함수명           | HTTP 메서드 | 엔드포인트                  | 설명                       |
+| ---------------- | ----------- | --------------------------- | -------------------------- |
+| `getTasksByDate` | GET         | `/api/v1/tasks?date={date}` | 특정 날짜의 업무 목록 조회 |
+| `getTaskDetail`  | GET         | `/api/v1/tasks/{taskId}`    | 특정 업무의 상세 정보 조회 |
 
 ### 타입 정의
 
@@ -393,9 +396,9 @@ try {
 
 ```typescript
 interface ApiResponse<T = null> {
-  isSuccess: boolean;  // 성공 여부
-  message: string;     // 응답 메시지
-  details: T;          // 상세 데이터
+  isSuccess: boolean; // 성공 여부
+  message: string; // 응답 메시지
+  details: T; // 상세 데이터
 }
 ```
 
@@ -403,10 +406,10 @@ interface ApiResponse<T = null> {
 
 ## 변경 이력
 
-| 날짜 | 작업 내용 | 작업자 |
-|------|----------|--------|
+| 날짜       | 작업 내용                            | 작업자   |
+| ---------- | ------------------------------------ | -------- |
 | 2026-01-14 | Chapter 2 (Work Schedule API) 문서화 | API 연동 |
 | 2026-01-14 | Chapter 3 (Attendance API) 구현 완료 | API 연동 |
-| 2026-01-14 | Chapter 4 (User API) 구현 완료 | API 연동 |
-| 2026-01-14 | Chapter 5 (Home API) 구현 완료 | API 연동 |
-| 2026-01-14 | Chapter 6 (Task API) 구현 완료 | API 연동 |
+| 2026-01-14 | Chapter 4 (User API) 구현 완료       | API 연동 |
+| 2026-01-14 | Chapter 5 (Home API) 구현 완료       | API 연동 |
+| 2026-01-14 | Chapter 6 (Task API) 구현 완료       | API 연동 |

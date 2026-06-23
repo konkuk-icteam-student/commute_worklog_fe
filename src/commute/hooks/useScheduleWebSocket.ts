@@ -24,9 +24,10 @@ export const useScheduleWebSocket = ({
 
     try {
       // 백엔드로 직접 연결 (개발/프로덕션 모두)
-      const backendUrl = import.meta.env.VITE_PROXY_TARGET ||
-                         import.meta.env.VITE_API_BASE_URL ||
-                         'http://localhost:8080';
+      const backendUrl =
+        import.meta.env.VITE_PROXY_TARGET ||
+        import.meta.env.VITE_API_BASE_URL ||
+        'http://localhost:8080';
 
       const wsUrl = `${backendUrl}/ws`;
 
@@ -57,7 +58,7 @@ export const useScheduleWebSocket = ({
         },
         onDisconnect: () => {
           isConnectedRef.current = false;
-        }
+        },
       });
 
       clientRef.current = client;

@@ -12,16 +12,12 @@ import sampleLoading from '@/shared/assets/animations/sample-loading.json';
 const LottieExample = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          Lottie 애니메이션 예시
-        </h1>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="mb-8 text-3xl font-bold text-gray-800">Lottie 애니메이션 예시</h1>
 
         {/* 기본 사용 예시 */}
-        <section className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            1. 기본 로딩 애니메이션
-          </h2>
+        <section className="mb-8 rounded-lg bg-white p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold text-gray-700">1. 기본 로딩 애니메이션</h2>
           <div className="flex justify-center">
             <LottieAnimation
               animationData={sampleLoading}
@@ -31,86 +27,55 @@ const LottieExample = () => {
               autoplay={true}
             />
           </div>
-          <p className="text-sm text-gray-500 mt-4 text-center">
+          <p className="mt-4 text-center text-sm text-gray-500">
             기본 설정으로 자동 재생, 무한 반복
           </p>
         </section>
 
         {/* 다양한 크기 */}
-        <section className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            2. 다양한 크기
-          </h2>
+        <section className="mb-8 rounded-lg bg-white p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold text-gray-700">2. 다양한 크기</h2>
           <div className="flex items-center justify-around gap-4">
             <div className="text-center">
-              <LottieAnimation
-                animationData={sampleLoading}
-                width={80}
-                height={80}
-              />
-              <p className="text-sm text-gray-500 mt-2">Small (80px)</p>
+              <LottieAnimation animationData={sampleLoading} width={80} height={80} />
+              <p className="mt-2 text-sm text-gray-500">Small (80px)</p>
             </div>
             <div className="text-center">
-              <LottieAnimation
-                animationData={sampleLoading}
-                width={120}
-                height={120}
-              />
-              <p className="text-sm text-gray-500 mt-2">Medium (120px)</p>
+              <LottieAnimation animationData={sampleLoading} width={120} height={120} />
+              <p className="mt-2 text-sm text-gray-500">Medium (120px)</p>
             </div>
             <div className="text-center">
-              <LottieAnimation
-                animationData={sampleLoading}
-                width={200}
-                height={200}
-              />
-              <p className="text-sm text-gray-500 mt-2">Large (200px)</p>
+              <LottieAnimation animationData={sampleLoading} width={200} height={200} />
+              <p className="mt-2 text-sm text-gray-500">Large (200px)</p>
             </div>
           </div>
         </section>
 
         {/* 속도 조절 */}
-        <section className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            3. 재생 속도 조절
-          </h2>
+        <section className="mb-8 rounded-lg bg-white p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold text-gray-700">3. 재생 속도 조절</h2>
           <div className="flex items-center justify-around gap-4">
             <div className="text-center">
-              <LottieAnimation
-                animationData={sampleLoading}
-                width={100}
-                height={100}
-                speed={0.5}
-              />
-              <p className="text-sm text-gray-500 mt-2">0.5x 느리게</p>
+              <LottieAnimation animationData={sampleLoading} width={100} height={100} speed={0.5} />
+              <p className="mt-2 text-sm text-gray-500">0.5x 느리게</p>
             </div>
             <div className="text-center">
-              <LottieAnimation
-                animationData={sampleLoading}
-                width={100}
-                height={100}
-                speed={1}
-              />
-              <p className="text-sm text-gray-500 mt-2">1x 보통</p>
+              <LottieAnimation animationData={sampleLoading} width={100} height={100} speed={1} />
+              <p className="mt-2 text-sm text-gray-500">1x 보통</p>
             </div>
             <div className="text-center">
-              <LottieAnimation
-                animationData={sampleLoading}
-                width={100}
-                height={100}
-                speed={2}
-              />
-              <p className="text-sm text-gray-500 mt-2">2x 빠르게</p>
+              <LottieAnimation animationData={sampleLoading} width={100} height={100} speed={2} />
+              <p className="mt-2 text-sm text-gray-500">2x 빠르게</p>
             </div>
           </div>
         </section>
 
         {/* 사용 가이드 */}
-        <section className="bg-blue-50 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-blue-900 mb-4">
+        <section className="rounded-lg bg-blue-50 p-6">
+          <h2 className="mb-4 text-xl font-semibold text-blue-900">
             💡 더 많은 애니메이션 사용하기
           </h2>
-          <ol className="list-decimal list-inside space-y-2 text-gray-700">
+          <ol className="list-inside list-decimal space-y-2 text-gray-700">
             <li>
               <a
                 href="https://lottiefiles.com"
@@ -124,15 +89,15 @@ const LottieExample = () => {
             </li>
             <li>JSON 파일 다운로드</li>
             <li>
-              <code className="bg-gray-200 px-2 py-1 rounded text-sm">
+              <code className="rounded bg-gray-200 px-2 py-1 text-sm">
                 src/shared/assets/animations/
               </code>{' '}
               폴더에 저장
             </li>
             <li>컴포넌트에서 import하여 사용</li>
           </ol>
-          <div className="mt-4 p-4 bg-white rounded border border-blue-200">
-            <p className="text-sm font-mono text-gray-800">
+          <div className="mt-4 rounded border border-blue-200 bg-white p-4">
+            <p className="font-mono text-sm text-gray-800">
               import myAnimation from '@/shared/assets/animations/my-animation.json';
               <br />
               <br />
@@ -140,7 +105,9 @@ const LottieExample = () => {
             </p>
           </div>
           <p className="mt-4 text-sm text-gray-600">
-            자세한 사용법은 <code className="bg-gray-200 px-2 py-1 rounded">LOTTIE_USAGE_GUIDE.md</code> 문서를 참고하세요.
+            자세한 사용법은{' '}
+            <code className="rounded bg-gray-200 px-2 py-1">LOTTIE_USAGE_GUIDE.md</code> 문서를
+            참고하세요.
           </p>
         </section>
       </div>

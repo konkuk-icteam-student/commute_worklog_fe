@@ -5,6 +5,7 @@
 ## 설치 완료
 
 다음 라이브러리가 설치되었습니다:
+
 - `lottie-react` (v2.4.1)
 
 ---
@@ -16,10 +17,12 @@
 Lottie 애니메이션 파일을 다운로드하여 프로젝트에 추가합니다.
 
 **추천 다운로드 사이트:**
+
 - [LottieFiles](https://lottiefiles.com/) - 무료/유료 Lottie 애니메이션
 - [Lordicon](https://lordicon.com/) - 아이콘 애니메이션
 
 **파일 저장 위치:**
+
 ```
 src/shared/assets/animations/
 ├── loading.json
@@ -75,16 +78,16 @@ const SuccessMessage = () => {
 
 ## LottieAnimation 컴포넌트 Props
 
-| Props | 타입 | 기본값 | 설명 |
-|-------|------|--------|------|
-| `animationData` | `any` | - | **(필수)** Lottie JSON 데이터 |
-| `width` | `string \| number` | `300` | 애니메이션 너비 (px 또는 %, em 등) |
-| `height` | `string \| number` | `300` | 애니메이션 높이 |
-| `loop` | `boolean` | `true` | 반복 재생 여부 |
-| `autoplay` | `boolean` | `true` | 자동 재생 여부 |
-| `speed` | `number` | `1` | 재생 속도 (1 = 정상 속도) |
-| `className` | `string` | - | CSS 클래스명 |
-| `style` | `CSSProperties` | - | 인라인 스타일 |
+| Props           | 타입               | 기본값 | 설명                               |
+| --------------- | ------------------ | ------ | ---------------------------------- |
+| `animationData` | `any`              | -      | **(필수)** Lottie JSON 데이터      |
+| `width`         | `string \| number` | `300`  | 애니메이션 너비 (px 또는 %, em 등) |
+| `height`        | `string \| number` | `300`  | 애니메이션 높이                    |
+| `loop`          | `boolean`          | `true` | 반복 재생 여부                     |
+| `autoplay`      | `boolean`          | `true` | 자동 재생 여부                     |
+| `speed`         | `number`           | `1`    | 재생 속도 (1 = 정상 속도)          |
+| `className`     | `string`           | -      | CSS 클래스명                       |
+| `style`         | `CSSProperties`    | -      | 인라인 스타일                      |
 
 ---
 
@@ -327,6 +330,7 @@ const EventAnimation = () => {
 ## 최적화 팁
 
 ### 1. JSON 파일 크기 줄이기
+
 - LottieFiles에서 다운로드 시 "Optimized for Lottie" 옵션 선택
 - 불필요한 레이어 제거
 
@@ -372,6 +376,7 @@ const CDNAnimation = () => {
 ## 추천 Lottie 애니메이션
 
 ### 자주 사용하는 애니메이션 타입:
+
 - ✅ 로딩 스피너
 - ✅ 체크마크 (성공)
 - ❌ 에러/실패
@@ -381,6 +386,7 @@ const CDNAnimation = () => {
 - 🎉 축하/완료
 
 **다운로드 링크:**
+
 - https://lottiefiles.com/featured
 - https://lottiefiles.com/search?q=loading
 - https://lottiefiles.com/search?q=success
@@ -390,7 +396,9 @@ const CDNAnimation = () => {
 ## 문제 해결
 
 ### JSON import 에러 발생 시
+
 `src/vite-env.d.ts` 파일에 타입 정의가 있는지 확인:
+
 ```typescript
 declare module '*.json' {
   const value: any;
@@ -399,6 +407,7 @@ declare module '*.json' {
 ```
 
 ### 애니메이션이 표시되지 않을 때
+
 1. JSON 파일 경로가 올바른지 확인
 2. animationData가 올바르게 import 되었는지 확인
 3. 개발자 도구에서 콘솔 에러 확인

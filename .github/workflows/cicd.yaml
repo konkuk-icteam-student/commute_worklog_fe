@@ -8,9 +8,9 @@ on:
       - feat/ci-cd
 
 env:
-  REGISTRY: ghcr.io                        # GitHub Container Registry
-  OWNER: ${{ github.repository_owner }}    # 조직/사용자 자동 참조
-  IMAGE_NAME: ${{ github.repository_owner }}/commutemate-frontend  # 프론트엔드 이미지 이름
+  REGISTRY: ghcr.io # GitHub Container Registry
+  OWNER: ${{ github.repository_owner }} # 조직/사용자 자동 참조
+  IMAGE_NAME: ${{ github.repository_owner }}/commutemate-frontend # 프론트엔드 이미지 이름
 
 jobs:
   # ===================================================================
@@ -27,9 +27,10 @@ jobs:
 
       # 2. pnpm 설정
       - name: pnpm 설정
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
-          version: 9
+          version: 10.25.0
+          run_install: false
 
       # 3. Node.js 설정
       - name: Node.js 설정
@@ -61,8 +62,8 @@ jobs:
 
     # GHCR 접근 권한 설정
     permissions:
-      contents: read      # 소스 코드 읽기
-      packages: write     # GHCR에 이미지 푸시
+      contents: read # 소스 코드 읽기
+      packages: write # GHCR에 이미지 푸시
       id-token: write
       attestations: write
 
@@ -132,7 +133,7 @@ jobs:
   deploy-to-server:
     name: 서버에 Docker Compose 배포
     runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, build-and-push]    # 린트와 빌드 모두 성공 후 실행
+    needs: [lint-and-typecheck, build-and-push] # 린트와 빌드 모두 성공 후 실행
     if: github.event_name == 'push'
 
     steps:

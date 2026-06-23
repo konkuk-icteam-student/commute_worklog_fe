@@ -8,9 +8,18 @@ import MonthlyHoursCard from '../shared/components/MonthlyHoursCard';
 import WeeklySummaryCard from '../shared/components/WeeklySummaryCard';
 import BottomNavigation from '../shared/components/BottomNavigation';
 import successIcon from '../shared/assets/success.svg';
-import { applyWorkSchedule, getMySchedules, getAllScheduleHistory } from '../shared/apis/schedule.api';
+import {
+  applyWorkSchedule,
+  getMySchedules,
+  getAllScheduleHistory,
+} from '../shared/apis/schedule.api';
 import { convertSlotsToTimeSlots, convertSchedulesToSlots } from '../shared/utils/scheduleUtils';
-import type { TimeSlot, WorkSchedule, ScheduleHistoryItem, ScheduleUpdateItem } from '../shared/types/schedule.types';
+import type {
+  TimeSlot,
+  WorkSchedule,
+  ScheduleHistoryItem,
+  ScheduleUpdateItem,
+} from '../shared/types/schedule.types';
 import { useScheduleWebSocket } from '../hooks/useScheduleWebSocket';
 
 export default function ScheduleApplyPage() {
@@ -39,7 +48,9 @@ export default function ScheduleApplyPage() {
    * @param histories 전체 스케줄 히스토리 배열
    * @returns Map<슬롯키, 신청인원수>
    */
-  const processScheduleHistoryToCapacity = (histories: ScheduleHistoryItem[]): Map<string, number> => {
+  const processScheduleHistoryToCapacity = (
+    histories: ScheduleHistoryItem[]
+  ): Map<string, number> => {
     const capacityMap = new Map<string, number>();
 
     histories.forEach((history) => {
@@ -213,21 +224,18 @@ export default function ScheduleApplyPage() {
     if (newWeek === selectedWeek) return;
 
     // 현재 주차의 선택 슬롯을 저장
-    setPendingSlotsByWeek(prev => ({
+    setPendingSlotsByWeek((prev) => ({
       ...prev,
-      [selectedWeek]: selectedSlots
+      [selectedWeek]: selectedSlots,
     }));
 
     // 새 주차로 변경
     setSelectedWeek(newWeek);
 
     // 새 주차의 저장된 슬롯 불러오기
-    const newWeekSlots = pendingSlotsByWeek[newWeek] || convertSchedulesToSlots(
-      allSchedules,
-      newWeek,
-      currentYear,
-      currentMonth
-    );
+    const newWeekSlots =
+      pendingSlotsByWeek[newWeek] ||
+      convertSchedulesToSlots(allSchedules, newWeek, currentYear, currentMonth);
     setSelectedSlots(newWeekSlots);
   };
 
@@ -245,9 +253,9 @@ export default function ScheduleApplyPage() {
 
   const handleSlotClick = (dayIndex: number, time: string) => {
     const slotKey = `${dayIndex}-${time}`;
-    setSelectedSlots(prev => {
+    setSelectedSlots((prev) => {
       if (prev.includes(slotKey)) {
-        return prev.filter(s => s !== slotKey);
+        return prev.filter((s) => s !== slotKey);
       } else {
         return [...prev, slotKey];
       }
@@ -260,7 +268,9 @@ export default function ScheduleApplyPage() {
       return selectedSlots.length * 0.5;
     } else {
       // 다른 주차는 pendingSlotsByWeek에서 가져오기 (없으면 API 데이터)
-      const weekSlots = pendingSlotsByWeek[week] || convertSchedulesToSlots(allSchedules, week, currentYear, currentMonth);
+      const weekSlots =
+        pendingSlotsByWeek[week] ||
+        convertSchedulesToSlots(allSchedules, week, currentYear, currentMonth);
       return weekSlots.length * 0.5;
     }
   };
@@ -303,7 +313,7 @@ export default function ScheduleApplyPage() {
 
     // 요일별로 슬롯 그룹화
     const slotsByDay: Record<number, string[]> = {};
-    selectedSlots.forEach(slot => {
+    selectedSlots.forEach((slot) => {
       const [dayStr, time] = slot.split('-');
       const day = parseInt(dayStr);
       if (!slotsByDay[day]) slotsByDay[day] = [];
@@ -380,9 +390,10 @@ export default function ScheduleApplyPage() {
       return `현재 월 최대 근무 가능시간 ${MAX_MONTH_HOURS}시간을 초과하였습니다.`;
     }
     if (!consecutiveHoursResult.isValid && selectedSlots.length > 0) {
-      const dayName = consecutiveHoursResult.invalidDay !== undefined
-        ? getDayName(consecutiveHoursResult.invalidDay)
-        : '';
+      const dayName =
+        consecutiveHoursResult.invalidDay !== undefined
+          ? getDayName(consecutiveHoursResult.invalidDay)
+          : '';
       const blockInfo = consecutiveHoursResult.invalidBlock || '';
       const slotCount = consecutiveHoursResult.slotCount || 0;
       const hours = slotCount * 0.5;
@@ -400,11 +411,9 @@ export default function ScheduleApplyPage() {
     // 현재 주차는 selectedSlots에서, 다른 주차는 pendingSlotsByWeek에서 가져오기
     for (let week = 1; week <= 5; week++) {
       const originalSlots = originalSlotsByWeek[week] || new Set<string>();
-      const currentSlots = week === selectedWeek
-        ? selectedSlots
-        : (pendingSlotsByWeek[week] || []);
+      const currentSlots = week === selectedWeek ? selectedSlots : pendingSlotsByWeek[week] || [];
 
-      const newSlots = currentSlots.filter(slot => !originalSlots.has(slot));
+      const newSlots = currentSlots.filter((slot) => !originalSlots.has(slot));
       if (newSlots.length > 0) {
         allNewSlots.push({ week, slots: newSlots });
       }
@@ -446,7 +455,9 @@ export default function ScheduleApplyPage() {
         // 부분 실패가 있는 경우 (207 Multi-Status)
         if (response.details?.failure && response.details.failure.length > 0) {
           setFailedSlots(response.details.failure);
-          setError(`일부 일정 신청에 실패했습니다. (성공: ${response.details.success.length}개, 실패: ${response.details.failure.length}개)`);
+          setError(
+            `일부 일정 신청에 실패했습니다. (성공: ${response.details.success.length}개, 실패: ${response.details.failure.length}개)`
+          );
         }
 
         // 성공한 경우 스케줄 재조회
@@ -468,7 +479,10 @@ export default function ScheduleApplyPage() {
 
       // axios 에러에서 response.data 추출
       if (axios.isAxiosError(err) && err.response?.data) {
-        const errorData = err.response.data as { message?: string; details?: { failure?: TimeSlot[] } };
+        const errorData = err.response.data as {
+          message?: string;
+          details?: { failure?: TimeSlot[] };
+        };
         setError(errorData.message || '일정 신청에 실패했습니다.');
 
         // 실패한 슬롯 정보가 있으면 표시
@@ -486,22 +500,34 @@ export default function ScheduleApplyPage() {
   // 신청 완료 화면
   if (isSubmitted) {
     return (
-      <div className="bg-white relative min-h-screen w-full" data-name="scheduleApplySuccess">
+      <div className="relative min-h-screen w-full bg-white" data-name="scheduleApplySuccess">
         {/* Background Gradient */}
-        <div className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] inset-0 -z-10" data-name="Background" />
+        <div
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f8fbff] to-[#ffffff]"
+          data-name="Background"
+        />
 
         {/* Header */}
-        <div className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]" data-name="Container">
-          <div className="max-w-[39.3rem] mx-auto px-[3.2rem] py-[2.4rem]">
+        <div
+          className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]"
+          data-name="Container"
+        >
+          <div className="mx-auto max-w-[39.3rem] px-[3.2rem] py-[2.4rem]">
             <div className="flex items-center gap-[1.6rem]">
               {/* Back Button */}
               <button
                 onClick={() => navigate('/schedule')}
-                className="shrink-0 size-[4rem] flex items-center justify-center"
+                className="flex size-[4rem] shrink-0 items-center justify-center"
                 data-name="Button"
               >
                 <svg className="size-[2.4rem]" fill="none" viewBox="0 0 24 24">
-                  <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M15 18L9 12L15 6"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
 
@@ -518,19 +544,27 @@ export default function ScheduleApplyPage() {
         </div>
 
         {/* Success Content */}
-        <div className="w-full flex items-center justify-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
+        <div
+          className="flex w-full items-center justify-center"
+          style={{ minHeight: 'calc(100vh - 200px)' }}
+        >
           <div className="flex flex-col items-center gap-[24px] px-[32px]">
-            <img src={successIcon} alt="success" className="w-[40px] h-[40px]" />
-            <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[16px] tracking-[0.24px] text-[#09121c] text-center">
-              {failedSlots.length > 0 ? '일부 일정 신청이 완료되었습니다.' : '신청이 완료되었습니다.'}
+            <img src={successIcon} alt="success" className="h-[40px] w-[40px]" />
+            <p className="text-center font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[16px] leading-[16px] tracking-[0.24px] text-[#09121c]">
+              {failedSlots.length > 0
+                ? '일부 일정 신청이 완료되었습니다.'
+                : '신청이 완료되었습니다.'}
             </p>
             {failedSlots.length > 0 && (
-              <div className="w-full max-w-[300px] px-[16px] py-[12px] bg-yellow-50 border border-yellow-200 rounded-[12px]">
-                <p className="font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[13px] text-yellow-800 mb-[8px]">
+              <div className="w-full max-w-[300px] rounded-[12px] border border-yellow-200 bg-yellow-50 px-[16px] py-[12px]">
+                <p className="mb-[8px] font-['LINE_Seed_Sans_KR:Bold',sans-serif] text-[13px] text-yellow-800">
                   ⚠ 일부 일정 신청 실패
                 </p>
                 {failedSlots.map((slot, index) => (
-                  <p key={index} className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[11px] text-yellow-700">
+                  <p
+                    key={index}
+                    className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[11px] text-yellow-700"
+                  >
                     • {slot.start.split('T')[1].slice(0, 5)} ~ {slot.end.split('T')[1].slice(0, 5)}
                   </p>
                 ))}
@@ -546,22 +580,34 @@ export default function ScheduleApplyPage() {
   }
 
   return (
-    <div className="bg-white relative min-h-screen w-full" data-name="scheduleApply">
+    <div className="relative min-h-screen w-full bg-white" data-name="scheduleApply">
       {/* Background Gradient */}
-      <div className="absolute bg-gradient-to-b from-[#f8fbff] to-[#ffffff] inset-0 -z-10" data-name="Background" />
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f8fbff] to-[#ffffff]"
+        data-name="Background"
+      />
 
       {/* Header */}
-      <div className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]" data-name="Container">
-        <div className="max-w-[39.3rem] mx-auto px-[3.2rem] py-[2.4rem]">
+      <div
+        className="w-full bg-[#51a8ff] shadow-[0rem_0.4rem_0.6rem_-0.4rem_rgba(0,0,0,0.1)]"
+        data-name="Container"
+      >
+        <div className="mx-auto max-w-[39.3rem] px-[3.2rem] py-[2.4rem]">
           <div className="flex items-center gap-[1.6rem]">
             {/* Back Button */}
             <button
               onClick={() => navigate('/schedule')}
-              className="shrink-0 size-[4rem] flex items-center justify-center"
+              className="flex size-[4rem] shrink-0 items-center justify-center"
               data-name="Button"
             >
               <svg className="size-[2.4rem]" fill="none" viewBox="0 0 24 24">
-                <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
 
@@ -579,14 +625,14 @@ export default function ScheduleApplyPage() {
 
       {/* Content - Scrollable */}
       <div className="w-full">
-        <div className="max-w-[39.3rem] mx-auto px-[2.4rem] pt-[3.2rem] pb-[3.2rem] flex flex-col gap-[2rem]">
+        <div className="mx-auto flex max-w-[39.3rem] flex-col gap-[2rem] px-[2.4rem] pb-[3.2rem] pt-[3.2rem]">
           {/* Info Box */}
           <div className="w-full">
             <ScheduleInfoCard />
           </div>
 
           {/* Week Tabs */}
-          <div className="flex gap-[1rem] w-full" data-name="Container">
+          <div className="flex w-full gap-[1rem]" data-name="Container">
             {[1, 2, 3, 4, 5].map((week) => {
               const isActive = selectedWeek === week;
 
@@ -594,10 +640,12 @@ export default function ScheduleApplyPage() {
                 <button
                   key={week}
                   onClick={() => handleWeekChange(week)}
-                  className={`flex-1 h-[3.6rem] rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
+                  className={`h-[3.6rem] flex-1 rounded-[4.4rem] shadow-[0px_4px_${isActive ? '20' : '25'}px_0px_rgba(${isActive ? '81,168,255' : '5,6,24'},${isActive ? '0.07' : '0.05'})] ${isActive ? 'bg-[#51a8ff]' : 'bg-white'} transition-all duration-200`}
                   data-name="Button"
                 >
-                  <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.2rem] tracking-[0.021rem] ${isActive ? 'text-white' : 'text-[#09121c]'}`}>
+                  <p
+                    className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.2rem] tracking-[0.021rem] ${isActive ? 'text-white' : 'text-[#09121c]'}`}
+                  >
                     {week}주차
                   </p>
                 </button>
@@ -607,11 +655,7 @@ export default function ScheduleApplyPage() {
 
           {/* Weekly Hours Card */}
           <div className="w-full">
-            <WeekTotalCard
-              week={selectedWeek}
-              currentHours={currentWeekHours}
-              maxHours={13}
-            />
+            <WeekTotalCard week={selectedWeek} currentHours={currentWeekHours} maxHours={13} />
           </div>
 
           {/* Time Table */}
@@ -635,7 +679,7 @@ export default function ScheduleApplyPage() {
 
           {/* Validation Warning */}
           {validationWarning && (
-            <div className="w-full px-[1.6rem] py-[1.2rem] bg-yellow-50 border border-yellow-300 rounded-[1.2rem]">
+            <div className="w-full rounded-[1.2rem] border border-yellow-300 bg-yellow-50 px-[1.6rem] py-[1.2rem]">
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-yellow-700">
                 {validationWarning}
               </p>
@@ -644,7 +688,7 @@ export default function ScheduleApplyPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="w-full px-[1.6rem] py-[1.2rem] bg-red-50 border border-red-200 rounded-[1.2rem]">
+            <div className="w-full rounded-[1.2rem] border border-red-200 bg-red-50 px-[1.6rem] py-[1.2rem]">
               <p className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.3rem] leading-[1.95rem] text-red-600">
                 {error}
               </p>
@@ -654,7 +698,10 @@ export default function ScheduleApplyPage() {
                     실패한 일정:
                   </p>
                   {failedSlots.map((slot, index) => (
-                    <p key={index} className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] text-red-600">
+                    <p
+                      key={index}
+                      className="font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.1rem] text-red-600"
+                    >
                       • {slot.start} ~ {slot.end}
                     </p>
                   ))}
@@ -668,16 +715,16 @@ export default function ScheduleApplyPage() {
             <button
               onClick={handleSubmit}
               disabled={isSubmitDisabled}
-              className={`w-full h-[5.6rem] rounded-[4.6rem] transition-all duration-200 ${
-                !isSubmitDisabled
-                  ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]'
-                  : 'bg-[#eaeaea]'
+              className={`h-[5.6rem] w-full rounded-[4.6rem] transition-all duration-200 ${
+                !isSubmitDisabled ? 'bg-[#51a8ff] hover:bg-[#3d8fe0]' : 'bg-[#eaeaea]'
               }`}
               data-name="Button"
             >
-              <p className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
-                !isSubmitDisabled ? 'text-white' : 'text-[#cdcdcd]'
-              }`}>
+              <p
+                className={`font-['LINE_Seed_Sans_KR:Regular',sans-serif] text-[1.6rem] leading-[2.4rem] tracking-[0.024rem] ${
+                  !isSubmitDisabled ? 'text-white' : 'text-[#cdcdcd]'
+                }`}
+              >
                 {isLoading ? '신청 중...' : '신청하기'}
               </p>
             </button>
