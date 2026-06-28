@@ -27,10 +27,12 @@ export interface FaqListItem {
 export interface FaqRequest {
   title: string;
   complainantName: string;
-  answer: string;
+  answer: string; // HTML string
   etc: string;
-  categoryId: number;
-  content: string;
+  categoryIds: number[]; // [수정] 배열로 변경
+  content: string; // HTML string
+  fileUrls: string[]; // [추가] 첨부파일 URL 배열
+  relatedFaqIds: number[]; // [추가] 관련 FAQ ID 배열
 }
 
 /** 1. FAQ 상세 조회 응답 타입 */
@@ -75,6 +77,16 @@ export interface FaqSuccessResponse {
   message: string;
   details: {
     timestamp: string;
+  };
+}
+
+/** [추가됨] 파일 및 이미지 업로드 응답 타입 */
+export interface UploadResponse {
+  isSuccess: boolean;
+  message: string;
+  details: {
+    timestamp: string;
+    url?: string; // 실제 서버 응답 시 URL이 담길 필드 (명세에 따라 이름은 다를 수 있음)
   };
 }
 
@@ -141,5 +153,35 @@ export const getFaqList = async (params?: GetFaqListParams): Promise<FaqListResp
  */
 export const createFaq = async (data: FaqRequest): Promise<FaqSuccessResponse> => {
   const response = await apiClient.post<FaqSuccessResponse>('/api/faq', data);
+  return response.data;
+};
+
+/**
+ * [신규] FAQ 본문 삽입용 이미지 업로드
+ * Method: POST
+ * Path: /api/faq/images
+ */
+export const uploadFaqImage = async (imageFile: File): Promise<UploadResponse> => {
+  const formData = new FormData();
+  formData.append('imageFile', imageFile); // 명세에 명시된 'imageFile' 키 사용
+
+  const response = await apiClient.post<UploadResponse>('/api/faq/images', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
+/**
+ * [신규] FAQ 첨부 파일 업로드
+ * Method: POST
+ * Path: /api/faq/files
+ */
+export const uploadFaqFile = async (file: File): Promise<UploadResponse> => {
+  const formData = new FormData();
+  formData.append('file', file); // 명세에 명시된 'file' 키 사용
+
+  const response = await apiClient.post<UploadResponse>('/api/faq/files', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return response.data;
 };
