@@ -196,13 +196,13 @@ const WriteForm = () => {
         />
       </div>
 
-      {/* 3. 분류 ID (다중) */}
+      {/* 3. 분류 (다중) */}
       <div className="flex gap-4">
-        <div className={labelStyle}>분류 ID</div>
+        <div className={labelStyle}>분류</div>
         <InputField
           value={formData.categoryIds}
           onChange={(val) => handleFieldChange('categoryIds', val)}
-          placeholder="예: 1, 2, 3 (쉼표로 구분)"
+          placeholder="클릭시 드롭다운으로 선택 가능"
         />
       </div>
 
@@ -234,7 +234,7 @@ const WriteForm = () => {
         <InputField
           value={formData.relatedFaqIds}
           onChange={(val) => handleFieldChange('relatedFaqIds', val)}
-          placeholder="관련된 FAQ ID를 입력하세요 (예: 10, 15)"
+          placeholder="관련된 FAQ를 드래그로 넣어주세요."
         />
       </div>
 
