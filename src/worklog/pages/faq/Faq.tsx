@@ -144,13 +144,26 @@ const Faq = () => {
 
               {/* 리스트 렌더링 */}
               {currentPosts.map((post) => (
-                <SearchBar
+                <div
                   key={post.id}
-                  id={post.id}
-                  title={post.title}
-                  date={post.date}
-                  onClick={handleItemClick} // 클릭 이벤트 전달
-                />
+                  draggable // 드래그 허용
+                  onDragStart={(e) => {
+                    // 드래그 시작 시, 게시글의 ID와 제목을 JSON 문자열로 클립보드(dataTransfer)에 저장
+                    e.dataTransfer.setData(
+                      'application/json',
+                      JSON.stringify({ id: post.id, title: post.title })
+                    );
+                  }}
+                  className="cursor-grab active:cursor-grabbing" // 마우스 커서 UX 향상
+                >
+                  <SearchBar
+                    key={post.id}
+                    id={post.id}
+                    title={post.title}
+                    date={post.date}
+                    onClick={handleItemClick} // 클릭 이벤트 전달
+                  />
+                </div>
               ))}
               <div className="mt-auto pb-4">
                 <Pagination

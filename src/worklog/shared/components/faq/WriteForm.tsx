@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import type { ClipboardEvent, ChangeEvent } from 'react';
+import type { ClipboardEvent, ChangeEvent, DragEvent } from 'react';
 import xIcon from './x.svg';
+
+// API Imports (경로는 실제 구조에 맞게 확인해주세요)
+import { getCategories, type Category } from '@/worklog/shared/apis/categories/categories.api';
+import { recommendCategory } from '@/worklog/shared/apis/faq/faqai.api';
+import { createFaq, uploadFaqFile, type FaqRequest } from '@/worklog/shared/apis/faq/faq.api';
 
 const labelStyle =
   'flex h-[36px] w-[80px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[15px] font-[700] text-[#17191A]';
@@ -114,64 +119,167 @@ const RichTextEditor = ({
   );
 };
 
+// AI 아이콘 (파란색 스파클 SVG)
+const SparkIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z"
+      fill="#3B82F6"
+    />
+  </svg>
+);
+
 const WriteForm = () => {
-  // 전체 폼 상태 관리 (API 명세서 형식 일치)
   const [formData, setFormData] = useState({
     title: '',
     complainantName: '',
-    categoryIds: '', // 배열 변환용 임시 string (ex: "1, 2, 3")
-    relatedFaqIds: '', // 배열 변환용 임시 string
-    content: '', // HTML 저장
-    answer: '', // HTML 저장
+    content: '',
+    answer: '',
     etc: '',
-    files: [] as File[], // UI 표시 및 업로드용
+    files: [] as File[],
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // 1. 분류 (카테고리) 관련 상태
+  const [availableCategories, setAvailableCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // 일반 입력 핸들러
+  // 2. 관련 FAQ (드래그 앤 드롭) 관련 상태
+  const [relatedFaqs, setRelatedFaqs] = useState<{ id: number; title: string }[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  // 3. AI 추천 관련 상태
+  const [aiCategories, setAiCategories] = useState<{ id: number; name: string }[]>([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // 전송 중 로딩 상태
+
+  // 마운트 시 분류 목록 불러오기
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategories();
+        if (res.isSuccess) setAvailableCategories(res.details.categories);
+      } catch (err) {
+        console.error('분류 목록 조회 실패:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const handleFieldChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // 첨부파일 선택 핸들러
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-      setFormData((prev) => ({ ...prev, files: [...prev.files, ...selectedFiles] }));
+      setFormData((prev) => ({ ...prev, files: [...prev.files, ...Array.from(e.target.files!)] }));
     }
   };
 
-  // 파일 삭제
-  const removeFile = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      files: prev.files.filter((_, i) => i !== index),
-    }));
+  // 💡 분류 드롭다운 처리
+  const toggleCategory = (category: Category) => {
+    setSelectedCategories(
+      (prev) =>
+        prev.some((c) => c.categoryId === category.categoryId)
+          ? prev.filter((c) => c.categoryId !== category.categoryId) // 있으면 제거
+          : [...prev, category] // 없으면 추가
+    );
   };
 
-  // 작성완료 버튼 클릭 -> 모달 오픈
-  const handleSubmitClick = () => {
-    // 2단계에서 유효성 검사 추가 예정
-    setIsModalOpen(true);
+  // 💡 드래그 앤 드롭 (관련 FAQ) 처리 함수
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      if (data && data.id && data.title) {
+        // 이미 추가된 게시글이 아니면 추가
+        if (!relatedFaqs.some((faq) => faq.id === data.id)) {
+          setRelatedFaqs((prev) => [...prev, data]);
+        }
+      }
+    } catch (err) {
+      console.error('드롭 데이터 파싱 오류:', err);
+    }
   };
 
-  // 모달 안에서 최종 '확인' 클릭 시 -> 실제 API 전송 로직
+  // 💡 AI 카테고리 추천 요청 함수
+  const handleAiRecommend = async () => {
+    if (!formData.title || !formData.content) {
+      alert('제목과 내용을 먼저 작성해주세요!');
+      return;
+    }
+    setIsAiLoading(true);
+    try {
+      // HTML 태그 제거 후 순수 텍스트만 AI에게 전송
+      const plainContent = formData.content.replace(/<[^>]+>/g, '');
+      const res = await recommendCategory({ title: formData.title, content: plainContent });
+
+      setAiCategories(res.categories);
+
+      // AI가 추천한 결과를 실제 선택된 카테고리에도 자동 추가 (이름 기준 매칭)
+      const newSelections = res.categories
+        .map((ai) => availableCategories.find((c) => c.categoryId === ai.id))
+        .filter((c): c is Category => c !== undefined);
+
+      setSelectedCategories((prev) => {
+        const combined = [...prev, ...newSelections];
+        // 중복 제거
+        return Array.from(new Map(combined.map((item) => [item.categoryId, item])).values());
+      });
+    } catch (err) {
+      console.error('AI 추천 실패:', err);
+      alert('AI 추천 중 오류가 발생했습니다.');
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  // 💡 최종 제출 (모달 확인 클릭 시)
   const handleConfirmSubmit = async () => {
-    console.log('🚀 [API 호출 준비 완료] 전송될 데이터:', {
-      ...formData,
-      categoryIds: formData.categoryIds
-        .split(',')
-        .map((id) => Number(id.trim()))
-        .filter(Boolean),
-      relatedFaqIds: formData.relatedFaqIds
-        .split(',')
-        .map((id) => Number(id.trim()))
-        .filter(Boolean),
-    });
+    if (!formData.title || !formData.answer) {
+      alert('제목과 답변은 필수입니다.');
+      setIsModalOpen(false);
+      return;
+    }
 
-    // [2단계 연동 시 여기에 파일 선업로드 및 createFaq 호출 로직 추가]
-    setIsModalOpen(false);
+    setIsSubmitting(true);
+    try {
+      // 1. 파일이 있다면 먼저 업로드하여 URL 획득
+      const uploadedFileUrls: string[] = [];
+      for (const file of formData.files) {
+        const fileRes = await uploadFaqFile(file);
+        if (fileRes.isSuccess && fileRes.details.url) {
+          uploadedFileUrls.push(fileRes.details.url);
+        }
+      }
+
+      // 2. 최종 FAQ 생성 Payload 구성 (UI 데이터를 API 명세에 맞게 변환!)
+      const payload: FaqRequest = {
+        title: formData.title,
+        complainantName: formData.complainantName,
+        categoryIds: selectedCategories.map((c) => c.categoryId), // 객체 배열 -> ID 숫자 배열
+        content: formData.content,
+        answer: formData.answer,
+        etc: formData.etc,
+        fileUrls: uploadedFileUrls,
+        relatedFaqIds: relatedFaqs.map((f) => f.id), // 객체 배열 -> ID 숫자 배열
+      };
+
+      // 3. API 호출
+      await createFaq(payload);
+
+      alert('FAQ가 성공적으로 작성되었습니다!');
+      setIsModalOpen(false);
+      // TODO: 성공 후 탭 닫기나 초기화 로직 (부모 컴포넌트 호출)
+    } catch (err) {
+      console.error('FAQ 등록 실패:', err);
+      alert('작성 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -196,14 +304,52 @@ const WriteForm = () => {
         />
       </div>
 
-      {/* 3. 분류 (다중) */}
+      {/* 3. 분류 (다중 선택 드롭다운 UI) */}
       <div className="flex gap-4">
         <div className={labelStyle}>분류</div>
-        <InputField
-          value={formData.categoryIds}
-          onChange={(val) => handleFieldChange('categoryIds', val)}
-          placeholder="클릭시 드롭다운으로 선택 가능"
-        />
+        <div className="relative flex-1">
+          <div
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex min-h-[36px] w-full cursor-pointer flex-wrap items-center gap-2 rounded-[6px] border border-[#E8EEF2] bg-[#F4F6F8] px-3 py-1.5 transition-colors hover:border-blue-400"
+          >
+            {selectedCategories.length === 0 && (
+              <span className="text-[14px] text-[#8C9499]">
+                클릭하여 분류를 선택하세요 (다중 선택 가능)
+              </span>
+            )}
+            {selectedCategories.map((cat) => (
+              <span
+                key={cat.categoryId}
+                className="flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-[13px] shadow-sm"
+              >
+                {cat.categoryName}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleCategory(cat);
+                  }}
+                  className="text-gray-400 hover:text-red-500"
+                >
+                  ✕
+                </button>
+              </span>
+            ))}
+          </div>
+          {/* 드롭다운 리스트 */}
+          {isDropdownOpen && (
+            <div className="absolute top-[40px] z-20 max-h-[200px] w-full overflow-y-auto rounded border bg-white shadow-lg">
+              {availableCategories.map((cat) => (
+                <div
+                  key={cat.categoryId}
+                  onClick={() => toggleCategory(cat)}
+                  className={`cursor-pointer px-4 py-2 text-[14px] hover:bg-gray-100 ${selectedCategories.some((c) => c.categoryId === cat.categoryId) ? 'bg-blue-50 font-bold text-blue-600' : ''}`}
+                >
+                  {cat.categoryName}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 4. 내용 (에디터) */}
@@ -217,6 +363,37 @@ const WriteForm = () => {
         />
       </div>
 
+      {/* ✨ 4.5. AI 카테고리 추천 영역 (내용과 답변 사이) */}
+      <div className="flex gap-4">
+        <div className="w-[80px] shrink-0" /> {/* 간격 맞추기용 빈 공간 */}
+        <div className="flex flex-1 flex-col items-start gap-2">
+          <button
+            onClick={handleAiRecommend}
+            disabled={isAiLoading}
+            className="flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-[13px] font-bold text-blue-600 transition-colors hover:bg-blue-100 disabled:opacity-50"
+          >
+            <SparkIcon />
+            {isAiLoading ? 'AI 분석 중...' : 'AI 카테고리 추천받기'}
+          </button>
+
+          {/* AI 추천 결과 마커 표시 영역 */}
+          {aiCategories.length > 0 && (
+            <div className="flex items-center gap-2 pt-1">
+              <SparkIcon />
+              {aiCategories.map((cat) => (
+                <span
+                  key={cat.id}
+                  className="rounded-[8px] border border-blue-100 bg-white px-3 py-1 text-[13px] font-medium text-gray-700 shadow-sm"
+                >
+                  {cat.name}
+                </span>
+              ))}
+              <span className="ml-2 text-[12px] text-gray-400">분류에 자동 추가되었습니다.</span>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* 5. 답변 (에디터) */}
       <div className="flex gap-4">
         <div className={labelStyle}>답변</div>
@@ -228,14 +405,41 @@ const WriteForm = () => {
         />
       </div>
 
-      {/* 6. 연관 FAQ ID (다중) */}
+      {/* 6. 연관 FAQ (💡 드래그 앤 드롭 존) */}
       <div className="flex gap-4">
         <div className={labelStyle}>관련 FAQ</div>
-        <InputField
-          value={formData.relatedFaqIds}
-          onChange={(val) => handleFieldChange('relatedFaqIds', val)}
-          placeholder="관련된 FAQ를 드래그로 넣어주세요."
-        />
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={handleDrop}
+          className={`flex min-h-[44px] flex-1 flex-wrap items-center gap-2 rounded-[6px] border-2 border-dashed px-3 py-2 transition-colors ${
+            isDragOver ? 'border-blue-400 bg-blue-50' : 'border-[#E8EEF2] bg-[#F4F6F8]'
+          }`}
+        >
+          {relatedFaqs.length === 0 && (
+            <span className="pointer-events-none text-[14px] text-[#8C9499]">
+              우측 목록에서 관련된 FAQ를 이쪽으로 드래그 앤 드롭 해주세요.
+            </span>
+          )}
+          {relatedFaqs.map((faq) => (
+            <span
+              key={faq.id}
+              className="flex max-w-[250px] items-center gap-1.5 rounded border bg-white px-3 py-1 text-[13px] shadow-sm"
+            >
+              <span className="truncate font-medium text-blue-600">#{faq.id}</span>
+              <span className="truncate">{faq.title}</span>
+              <button
+                onClick={() => setRelatedFaqs((prev) => prev.filter((f) => f.id !== faq.id))}
+                className="ml-1 text-gray-400 hover:text-red-500"
+              >
+                ✕
+              </button>
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* 7. 비고 */}
@@ -255,8 +459,6 @@ const WriteForm = () => {
           <span className="text-[14px] font-medium">첨부파일 올리기</span>
           <input type="file" multiple className="hidden" onChange={handleFileChange} />
         </label>
-
-        {/* 선택된 파일 리스트 UI */}
         {formData.files.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
             {formData.files.map((file, idx) => (
@@ -266,7 +468,12 @@ const WriteForm = () => {
               >
                 <span className="max-w-[200px] truncate">{file.name}</span>
                 <button
-                  onClick={() => removeFile(idx)}
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      files: prev.files.filter((_, i) => i !== idx),
+                    }))
+                  }
                   className="text-gray-400 hover:text-red-500"
                 >
                   ✕
@@ -286,7 +493,7 @@ const WriteForm = () => {
           임시 저장
         </button>
         <button
-          onClick={handleSubmitClick}
+          onClick={() => setIsModalOpen(true)}
           className="rounded-[6px] bg-[#3B82F6] px-6 py-2.5 text-[14px] font-bold text-white transition-colors hover:bg-blue-600"
         >
           작성완료
@@ -304,15 +511,17 @@ const WriteForm = () => {
             <div className="flex w-full gap-3">
               <button
                 onClick={() => setIsModalOpen(false)}
+                disabled={isSubmitting}
                 className="flex-1 rounded-[8px] bg-gray-100 py-2.5 text-[14px] font-bold text-[#464A4D] hover:bg-gray-200"
               >
                 취소
               </button>
               <button
                 onClick={handleConfirmSubmit}
-                className="flex-1 rounded-[8px] bg-[#3B82F6] py-2.5 text-[14px] font-bold text-white hover:bg-blue-600"
+                disabled={isSubmitting}
+                className="flex flex-1 items-center justify-center rounded-[8px] bg-[#3B82F6] py-2.5 text-[14px] font-bold text-white hover:bg-blue-600"
               >
-                확인
+                {isSubmitting ? '처리 중...' : '확인'}
               </button>
             </div>
           </div>
