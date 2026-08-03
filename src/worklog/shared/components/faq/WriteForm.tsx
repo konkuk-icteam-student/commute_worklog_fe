@@ -217,18 +217,21 @@ const WriteForm = () => {
       const plainContent = formData.content.replace(/<[^>]+>/g, '');
       const res = await recommendCategory({ title: formData.title, content: plainContent });
 
-      setAiCategories(res.categories);
+      // 💡 수정된 부분: res.categories -> res.details.categories 로 변경!
+      if (res.isSuccess && res.details.categories) {
+        setAiCategories(res.details.categories);
 
-      // AI가 추천한 결과를 실제 선택된 카테고리에도 자동 추가 (이름 기준 매칭)
-      const newSelections = res.categories
-        .map((ai) => availableCategories.find((c) => c.categoryId === ai.id))
-        .filter((c): c is Category => c !== undefined);
+        // AI가 추천한 결과를 실제 선택된 카테고리에도 자동 추가 (이름 기준 매칭)
+        const newSelections = res.details.categories
+          .map((ai) => availableCategories.find((c) => c.categoryId === ai.id))
+          .filter((c): c is Category => c !== undefined);
 
-      setSelectedCategories((prev) => {
-        const combined = [...prev, ...newSelections];
-        // 중복 제거
-        return Array.from(new Map(combined.map((item) => [item.categoryId, item])).values());
-      });
+        setSelectedCategories((prev) => {
+          const combined = [...prev, ...newSelections];
+          // 중복 제거
+          return Array.from(new Map(combined.map((item) => [item.categoryId, item])).values());
+        });
+      }
     } catch (err) {
       console.error('AI 추천 실패:', err);
       alert('AI 추천 중 오류가 발생했습니다.');

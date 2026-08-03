@@ -11,8 +11,12 @@ export interface RecommendedCategory {
 }
 
 export interface RecommendCategoryResponse {
-  timestamp: string;
-  categories: RecommendedCategory[];
+  isSuccess: boolean;
+  message: string;
+  details: {
+    timestamp: string;
+    categories: RecommendedCategory[];
+  };
 }
 
 /**
