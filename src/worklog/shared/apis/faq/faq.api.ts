@@ -29,27 +29,39 @@ export interface FaqRequest {
   complainantName: string;
   answer: string; // HTML string
   etc: string;
-  categoryIds: number[]; // [수정] 배열로 변경
+  categoryIds: number[];
   content: string; // HTML string
-  fileUrls: string[]; // [추가] 첨부파일 URL 배열
-  relatedFaqIds: number[]; // [추가] 관련 FAQ ID 배열
+  fileUrls: string[];
+  relatedFaqIds: number[];
 }
 
-/** 1. FAQ 상세 조회 응답 타입 */
+/** 1. FAQ 상세 조회 응답 타입 (🔥 최신 명세 반영) */
 export interface FaqDetailResponse {
   timestamp: string;
   faqId: number;
   title: string;
-  categoryName: string;
+  categoryNames: string[]; // [수정] 단일 string -> 배열로 변경됨
   deletedFlag: boolean;
   complainantName: string;
   writerName: string;
+  content: string; // [추가] 상세 본문 내용 (HTML)
   answer: string;
   etc: string;
+  files: {
+    // [추가] 첨부파일 목록
+    url: string;
+    originalName: string;
+  }[];
   pastManagers: ManagerSummary[];
   currentManagers: ManagerSummary[];
   editedDates: string[]; // ["2024-11-01", "2024-11-10"]
   deletedAt: string | null;
+  relatedFaqs: {
+    // [추가] 관련 FAQ 목록
+    faqId: number;
+    title: string;
+    updatedDate: string;
+  }[];
 }
 
 /** 4. FAQ 목록 조회 요청 파라미터 타입 */
@@ -86,7 +98,7 @@ export interface UploadResponse {
   message: string;
   details: {
     timestamp: string;
-    url?: string; // 실제 서버 응답 시 URL이 담길 필드 (명세에 따라 이름은 다를 수 있음)
+    url?: string;
   };
 }
 
@@ -94,12 +106,6 @@ export interface UploadResponse {
 // API Methods
 // ==========================================
 
-/**
- * 1. FAQ 상세 조회
- * Method: GET
- * Path: /api/faq/{faqId}
- * Query: date (yyyy-MM-dd)
- */
 export const getFaqDetail = async (faqId: number, date: string): Promise<FaqDetailResponse> => {
   const response = await apiClient.get<FaqDetailResponse>(`/api/faq/${faqId}`, {
     params: { date },
@@ -107,79 +113,47 @@ export const getFaqDetail = async (faqId: number, date: string): Promise<FaqDeta
   return response.data;
 };
 
-/**
- * 2. FAQ 수정
- * Method: PUT
- * Path: /api/faq/{faqId}
- */
 export const updateFaq = async (faqId: number, data: FaqRequest): Promise<FaqSuccessResponse> => {
   const response = await apiClient.put<FaqSuccessResponse>(`/api/faq/${faqId}`, data);
   return response.data;
 };
 
-/**
- * 3. FAQ 삭제
- * Method: DELETE
- * Path: /api/faq/{faqId}
- */
 export const deleteFaq = async (faqId: number): Promise<FaqSuccessResponse> => {
   const response = await apiClient.delete<FaqSuccessResponse>(`/api/faq/${faqId}`);
   return response.data;
 };
 
-/**
- * 4. FAQ 목록 조회
- * Method: GET
- * Path: /api/faq
- */
 export const getFaqList = async (params?: GetFaqListParams): Promise<FaqListResponse> => {
   const serverPage = Math.max(0, (params?.page || 1) - 1);
   const response = await apiClient.get<FaqListResponse>('/api/faq', {
     params: {
       ...params,
-      page: serverPage, // 기본값 0 설정
+      page: serverPage,
     },
   });
   return {
     ...response.data,
-    page: response.data.page + 1,
+    page: response.data.page + 1, // 프론트엔드 UI용 1-based index 보정
   };
 };
 
-/**
- * 5. FAQ 작성 (등록)
- * Method: POST
- * Path: /api/faq
- */
 export const createFaq = async (data: FaqRequest): Promise<FaqSuccessResponse> => {
   const response = await apiClient.post<FaqSuccessResponse>('/api/faq', data);
   return response.data;
 };
 
-/**
- * [신규] FAQ 본문 삽입용 이미지 업로드
- * Method: POST
- * Path: /api/faq/images
- */
 export const uploadFaqImage = async (imageFile: File): Promise<UploadResponse> => {
   const formData = new FormData();
-  formData.append('imageFile', imageFile); // 명세에 명시된 'imageFile' 키 사용
-
+  formData.append('imageFile', imageFile);
   const response = await apiClient.post<UploadResponse>('/api/faq/images', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 };
 
-/**
- * [신규] FAQ 첨부 파일 업로드
- * Method: POST
- * Path: /api/faq/files
- */
 export const uploadFaqFile = async (file: File): Promise<UploadResponse> => {
   const formData = new FormData();
-  formData.append('file', file); // 명세에 명시된 'file' 키 사용
-
+  formData.append('file', file);
   const response = await apiClient.post<UploadResponse>('/api/faq/files', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
