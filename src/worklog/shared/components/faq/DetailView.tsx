@@ -82,6 +82,25 @@ const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: stri
         <div className="flex h-[36px] flex-1 items-center px-2 text-[14px]">{data.writerName}</div>
       </div>
 
+      {/* 3.5. 분류 */}
+      <div className="flex gap-4">
+        <div className={labelStyle}>분류</div>
+        <div className="flex min-h-[36px] flex-1 flex-wrap items-center gap-2 px-2">
+          {data.categoryNames && data.categoryNames.length > 0 ? (
+            data.categoryNames.map((category, idx) => (
+              <span
+                key={idx}
+                className="flex items-center gap-1 rounded border border-[#E8EEF2] bg-[#F4F6F8] px-2 py-0.5 text-[13px] font-medium text-[#464A4D] shadow-sm"
+              >
+                {category}
+              </span>
+            ))
+          ) : (
+            <span className="text-[14px] text-[#8C9499]">지정된 분류가 없습니다.</span>
+          )}
+        </div>
+      </div>
+
       {/* 4. 내용 (HTML 렌더링) */}
       <div className="flex gap-4">
         <div className={labelStyle}>내용</div>
