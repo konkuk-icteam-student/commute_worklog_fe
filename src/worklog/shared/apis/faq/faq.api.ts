@@ -75,6 +75,17 @@ export interface GetFaqListParams {
   page?: number; // Default: 0
 }
 
+export interface FaqListServerResponse {
+  isSuccess: boolean;
+  message: string;
+  details: {
+    timestamp: string;
+    faqs: FaqListItem[];
+    page: number;
+    totalPages: number;
+  };
+}
+
 /** 4. FAQ 목록 조회 응답 타입 */
 export interface FaqListResponse {
   timestamp: string;
@@ -98,8 +109,16 @@ export interface UploadResponse {
   message: string;
   details: {
     timestamp: string;
+    imageUrl?: string; // 이미지 업로드 시 서버가 주는 키값
+    fileUrl?: string; // 일반 파일 업로드 시를 대비한 키값
     url?: string;
   };
+}
+
+export interface FaqDetailServerResponse {
+  isSuccess: boolean;
+  message: string;
+  details: FaqDetailResponse | null;
 }
 
 // ==========================================
@@ -107,10 +126,17 @@ export interface UploadResponse {
 // ==========================================
 
 export const getFaqDetail = async (faqId: number, date: string): Promise<FaqDetailResponse> => {
-  const response = await apiClient.get<FaqDetailResponse>(`/api/faq/${faqId}`, {
+  const response = await apiClient.get<FaqDetailServerResponse>(`/api/faq/${faqId}`, {
     params: { date },
   });
-  return response.data;
+
+  // 💡 서버에서 실패했다고 보내거나 details가 없으면 에러를 던져서 UI에서 처리하게 합니다.
+  if (!response.data.isSuccess || !response.data.details) {
+    throw new Error(response.data.message || '상세 조회에 실패했습니다.');
+  }
+
+  // 💡 알맹이만 쏙 빼서 리턴!
+  return response.data.details;
 };
 
 export const updateFaq = async (faqId: number, data: FaqRequest): Promise<FaqSuccessResponse> => {
@@ -125,15 +151,21 @@ export const deleteFaq = async (faqId: number): Promise<FaqSuccessResponse> => {
 
 export const getFaqList = async (params?: GetFaqListParams): Promise<FaqListResponse> => {
   const serverPage = Math.max(0, (params?.page || 1) - 1);
-  const response = await apiClient.get<FaqListResponse>('/api/faq', {
+
+  const response = await apiClient.get<FaqListServerResponse>('/api/faq', {
     params: {
       ...params,
       page: serverPage,
     },
   });
+
+  const { timestamp, faqs, page, totalPages } = response.data.details;
+
   return {
-    ...response.data,
-    page: response.data.page + 1, // 프론트엔드 UI용 1-based index 보정
+    timestamp,
+    faqs: faqs || [], // 안전장치: 혹시라도 null이 오면 빈 배열로 처리
+    page: page + 1, // 프론트엔드 UI용 1-based index 보정
+    totalPages: totalPages === 0 ? 1 : totalPages,
   };
 };
 

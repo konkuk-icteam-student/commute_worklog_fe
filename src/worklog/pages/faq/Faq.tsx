@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Title from '@/worklog/shared/components/faq/Title';
 import SearchBar from '@/worklog/shared/components/faq/SearchBar';
 import SidePanel, { type TabData } from '@/worklog/shared/components/faq/SidePanel';
@@ -6,31 +6,31 @@ import WriteForm from '@/worklog/shared/components/faq/WriteForm';
 import DetailView from '@/worklog/shared/components/faq/DetailView';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout';
 import Pagination from '@/worklog/shared/components/faq/Pagination';
+import { getFaqList, type FaqListItem } from '@/worklog/shared/apis/faq/faq.api';
 
 const Faq = () => {
   const [tabs, setTabs] = useState<TabData[]>([]); // 열린 탭 목록
   const [activeTabId, setActiveTabId] = useState<string | number>(0); // 현재 보고있는 탭 ID
-  // 예시 데이터 배열
-  const dummyPosts = Array.from({ length: 50 }).map((_, i) => ({
-    id: i + 1,
-    title:
-      i % 2 === 0
-        ? `[${i + 1}] 부서 계정으로 로그인 하려고 하는데 장시간 접속을 안해서 불가능하다는 문구가 뜬다고 합니다.`
-        : `[${i + 1}] 홈페이지 접속 불가`,
-    date: '2023-10-0' + ((i % 9) + 1),
-  }));
 
-  const ITEMS_PER_PAGE = 10;
-
-  // [추가] 페이지네이션 상태
+  const [posts, setPosts] = useState<FaqListItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
 
-  // [추가] 현재 페이지에 보여줄 데이터 슬라이싱
-  const totalPages = Math.ceil(dummyPosts.length / ITEMS_PER_PAGE);
-  const currentPosts = dummyPosts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  // 💡 컴포넌트 마운트 및 페이지 변경 시 API 호출
+  useEffect(() => {
+    const fetchList = async () => {
+      try {
+        const res = await getFaqList({ page: currentPage });
+        setPosts(res.faqs);
+        setTotalPages(res.totalPages);
+        setTotalElements(res.faqs.length); // 실제론 API에서 totalElements를 주면 좋지만, 우선 길이로 대체하거나 생략 가능
+      } catch (error) {
+        console.error('FAQ 목록 조회 실패:', error);
+      }
+    };
+    fetchList();
+  }, [currentPage]);
 
   // 2. 탭 추가 로직 (핵심: Max 5개, FIFO)
   const addTab = (newTab: TabData) => {
@@ -71,7 +71,7 @@ const Faq = () => {
 
   // 4. 이벤트 핸들러: 리스트 아이템 (SearchBar) 클릭
   const handleItemClick = (id: number) => {
-    const selectedPost = dummyPosts.find((p) => p.id === id);
+    const selectedPost = posts.find((p) => p.faqId === id);
     if (!selectedPost) return;
 
     // 긴 제목은 잘라서 탭 제목으로 사용
@@ -85,7 +85,7 @@ const Faq = () => {
       label: shortTitle,
       title: selectedPost.title,
       type: 'detail',
-      content: <DetailView />, // 상세 데이터 전달 가능
+      content: <DetailView faqId={id} updatedDate={selectedPost.updatedDate} />,
     };
     addTab(newTab);
   };
@@ -138,30 +138,29 @@ const Faq = () => {
                   FAQ
                 </span>
                 <span className="pb-[10px] text-[16px] font-[400] text-[#464A4D]">
-                  총 {dummyPosts.length}건의 메뉴얼이 있습니다.
+                  총 {totalElements}건의 메뉴얼이 있습니다.
                 </span>
               </div>
 
               {/* 리스트 렌더링 */}
-              {currentPosts.map((post) => (
+              {posts.map((post) => (
                 <div
-                  key={post.id}
-                  draggable // 드래그 허용
+                  key={post.faqId}
+                  draggable
                   onDragStart={(e) => {
-                    // 드래그 시작 시, 게시글의 ID와 제목을 JSON 문자열로 클립보드(dataTransfer)에 저장
                     e.dataTransfer.setData(
                       'application/json',
-                      JSON.stringify({ id: post.id, title: post.title })
+                      JSON.stringify({ id: post.faqId, title: post.title })
                     );
                   }}
-                  className="cursor-grab active:cursor-grabbing" // 마우스 커서 UX 향상
+                  className="cursor-grab active:cursor-grabbing"
                 >
                   <SearchBar
-                    key={post.id}
-                    id={post.id}
+                    key={post.faqId}
+                    id={post.faqId}
                     title={post.title}
-                    date={post.date}
-                    onClick={handleItemClick} // 클릭 이벤트 전달
+                    date={post.updatedDate}
+                    onClick={handleItemClick}
                   />
                 </div>
               ))}

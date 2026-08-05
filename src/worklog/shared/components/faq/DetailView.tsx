@@ -1,114 +1,184 @@
+import { useState, useEffect } from 'react';
+import { getFaqDetail, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api';
+import WriteForm from './WriteForm';
+
 // 공통 라벨 스타일 (WriteForm과 동일)
 const labelStyle =
   'flex h-[36px] w-[71px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[16px] font-[700] text-[#17191A]';
 
-const DetailView = () => {
+const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: string }) => {
+  const [data, setData] = useState<FaqDetailResponse | null>(null);
+  const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    if (!faqId) return;
+    const fetchDetail = async () => {
+      try {
+        const targetDate = updatedDate || new Date().toISOString().split('T')[0];
+        const res = await getFaqDetail(faqId, targetDate);
+        setData(res);
+        setErrorMsg('');
+      } catch (err) {
+        console.error('FAQ 상세 조회 실패:', err);
+        // 💡 핵심 해결: any를 제거하고 Error 객체인지 확인(타입 가드)하여 안전하게 메시지 추출
+        if (err instanceof Error) {
+          setErrorMsg(err.message);
+        } else {
+          setErrorMsg('데이터를 불러올 수 없습니다.');
+        }
+      }
+    };
+    fetchDetail();
+  }, [faqId, updatedDate]);
+
+  if (errorMsg) {
+    return (
+      <div className="flex h-[300px] items-center justify-center text-[15px] font-bold text-red-500">
+        {errorMsg}
+      </div>
+    );
+  }
+
+  if (!data) return <div className="p-10 text-center text-gray-500">로딩 중...</div>;
+
+  // 💡 수정 모드일 때 WriteForm 렌더링 (취소 콜백 전달)
+  if (isEditing) {
+    return <WriteForm initialData={data} onCancel={() => setIsEditing(false)} />;
+  }
+  // 💡 타임라인 데이터 구성 (삭제일 + 수정일 병합 및 내림차순 정렬)
+  const historyList = [];
+  if (data.deletedAt) historyList.push({ date: data.deletedAt, type: 'deleted' });
+  data.editedDates?.forEach((d) => historyList.push({ date: d, type: 'edited' }));
+  historyList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
-    <div className="flex flex-col gap-6 pb-20">
-      {/* 1. 제목 */}
-      <div className="flex gap-4">
-        <div className={labelStyle}>제목</div>
-        <div className="flex h-[36px] flex-1 items-center rounded-[6px] bg-[#F4F6F8] px-3 text-[14px]">
-          학정시 로그인 오류
+    <div className="flex flex-col gap-6 pb-20 pt-4">
+      {/* 1. 제목 & 삭제 뱃지 */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <h1 className="text-[24px] font-bold text-[#17191A]">{data.title}</h1>
+          {data.deletedFlag && (
+            <span className="rounded bg-[#EEF2FF] px-2 py-1 text-[13px] font-bold text-[#4F46E5]">
+              삭제됨
+            </span>
+          )}
         </div>
       </div>
+
+      <hr className="border-[#E8EEF2]" />
 
       {/* 2. 민원인 */}
       <div className="flex gap-4">
         <div className={labelStyle}>민원인</div>
         <div className="flex h-[36px] flex-1 items-center px-2 text-[14px]">
-          김석진 (컴퓨터공학부 3학년)
+          {data.complainantName}
         </div>
       </div>
 
-      {/* 3. 내용 */}
-      <div className="flex gap-4">
-        <div className={labelStyle}>내용</div>
-        <div className="flex min-h-[80px] flex-1 rounded-[6px] bg-[#F4F6F8] p-3 text-[14px] leading-relaxed">
-          학사정보시스템 로그인을 하려는데 OTP 관련 메시지가 뜸,
-          <br />
-          팝업 하단 6자리 인증번호 입력 창에서
-          <br />
-          6자리를 입력해도 에러가 나고 로그인이 안됨
-        </div>
-      </div>
-
-      {/* 4. 작성자 */}
+      {/* 3. 작성자 */}
       <div className="flex gap-4">
         <div className={labelStyle}>작성자</div>
-        <div className="flex h-[36px] flex-1 items-center px-2 text-[14px]">
-          박길동 (컴퓨터공학부 과사무실)
-        </div>
+        <div className="flex h-[36px] flex-1 items-center px-2 text-[14px]">{data.writerName}</div>
       </div>
 
-      {/* 5. 이미지 (더미) */}
+      {/* 4. 내용 (HTML 렌더링) */}
       <div className="flex gap-4">
-        <div className="flex h-[200px] w-full items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[#8C9499]">
-          이미지
-        </div>
+        <div className={labelStyle}>내용</div>
+        <div
+          className="flex min-h-[100px] flex-1 flex-col rounded-[6px] bg-[#F4F6F8] p-4 text-[14px] leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: data.content }}
+        />
       </div>
 
-      {/* 6. 답변 */}
+      {/* 5. 답변 (HTML 렌더링) */}
       <div className="flex gap-4">
         <div className={labelStyle}>답변</div>
-        <div className="flex flex-1 flex-col gap-1 rounded-[6px] bg-[#F4F6F8] p-3 text-[14px]">
-          <p>핸드폰 Google Authenticator 앱에서</p>
-          <p>[QR코드 스캔]을 실행 못하고 엉뚱한 6자리를 입력해서 진행이 안되는 사례였음</p>
-          <p>OTP 인증 매뉴얼 8page 내용 순서대로 그대로 실행하면 해결 됨</p>
-          <ol className="list-decimal pl-4">
-            <li>학사정보시스템 로그인</li>
-            <li>OTP 인증 팝업창이 뜨면</li>
-            <li>Google Authenticator 앱 실행(없으면 다운로드)</li>
-            <li>오른쪽 하단 + 클릭</li>
-            <li>QR 코드 스캔 실행하고 컴퓨터 화면의 QR코드를 스캔해 등록</li>
-          </ol>
+        <div
+          className="flex min-h-[150px] flex-1 flex-col rounded-[6px] bg-[#F4F6F8] p-4 text-[14px] leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: data.answer }}
+        />
+      </div>
+
+      {/* 6. 비고 */}
+      {data.etc && (
+        <div className="flex gap-4">
+          <div className={labelStyle}>비고</div>
+          <div className="flex flex-1 items-center px-2 text-[14px]">{data.etc}</div>
         </div>
-      </div>
+      )}
 
-      {/* 7. 비고 */}
-      <div className="flex gap-4">
-        <div className={labelStyle}>비고</div>
-        <div className="flex h-[36px] flex-1 items-center px-2 text-[14px]">버튼 위치 변경됨</div>
-      </div>
-
-      {/* 8. 수정 이력 (더미) */}
+      {/* 7. 수정 이력 (타임라인 UI) */}
       <div className="flex gap-4">
         <div className={labelStyle}>수정</div>
-        <div className="flex flex-col justify-center text-[12px] text-[#8C9499]">
-          <div className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-[#8C9499]"></div>
-            <span>2025.10.29 (삭제)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-blue-500"></div>
-            <span className="text-blue-500 underline">2025.05.21</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-[#8C9499]"></div>
-            <span>2025.05.20</span>
-          </div>
+        <div className="relative ml-2 flex flex-col gap-5 border-l-2 border-[#E8EEF2] py-2">
+          {historyList.map((item, idx) => {
+            // 현재 보고 있는 최신 활성 버전 판단 (삭제가 아닐 경우 가장 위 항목)
+            const isActive = idx === (data.deletedAt ? 1 : 0);
+            return (
+              <div key={idx} className="relative flex items-center pl-4 text-[15px]">
+                {/* 타임라인 점 */}
+                <div className="absolute -left-[5px] h-[8px] w-[8px] rounded-full bg-[#8C9499]" />
+
+                {item.type === 'deleted' ? (
+                  <span className="text-[16px] text-[#8C9499]">{item.date} (삭제)</span>
+                ) : isActive ? (
+                  <span className="text-[16px] font-bold text-blue-600 underline underline-offset-4">
+                    {item.date}
+                  </span>
+                ) : (
+                  <span className="cursor-pointer text-[16px] font-bold text-[#464A4D] underline underline-offset-4 hover:text-blue-500">
+                    {item.date}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 9. 담당자 */}
+      {/* 8. 담당자 */}
       <div className="flex gap-4">
         <div className={labelStyle}>담당자</div>
-        <div className="flex h-[36px] flex-1 items-center px-2 text-[14px]">
-          김담당 (정보운영팀)
+        <div className="flex flex-1 flex-col justify-center px-2">
+          {/* 현재 담당자 */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            {data.currentManagers?.map((mgr, i) => (
+              <span key={i} className="text-[14px] text-[#17191A]">
+                {mgr.managerName}({mgr.organizationName}, {mgr.categoryName})
+              </span>
+            ))}
+          </div>
+          {/* 과거 담당자 */}
+          {data.pastManagers?.length > 0 && (
+            <div className="mt-2 text-[12px] text-[#8C9499]">
+              *작성 당시 담당자와 현재 담당자가 다릅니다. 현재 담당자는 아래와 같습니다.
+              <br />
+              <div className="mt-1 flex flex-wrap gap-2">
+                {data.pastManagers.map((mgr, i) => (
+                  <span key={i} className="rounded border bg-white px-2 py-1 shadow-sm">
+                    {mgr.managerName}({mgr.organizationName})
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* 첨부파일 확인 */}
-      <div className="flex w-fit items-center gap-2 rounded-[6px] border p-2 text-[#464A4D]">
-        <span>📎</span>
-        <span className="text-[14px]">첨부파일 1건</span>
-      </div>
+      {data.files?.length > 0 && (
+        <div className="flex w-fit items-center gap-2 rounded-[6px] border p-2 text-[#464A4D]">
+          <span>📎</span>
+          <span className="text-[14px]">첨부파일 {data.files.length}건</span>
+        </div>
+      )}
 
       {/* 수정하기 버튼 */}
       <div className="mt-8 flex justify-end">
         <button
-          onClick={() => console.log('수정하기 버튼 클릭!')}
-          className="rounded-[6px] border border-[#E8EEF2] px-4 py-2 text-[14px] font-bold text-[#464A4D] hover:bg-gray-50"
+          onClick={() => setIsEditing(true)}
+          className="rounded-[6px] border border-[#E8EEF2] px-6 py-2.5 text-[14px] font-bold text-[#464A4D] transition-colors hover:bg-gray-50"
         >
           수정하기
         </button>

@@ -5,7 +5,14 @@ import xIcon from './x.svg';
 // API Imports (경로는 실제 구조에 맞게 확인해주세요)
 import { getCategories, type Category } from '@/worklog/shared/apis/categories/categories.api';
 import { recommendCategory } from '@/worklog/shared/apis/faq/faqai.api';
-import { createFaq, uploadFaqFile, type FaqRequest } from '@/worklog/shared/apis/faq/faq.api';
+import {
+  createFaq,
+  updateFaq,
+  uploadFaqFile,
+  uploadFaqImage,
+  type FaqRequest,
+  type FaqDetailResponse,
+} from '@/worklog/shared/apis/faq/faq.api';
 
 const labelStyle =
   'flex h-[36px] w-[80px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[15px] font-[700] text-[#17191A]';
@@ -55,7 +62,7 @@ const RichTextEditor = ({
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
 
-  // ✅ 핵심 해결책: 외부 상태(value)와 에디터 내부 HTML이 다를 때만 동기화
+  // 핵심 해결책: 외부 상태(value)와 에디터 내부 HTML이 다를 때만 동기화
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = value;
@@ -69,27 +76,79 @@ const RichTextEditor = ({
     }
   };
 
-  // 클립보드 붙여넣기 감지 이벤트 (이미지 가로채기)
   const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     const items = e.clipboardData?.items;
     if (!items) return;
 
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf('image') !== -1) {
-        e.preventDefault(); // 기본 붙여넣기(텍스트 등) 방지
+        e.preventDefault(); // 기본 붙여넣기 방지
         const file = items[i].getAsFile();
         if (!file) continue;
 
-        // [2단계 연동 시] 여기서 await uploadFaqImage(file) 호출 후 실제 URL 받아옴
-        // 현재는 UI 확인을 위해 브라우저 임시 URL 생성 (mock)
-        const mockUrl = URL.createObjectURL(file);
+        const placeholderId = `uploading-${Date.now()}`;
 
-        // 에디터 커서 위치에 이미지 태그 삽입
-        const imgTag = `<br/><img src="${mockUrl}" alt="pasted-image" style="max-width: 100%; border-radius: 8px; margin: 8px 0;" /><br/>`;
-        document.execCommand('insertHTML', false, imgTag);
+        // 💡 1. execCommand 대신 최신 Selection API 사용 (삭선 문제 해결!)
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
 
-        // 상태 업데이트 반영
-        handleInput();
+          // 임시 로딩 div 생성
+          const loadingDiv = document.createElement('div');
+          loadingDiv.id = placeholderId;
+          loadingDiv.style.color = '#3B82F6';
+          loadingDiv.style.fontSize = '13px';
+          loadingDiv.style.margin = '8px 0';
+          loadingDiv.style.fontWeight = 'bold';
+          loadingDiv.textContent = '⏳ 이미지 서버 업로드 중...';
+
+          // 커서 위치에 쏙 집어넣고, 커서를 그 뒤로 이동
+          range.deleteContents();
+          range.insertNode(loadingDiv);
+          range.setStartAfter(loadingDiv);
+          range.setEndAfter(loadingDiv);
+          selection.removeAllRanges();
+          selection.addRange(range);
+
+          handleInput(); // 즉시 UI 반영
+        }
+
+        try {
+          // 2. 서버에 진짜 이미지 업로드 (비동기 처리)
+          const uploadRes = await uploadFaqImage(file);
+          const realUrl = uploadRes.details?.imageUrl || uploadRes.details?.url;
+
+          if (realUrl && editorRef.current) {
+            // 3. 업로드 완료 후, 아까 꽂아둔 임시 태그를 찾아 진짜 <img> 태그로 교체!
+            const placeholderEl = editorRef.current.querySelector(`#${placeholderId}`);
+            if (placeholderEl) {
+              const imgNode = document.createElement('img');
+              imgNode.src = realUrl;
+              imgNode.alt = 'pasted-image';
+              imgNode.style.maxWidth = '100%';
+              imgNode.style.borderRadius = '8px';
+              imgNode.style.margin = '8px 0';
+
+              placeholderEl.replaceWith(imgNode);
+              handleInput(); // 최종 상태 업데이트
+            }
+          }
+        } catch (error) {
+          console.error('본문 이미지 업로드 실패:', error);
+
+          if (editorRef.current) {
+            // 💡 2. querySelector 결과를 HTMLElement로 단언 (타입 에러 해결!)
+            const placeholderEl = editorRef.current.querySelector(
+              `#${placeholderId}`
+            ) as HTMLElement;
+            if (placeholderEl) {
+              placeholderEl.innerHTML = '❌ 이미지 업로드 실패';
+              placeholderEl.style.color = 'red'; // 이제 빨간 줄이 뜨지 않습니다!
+              handleInput();
+            }
+          }
+          alert('이미지 업로드 중 오류가 발생했습니다.');
+        }
       }
     }
   };
@@ -129,13 +188,21 @@ const SparkIcon = () => (
   </svg>
 );
 
-const WriteForm = () => {
+const WriteForm = ({
+  initialData,
+  onCancel,
+}: {
+  initialData?: FaqDetailResponse;
+  onCancel?: () => void;
+}) => {
+  const isEditMode = !!initialData; // 초기 데이터가 있으면 수정 모드로 판단
+
   const [formData, setFormData] = useState({
-    title: '',
-    complainantName: '',
-    content: '',
-    answer: '',
-    etc: '',
+    title: initialData?.title || '',
+    complainantName: initialData?.complainantName || '',
+    content: initialData?.content || '',
+    answer: initialData?.answer || '',
+    etc: initialData?.etc || '',
     files: [] as File[],
   });
 
@@ -144,142 +211,131 @@ const WriteForm = () => {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // 2. 관련 FAQ (드래그 앤 드롭) 관련 상태
-  const [relatedFaqs, setRelatedFaqs] = useState<{ id: number; title: string }[]>([]);
+  // 초기 관련 FAQ 매핑
+  const [relatedFaqs, setRelatedFaqs] = useState<{ id: number; title: string }[]>(
+    initialData?.relatedFaqs?.map((f) => ({ id: f.faqId, title: f.title })) || []
+  );
   const [isDragOver, setIsDragOver] = useState(false);
-
-  // 3. AI 추천 관련 상태
   const [aiCategories, setAiCategories] = useState<{ id: number; name: string }[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // 전송 중 로딩 상태
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 마운트 시 분류 목록 불러오기
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await getCategories();
-        if (res.isSuccess) setAvailableCategories(res.details.categories);
+        if (res.isSuccess) {
+          setAvailableCategories(res.details.categories);
+          // 수정 모드일 경우: 기존 이름과 매칭하여 선택된 카테고리 복원
+          if (initialData?.categoryNames) {
+            const matched = res.details.categories.filter((c) =>
+              initialData.categoryNames.includes(c.categoryName)
+            );
+            setSelectedCategories(matched);
+          }
+        }
       } catch (err) {
         console.error('분류 목록 조회 실패:', err);
       }
     };
     fetchCategories();
-  }, []);
+  }, [initialData]);
 
-  const handleFieldChange = (field: string, value: string) => {
+  const handleFieldChange = (field: string, value: string) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files)
       setFormData((prev) => ({ ...prev, files: [...prev.files, ...Array.from(e.target.files!)] }));
-    }
   };
 
-  // 💡 분류 드롭다운 처리
   const toggleCategory = (category: Category) => {
-    setSelectedCategories(
-      (prev) =>
-        prev.some((c) => c.categoryId === category.categoryId)
-          ? prev.filter((c) => c.categoryId !== category.categoryId) // 있으면 제거
-          : [...prev, category] // 없으면 추가
+    setSelectedCategories((prev) =>
+      prev.some((c) => c.categoryId === category.categoryId)
+        ? prev.filter((c) => c.categoryId !== category.categoryId)
+        : [...prev, category]
     );
   };
 
-  // 💡 드래그 앤 드롭 (관련 FAQ) 처리 함수
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
     try {
       const data = JSON.parse(e.dataTransfer.getData('application/json'));
-      if (data && data.id && data.title) {
-        // 이미 추가된 게시글이 아니면 추가
-        if (!relatedFaqs.some((faq) => faq.id === data.id)) {
-          setRelatedFaqs((prev) => [...prev, data]);
-        }
+      if (data && data.id && data.title && !relatedFaqs.some((faq) => faq.id === data.id)) {
+        setRelatedFaqs((prev) => [...prev, data]);
       }
     } catch (err) {
-      console.error('드롭 데이터 파싱 오류:', err);
+      console.error(err);
     }
   };
 
-  // 💡 AI 카테고리 추천 요청 함수
   const handleAiRecommend = async () => {
-    if (!formData.title || !formData.content) {
-      alert('제목과 내용을 먼저 작성해주세요!');
-      return;
-    }
+    /* 기존 코드 동일 생략 (글자 수 제한 방지) */
+    if (!formData.title || !formData.content) return alert('제목과 내용을 입력해주세요.');
     setIsAiLoading(true);
     try {
-      // HTML 태그 제거 후 순수 텍스트만 AI에게 전송
-      const plainContent = formData.content.replace(/<[^>]+>/g, '');
-      const res = await recommendCategory({ title: formData.title, content: plainContent });
-
-      // 💡 수정된 부분: res.categories -> res.details.categories 로 변경!
+      const res = await recommendCategory({
+        title: formData.title,
+        content: formData.content.replace(/<[^>]+>/g, ''),
+      });
       if (res.isSuccess && res.details.categories) {
         setAiCategories(res.details.categories);
-
-        // AI가 추천한 결과를 실제 선택된 카테고리에도 자동 추가 (이름 기준 매칭)
         const newSelections = res.details.categories
           .map((ai) => availableCategories.find((c) => c.categoryId === ai.id))
           .filter((c): c is Category => c !== undefined);
-
-        setSelectedCategories((prev) => {
-          const combined = [...prev, ...newSelections];
-          // 중복 제거
-          return Array.from(new Map(combined.map((item) => [item.categoryId, item])).values());
-        });
+        setSelectedCategories((prev) =>
+          Array.from(
+            new Map([...prev, ...newSelections].map((item) => [item.categoryId, item])).values()
+          )
+        );
       }
     } catch (err) {
-      console.error('AI 추천 실패:', err);
+      console.error('AI 추천 실패:', err); // 에러 해결
       alert('AI 추천 중 오류가 발생했습니다.');
     } finally {
       setIsAiLoading(false);
     }
   };
 
-  // 💡 최종 제출 (모달 확인 클릭 시)
   const handleConfirmSubmit = async () => {
     if (!formData.title || !formData.answer) {
       alert('제목과 답변은 필수입니다.');
       setIsModalOpen(false);
       return;
     }
-
     setIsSubmitting(true);
     try {
-      // 1. 파일이 있다면 먼저 업로드하여 URL 획득
       const uploadedFileUrls: string[] = [];
       for (const file of formData.files) {
         const fileRes = await uploadFaqFile(file);
-        if (fileRes.isSuccess && fileRes.details.url) {
-          uploadedFileUrls.push(fileRes.details.url);
-        }
+        if (fileRes.isSuccess && fileRes.details.url) uploadedFileUrls.push(fileRes.details.url);
       }
 
-      // 2. 최종 FAQ 생성 Payload 구성 (UI 데이터를 API 명세에 맞게 변환!)
       const payload: FaqRequest = {
         title: formData.title,
         complainantName: formData.complainantName,
-        categoryIds: selectedCategories.map((c) => c.categoryId), // 객체 배열 -> ID 숫자 배열
+        categoryIds: selectedCategories.map((c) => c.categoryId),
         content: formData.content,
         answer: formData.answer,
         etc: formData.etc,
         fileUrls: uploadedFileUrls,
-        relatedFaqIds: relatedFaqs.map((f) => f.id), // 객체 배열 -> ID 숫자 배열
+        relatedFaqIds: relatedFaqs.map((f) => f.id),
       };
 
-      // 3. API 호출
-      await createFaq(payload);
-
-      alert('FAQ가 성공적으로 작성되었습니다!');
+      // 💡 생성과 수정 분기 처리
+      if (isEditMode) {
+        await updateFaq(initialData.faqId, payload);
+        alert('FAQ가 성공적으로 수정되었습니다!');
+        if (onCancel) onCancel(); // 수정 성공 후 상세보기로 복귀
+      } else {
+        await createFaq(payload);
+        alert('FAQ가 성공적으로 작성되었습니다!');
+      }
       setIsModalOpen(false);
-      // TODO: 성공 후 탭 닫기나 초기화 로직 (부모 컴포넌트 호출)
     } catch (err) {
-      console.error('FAQ 등록 실패:', err);
-      alert('작성 중 오류가 발생했습니다.');
+      console.error('저장 중 오류:', err); // 에러 해결
+      alert('저장 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
