@@ -11,17 +11,24 @@ const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: stri
   const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
   const [errorMsg, setErrorMsg] = useState('');
 
+  const [selectedDate, setSelectedDate] = useState<string>(
+    updatedDate || new Date().toISOString().split('T')[0]
+  );
+
+  useEffect(() => {
+    setSelectedDate(updatedDate || new Date().toISOString().split('T')[0]);
+  }, [faqId, updatedDate]);
+
   useEffect(() => {
     if (!faqId) return;
     const fetchDetail = async () => {
       try {
-        const targetDate = updatedDate || new Date().toISOString().split('T')[0];
-        const res = await getFaqDetail(faqId, targetDate);
+        // 💡 핵심 2. targetDate 대신 상태값인 selectedDate를 파라미터로 전송!
+        const res = await getFaqDetail(faqId, selectedDate);
         setData(res);
         setErrorMsg('');
       } catch (err) {
         console.error('FAQ 상세 조회 실패:', err);
-        // 💡 핵심 해결: any를 제거하고 Error 객체인지 확인(타입 가드)하여 안전하게 메시지 추출
         if (err instanceof Error) {
           setErrorMsg(err.message);
         } else {
@@ -30,7 +37,7 @@ const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: stri
       }
     };
     fetchDetail();
-  }, [faqId, updatedDate]);
+  }, [faqId, selectedDate]); // selectedDate가 바뀔 때마다 API 재호출!
 
   if (errorMsg) {
     return (
@@ -51,6 +58,11 @@ const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: stri
   if (data.deletedAt) historyList.push({ date: data.deletedAt, type: 'deleted' });
   data.editedDates?.forEach((d) => historyList.push({ date: d, type: 'edited' }));
   historyList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  let activeDate = selectedDate;
+  if (!historyList.some((h) => h.date === selectedDate) && historyList.length > 0) {
+    activeDate = historyList[0].date;
+  }
 
   return (
     <div className="flex flex-col gap-6 pb-20 pt-4">
@@ -132,21 +144,26 @@ const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: stri
         <div className={labelStyle}>수정</div>
         <div className="relative ml-2 flex flex-col gap-5 border-l-2 border-[#E8EEF2] py-2">
           {historyList.map((item, idx) => {
-            // 현재 보고 있는 최신 활성 버전 판단 (삭제가 아닐 경우 가장 위 항목)
-            const isActive = idx === (data.deletedAt ? 1 : 0);
+            // 핵심 4. activeDate와 비교하여 현재 보고 있는 날짜 표시
+            const isActive = item.date === activeDate;
+
             return (
               <div key={idx} className="relative flex items-center pl-4 text-[15px]">
-                {/* 타임라인 점 */}
                 <div className="absolute -left-[5px] h-[8px] w-[8px] rounded-full bg-[#8C9499]" />
 
                 {item.type === 'deleted' ? (
                   <span className="text-[16px] text-[#8C9499]">{item.date} (삭제)</span>
                 ) : isActive ? (
+                  // 현재 보고 있는 날짜 (클릭 X, 파란색 유지)
                   <span className="text-[16px] font-bold text-blue-600 underline underline-offset-4">
                     {item.date}
                   </span>
                 ) : (
-                  <span className="cursor-pointer text-[16px] font-bold text-[#464A4D] underline underline-offset-4 hover:text-blue-500">
+                  // 핵심 5. 클릭 시 setSelectedDate를 호출하여 API 재요청 트리거!
+                  <span
+                    onClick={() => setSelectedDate(item.date)}
+                    className="cursor-pointer text-[16px] font-bold text-[#464A4D] underline underline-offset-4 hover:text-blue-500"
+                  >
                     {item.date}
                   </span>
                 )}
