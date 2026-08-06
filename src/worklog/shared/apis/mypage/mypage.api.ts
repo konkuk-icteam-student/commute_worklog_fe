@@ -11,8 +11,8 @@ export interface MyPageProfile {
   email: string;
   organizationId: number;
   organizationName: string;
-  publishedCount: number;
-  draftCount: number;
+  publishedCount: number; // 작성 완료 업무일지 수
+  draftCount: number; // 임시저장 업무일지 수
 }
 
 /** 마이페이지 업무일지(FAQ) 리스트 아이템 타입 */
