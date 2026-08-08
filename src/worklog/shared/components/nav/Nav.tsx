@@ -10,10 +10,10 @@ const Nav = ({ isOpen }: NavProps) => {
     try {
       // 1. 로그아웃 API 호출 (내부적으로 로컬스토리지 토큰 삭제됨)
       await logout();
-      navigate('/', { replace: true });
+      navigate('/login', { replace: true });
     } catch (error) {
       console.error('Logout failed:', error);
-      navigate('/', { replace: true });
+      navigate('/login', { replace: true });
     }
   };
 

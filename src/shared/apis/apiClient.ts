@@ -89,6 +89,10 @@ apiClient.interceptors.response.use(
       _retry?: boolean;
     };
 
+    if (originalRequest.url === '/api/auth/login') {
+      return Promise.reject(error);
+    }
+
     // 401 에러이고 재시도하지 않은 요청인 경우
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -118,7 +122,7 @@ apiClient.interceptors.response.use(
       } else {
         // 리프레시 토큰도 만료된 경우, 로그인 페이지로 이동
         clearTokens();
-        window.location.href = '/';
+        window.location.href = '/login';
         return Promise.reject(error);
       }
     }

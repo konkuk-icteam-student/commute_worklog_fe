@@ -26,7 +26,7 @@ import ProtectedRoute from '@/shared/components/layout/ProtectedRoute';
 const router = createBrowserRouter([
   // 로그인 없이 접근 가능한 공개(Public) 라우트
   {
-    path: '/',
+    path: '/login',
     element: <Auth />,
   },
   {
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
       { path: '/manager/qr', element: <ManagerQRPage /> },
       { path: '/manager/task', element: <ManagerTaskPage /> },
       { path: '/worklog/category/manager', element: <Category /> },
-      { path: '/worklog/faq', element: <Faq /> },
+      { path: '/', element: <Faq /> },
       { path: '/branch', element: <Home /> },
       { path: '/worklog/category/department', element: <Department /> },
       { path: '/worklog/category/task', element: <Task /> },

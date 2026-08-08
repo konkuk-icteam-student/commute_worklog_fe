@@ -19,6 +19,8 @@ const Login = () => {
     console.log('로그인 버튼 클릭!');
     console.log('🖱️ [Action] 로그인 버튼 클릭');
     console.log('📤 [Sending Data]:', { email, password });
+
+    // API 호출 전 기존 에러 메시지 초기화
     setErrorMessage('');
 
     try {
@@ -27,32 +29,45 @@ const Login = () => {
       if (response.isSuccess) {
         console.log('✅ [Login Success] Redirecting to /branch');
 
-        // 구조 분해 할당 (userName, roleCode는 옵셔널이므로 undefined일 수 있음)
         const { userName, roleCode, accessToken } = response.details;
 
-        // 1. LocalStorage 저장 (값이 없을 경우를 대비해 기본값 '' 처리)
-        // accessToken은 필수값이므로 그대로 저장
         localStorage.setItem('accessToken', accessToken);
-        // 옵셔널 값들은 ?? 연산자를 사용해 undefined일 경우 빈 문자열로 저장
         localStorage.setItem('userName', userName ?? '');
         localStorage.setItem('roleCode', roleCode ?? '');
 
-        // 2. 페이지 이동 및 State 전달
-        navigate('/branch', {
+        navigate('/', {
           state: {
-            userName: userName ?? '', // 값이 없으면 빈 문자열 전달
-            roleCode: roleCode ?? '', // 값이 없으면 빈 문자열 전달
+            userName: userName ?? '',
+            roleCode: roleCode ?? '',
           },
         });
       } else {
         setErrorMessage(response.message || '로그인 정보를 다시 확인해주세요.');
+        setPassword(''); // 실패 시 비밀번호만 초기화
       }
     } catch (error) {
       console.error('Login Failed:', error);
 
       const err = error as AxiosError<{ message: string }>;
-      const msg = err.response?.data?.message || '로그인 중 오류가 발생했습니다.';
-      setErrorMessage(msg);
+
+      // 서버의 HTTP 상태 코드에 따라 에러 메시지를 세분화하여 화면에 띄워줍니다.
+      if (err.response) {
+        const status = err.response.status;
+
+        if (status === 404) {
+          setErrorMessage('가입되지 않은 이메일이거나 존재하지 않는 계정입니다.');
+        } else if (status === 401 || status === 400) {
+          setErrorMessage('비밀번호가 일치하지 않거나 이메일 정보가 잘못되었습니다.');
+        } else {
+          setErrorMessage(err.response.data?.message || '로그인 중 오류가 발생했습니다.');
+        }
+      } else {
+        // 서버가 죽었거나 인터넷이 끊긴 경우
+        setErrorMessage('서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      }
+
+      // 실패 시 사용자가 바로 다시 칠 수 있도록 비밀번호 입력창 비워주기
+      setPassword('');
     }
   };
 
@@ -80,7 +95,8 @@ const Login = () => {
         />
       </div>
 
-      {errorMessage && <p className="pl-2 text-[12px] text-red-500">{errorMessage}</p>}
+      {/* 에러 메시지가 있을 때만 렌더링되며, 페이지 이동을 막고 이 위치에 빨간 글씨를 띄웁니다. */}
+      {errorMessage && <p className="pl-2 text-[13px] font-medium text-red-500">{errorMessage}</p>}
 
       <button
         disabled={!isValid}
