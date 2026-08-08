@@ -16,6 +16,7 @@ const Faq = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // 💡 컴포넌트 마운트 및 페이지 변경 시 API 호출
   useEffect(() => {
@@ -30,7 +31,7 @@ const Faq = () => {
       }
     };
     fetchList();
-  }, [currentPage]);
+  }, [currentPage, refreshTrigger]);
 
   // 2. 탭 추가 로직 (핵심: Max 5개, FIFO)
   const addTab = (newTab: TabData) => {
@@ -57,6 +58,11 @@ const Faq = () => {
     });
   };
 
+  const handleSuccess = (tabId: string | number) => {
+    handleCloseTab(tabId);
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
   // 3. 이벤트 핸들러: 연필 아이콘 (Header) 클릭
   const handlePencilClick = () => {
     // 고정된 ID 'write-new'를 사용하여 중복 방지 (원하면 매번 새 창 띄우기도 가능)
@@ -64,7 +70,7 @@ const Faq = () => {
       id: 'write-new',
       label: '글 작성',
       type: 'write',
-      content: <WriteForm />,
+      content: <WriteForm onSuccess={() => handleSuccess('write-new')} />,
     };
     addTab(newTab);
   };
@@ -87,7 +93,7 @@ const Faq = () => {
       label: shortTitle,
       title: selectedPost.title,
       type: 'detail',
-      content: <DetailView faqId={id} updatedDate={formattedDate} />,
+      content: <DetailView faqId={id} updatedDate={formattedDate} onSuccess={() => handleSuccess(id)} />,
     };
     addTab(newTab);
   };

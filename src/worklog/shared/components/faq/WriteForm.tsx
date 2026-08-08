@@ -191,9 +191,11 @@ const SparkIcon = () => (
 const WriteForm = ({
   initialData,
   onCancel,
+  onSuccess,
 }: {
   initialData?: FaqDetailResponse;
   onCancel?: () => void;
+  onSuccess?: () => void;
 }) => {
   const isEditMode = !!initialData; // 초기 데이터가 있으면 수정 모드로 판단
 
@@ -333,6 +335,7 @@ const WriteForm = ({
         alert('FAQ가 성공적으로 작성되었습니다!');
       }
       setIsModalOpen(false);
+      if (onSuccess) onSuccess();
     } catch (err) {
       console.error('저장 중 오류:', err); // 에러 해결
       alert('저장 중 오류가 발생했습니다.');
