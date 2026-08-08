@@ -22,6 +22,7 @@ const Nav = ({ isOpen }: NavProps) => {
       className={`flex flex-col gap-[20px] overflow-hidden border-r border-[#E8EEF2] bg-white transition-all duration-300 ease-in-out ${isOpen ? 'w-[200px] p-[30px] opacity-100' : 'w-0 border-none p-0 opacity-0'} `}
     >
       <div className="flex min-w-[140px] flex-col gap-[20px] whitespace-nowrap">
+        {/** 
         <span
           className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
           onClick={() => {
@@ -30,12 +31,13 @@ const Nav = ({ isOpen }: NavProps) => {
         >
           홈
         </span>
+        */}
         <div className="flex flex-col">
           <span className="text-[18px] font-[700] text-[#464A4D]">업무일지</span>
           <span
             className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
             onClick={() => {
-              navigate('/worklog/faq');
+              navigate('/');
             }}
           >
             FAQ
