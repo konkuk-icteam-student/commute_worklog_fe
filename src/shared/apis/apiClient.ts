@@ -118,7 +118,7 @@ apiClient.interceptors.response.use(
       } else {
         // 리프레시 토큰도 만료된 경우, 로그인 페이지로 이동
         clearTokens();
-        window.location.href = '/login';
+        window.location.href = '/';
         return Promise.reject(error);
       }
     }
