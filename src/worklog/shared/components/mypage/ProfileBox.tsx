@@ -20,11 +20,6 @@ const ProfileBox = () => {
     fetchProfile();
   }, []);
 
-  // 수정 버튼 클릭 핸들러
-  const handleEditClick = () => {
-    console.log('수정버튼클릭!');
-  };
-
   if (isLoading) {
     return (
       <div className="mx-auto flex min-h-[300px] w-full max-w-[1090px] items-center justify-center rounded-[20px] border-[1.5px] border-[#E8EEF2] bg-white">
@@ -41,12 +36,14 @@ const ProfileBox = () => {
       {/* 2. 헤더 영역 (프로필 타이틀 & 수정 버튼) */}
       <div className="flex items-center justify-between border-b-[1.5px] border-[#E8EEF2] px-8 py-6">
         <h2 className="text-[22px] font-bold text-[#464A4D]">프로필</h2>
+        {/*}
         <button
           onClick={handleEditClick}
           className="rounded-[8px] border-[1.5px] border-[#E8EEF2] px-5 py-2 text-[14px] font-bold text-[#464A4D] transition-colors hover:bg-gray-50"
         >
           수정
         </button>
+        */}
       </div>
 
       {/* 3. 본문 영역 (아바타 & 정보) */}
