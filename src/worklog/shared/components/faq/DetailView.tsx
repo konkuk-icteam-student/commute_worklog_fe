@@ -60,11 +60,7 @@ const DetailView = ({
   // 💡 수정 모드일 때 WriteForm 렌더링 (취소 콜백 전달)
   if (isEditing) {
     return (
-      <WriteForm
-        initialData={data}
-        onCancel={() => setIsEditing(false)}
-        onSuccess={onSuccess}
-      />
+      <WriteForm initialData={data} onCancel={() => setIsEditing(false)} onSuccess={onSuccess} />
     );
   }
   // 💡 타임라인 데이터 구성 (삭제일 + 수정일 병합 및 내림차순 정렬)
