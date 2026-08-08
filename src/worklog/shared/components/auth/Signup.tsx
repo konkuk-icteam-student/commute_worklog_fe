@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios'; // [추가]
+import { AxiosError } from 'axios';
 import {
   sendVerificationCode,
   verifyCode,
   register,
   login,
 } from '../../../../shared/apis/auth.api';
-// RegisterRequest 타입을 import 해서 roleCode 타입을 정확히 맞춥니다.
+import { getOrganizations, type Organization } from '../../apis/organization/Organization.api';
 import type { RegisterRequest } from '../../../../shared/types/auth.types';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,6 +25,11 @@ const Signup = () => {
   const [authCode, setAuthCode] = useState('');
   const [password, setPassword] = useState('');
 
+  // 2-1. 조직 선택 관련 상태 추가
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
+  const [isOrgDropdownOpen, setIsOrgDropdownOpen] = useState(false);
+
   // 3. 진행 단계 및 UI 상태
   const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
   const [isAuthVerified, setIsAuthVerified] = useState(false);
@@ -41,6 +46,25 @@ const Signup = () => {
   const [pwMessage, setPwMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(
     null
   );
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const response = await getOrganizations();
+        if (response.isSuccess && response.details?.organizations?.length > 0) {
+          setOrganizations(response.details.organizations);
+        } else {
+          // [예외 처리] 등록된 조직이 없을 경우 프론트 개발 진행을 위해 임시 더미 조직 삽입
+          setOrganizations([{ organizationId: 0, organizationName: '임시 조직 (데이터 없음)' }]);
+        }
+      } catch (error) {
+        console.error('조직 목록 조회 실패:', error);
+        // [예외 처리] API 에러 시에도 막히지 않도록 임시 더미 조직 삽입
+        setOrganizations([{ organizationId: 0, organizationName: '임시 조직 (API 통신 오류)' }]);
+      }
+    };
+    fetchOrganizations();
+  }, []);
 
   // --- API 1. 인증번호 발송 ---
   const handleRequestAuthCode = async () => {
@@ -106,7 +130,7 @@ const Signup = () => {
       password,
       name,
       roleCode: roleCode, // 여기서 타입 에러 해결됨
-      organizationId: 0,
+      organizationId: selectedOrgId as number,
     };
     console.log('📤 [Sending Data - Register]:', registerData);
 
@@ -160,7 +184,8 @@ const Signup = () => {
 
   // 버튼 활성화 조건
   const isRequestBtnEnabled = name.length > 0 && email.length > 0 && !isAuthCodeSent;
-  const isSignupBtnEnabled = isAuthVerified && password.length > 0 && pwRegex.test(password);
+  const isSignupBtnEnabled =
+    isAuthVerified && password.length > 0 && pwRegex.test(password) && selectedOrgId !== null;
 
   return (
     <div className="flex w-full max-w-[600px] flex-col gap-4 px-[20px]">
@@ -282,7 +307,53 @@ const Signup = () => {
         </p>
       )}
 
-      {/* 7. 가입하기 버튼 */}
+      {/* 💡 7. 소속(조직) 선택 드롭다운 (인증이 완료된 후에만 조작 가능) */}
+      <div className="relative w-full">
+        <div
+          onClick={() => isAuthVerified && setIsOrgDropdownOpen(!isOrgDropdownOpen)}
+          className={`flex h-[53px] w-full items-center justify-between rounded-[16px] border border-[#E8EEF2] px-6 py-4 text-[14px] ${!isAuthVerified ? 'cursor-not-allowed bg-gray-50 text-[#CDCDCD]' : 'cursor-pointer bg-white'}`}
+        >
+          <span className={selectedOrgId !== null ? 'text-[#17191A]' : 'text-[#CDCDCD]'}>
+            {selectedOrgId !== null
+              ? organizations.find((o) => o.organizationId === selectedOrgId)?.organizationName
+              : '선택'}
+          </span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2.5 4.5L6 8L9.5 4.5"
+              stroke="#8C9499"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+
+        {isOrgDropdownOpen && isAuthVerified && (
+          <div className="absolute top-[60px] z-10 max-h-[200px] w-full overflow-y-auto rounded-[16px] border border-[#E8EEF2] bg-white shadow-sm">
+            {organizations.map((org) => (
+              <div
+                key={org.organizationId}
+                onClick={() => {
+                  setSelectedOrgId(org.organizationId);
+                  setIsOrgDropdownOpen(false);
+                }}
+                className="cursor-pointer border-b border-[#E8EEF2] px-6 py-4 text-[14px] text-[#464A4D] last:border-none hover:bg-gray-50"
+              >
+                {org.organizationName}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 8. 가입하기 버튼 */}
       <button
         disabled={!isSignupBtnEnabled}
         onClick={handleSignup}
