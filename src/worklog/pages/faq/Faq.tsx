@@ -80,12 +80,14 @@ const Faq = () => {
         ? selectedPost.title.substring(0, 10) + '...'
         : selectedPost.title;
 
+    const formattedDate = selectedPost.updatedDate ? selectedPost.updatedDate.substring(0, 10) : '';
+
     const newTab: TabData = {
       id: id,
       label: shortTitle,
       title: selectedPost.title,
       type: 'detail',
-      content: <DetailView faqId={id} updatedDate={selectedPost.updatedDate} />,
+      content: <DetailView faqId={id} updatedDate={formattedDate} />,
     };
     addTab(newTab);
   };
