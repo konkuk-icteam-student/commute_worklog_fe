@@ -6,6 +6,8 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ id, title, date, onClick }: SearchBarProps) => {
+  const formattedDate = date ? date.substring(0, 10) : '';
+
   return (
     <div
       className="mb-4 flex h-[48px] cursor-pointer flex-row items-center justify-between rounded-[24px] border border-[#E8EEF2] px-4 hover:bg-gray-50"
@@ -15,7 +17,7 @@ const SearchBar = ({ id, title, date, onClick }: SearchBarProps) => {
         {title}
       </span>
       <span className="whitespace-nowrap pr-[10px] text-[16px] font-[400] text-[#A9AFB2]">
-        {date}
+        {formattedDate}
       </span>
     </div>
   );

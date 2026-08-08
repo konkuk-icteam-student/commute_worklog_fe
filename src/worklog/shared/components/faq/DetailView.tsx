@@ -6,7 +6,15 @@ import WriteForm from './WriteForm';
 const labelStyle =
   'flex h-[36px] w-[71px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[16px] font-[700] text-[#17191A]';
 
-const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: string }) => {
+const DetailView = ({
+  faqId,
+  updatedDate,
+  onSuccess,
+}: {
+  faqId?: number;
+  updatedDate?: string;
+  onSuccess?: () => void;
+}) => {
   const [data, setData] = useState<FaqDetailResponse | null>(null);
   const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
   const [errorMsg, setErrorMsg] = useState('');
@@ -51,7 +59,9 @@ const DetailView = ({ faqId, updatedDate }: { faqId?: number; updatedDate?: stri
 
   // 💡 수정 모드일 때 WriteForm 렌더링 (취소 콜백 전달)
   if (isEditing) {
-    return <WriteForm initialData={data} onCancel={() => setIsEditing(false)} />;
+    return (
+      <WriteForm initialData={data} onCancel={() => setIsEditing(false)} onSuccess={onSuccess} />
+    );
   }
   // 💡 타임라인 데이터 구성 (삭제일 + 수정일 병합 및 내림차순 정렬)
   const historyList = [];

@@ -20,11 +20,11 @@ const Logout = () => {
       await logout();
       console.log('로그아웃 성공!');
       setIsModalOpen(false);
-      navigate('/'); // 로그아웃 후 루트 페이지로 이동
+      navigate('/login'); // 로그아웃 후 로그인 페이지로 이동
     } catch (error) {
       console.error('로그아웃 실패:', error);
       // API 실패 시에도 토큰은 지워지도록 auth.api.ts에 구현되어 있으므로 강제 이동시킬지 선택 가능합니다.
-      // navigate('/');
+      // navigate('/login');
     } finally {
       setIsLoggingOut(false);
     }

@@ -21,95 +21,44 @@ import Home from '@/worklog/pages/home/Home';
 import Department from '@/worklog/pages/category/Department';
 import Task from '@/worklog/pages/category/Task';
 import Mypage from '@/worklog/pages/mypage/Mypage';
+import ProtectedRoute from '@/shared/components/layout/ProtectedRoute';
 
 const router = createBrowserRouter([
+  // 로그인 없이 접근 가능한 공개(Public) 라우트
   {
-    path: '/',
+    path: '/login',
     element: <Auth />,
   },
   {
     path: '/auth',
     element: <AuthPage />,
   },
+
+  // 토큰이 있어야만 접근 가능한 보호된(Protected) 라우트 묶음
   {
-    path: '/home',
-    element: <HomePage />,
-  },
-  {
-    path: '/mypage',
-    element: <MyPage />,
-  },
-  {
-    path: '/schedule',
-    element: <SchedulePage />,
-  },
-  {
-    path: '/schedule/apply',
-    element: <ScheduleApplyPage />,
-  },
-  {
-    path: '/schedule/modify',
-    element: <ScheduleModifyPage />,
-  },
-  {
-    path: '/schedule/edit',
-    element: <ScheduleEditPage />,
-  },
-  {
-    path: '/schedule/view',
-    element: <ScheduleViewPage />,
-  },
-  {
-    path: '/tasks',
-    element: <TasksPage />,
-  },
-  {
-    path: '/tasks/today/modify',
-    element: <TasksEditPage />,
-  },
-  {
-    path: '/qr-scanner',
-    element: <QRScannerPage />,
-  },
-  {
-    path: '/manager',
-    element: <ManagerHomePage />,
-  },
-  {
-    path: '/manager/home',
-    element: <ManagerHomePage />,
-  },
-  {
-    path: '/manager/qr',
-    element: <ManagerQRPage />,
-  },
-  {
-    path: '/manager/task',
-    element: <ManagerTaskPage />,
-  },
-  {
-    path: '/worklog/category/manager',
-    element: <Category />,
-  },
-  {
-    path: '/worklog/faq',
-    element: <Faq />,
-  },
-  {
-    path: '/branch',
-    element: <Home />,
-  },
-  {
-    path: '/worklog/category/department',
-    element: <Department />,
-  },
-  {
-    path: '/worklog/category/task',
-    element: <Task />,
-  },
-  {
-    path: '/worklog/mypage',
-    element: <Mypage />,
+    element: <ProtectedRoute />, // 이 보호막을 통과해야만 children으로 진입 가능
+    children: [
+      { path: '/home', element: <HomePage /> },
+      { path: '/mypage', element: <MyPage /> },
+      { path: '/schedule', element: <SchedulePage /> },
+      { path: '/schedule/apply', element: <ScheduleApplyPage /> },
+      { path: '/schedule/modify', element: <ScheduleModifyPage /> },
+      { path: '/schedule/edit', element: <ScheduleEditPage /> },
+      { path: '/schedule/view', element: <ScheduleViewPage /> },
+      { path: '/tasks', element: <TasksPage /> },
+      { path: '/tasks/today/modify', element: <TasksEditPage /> },
+      { path: '/qr-scanner', element: <QRScannerPage /> },
+      { path: '/manager', element: <ManagerHomePage /> },
+      { path: '/manager/home', element: <ManagerHomePage /> },
+      { path: '/manager/qr', element: <ManagerQRPage /> },
+      { path: '/manager/task', element: <ManagerTaskPage /> },
+      { path: '/worklog/category/manager', element: <Category /> },
+      { path: '/', element: <Faq /> },
+      { path: '/branch', element: <Home /> },
+      { path: '/worklog/category/department', element: <Department /> },
+      { path: '/worklog/category/task', element: <Task /> },
+      { path: '/worklog/mypage', element: <Mypage /> },
+    ],
   },
 ]);
 

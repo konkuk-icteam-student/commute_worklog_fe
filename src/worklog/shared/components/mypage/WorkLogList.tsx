@@ -1,7 +1,23 @@
+import { useState, useEffect } from 'react';
+import { getMyPageProfile, type MyPageProfile } from '../../apis/mypage/mypage.api';
 import Mylog from './mylog.svg';
 import Draftlist from './draftlist.svg';
 import rightArrow from '../../assets/rightarrow.svg';
 const WorkLogList = () => {
+  const [profile, setProfile] = useState<MyPageProfile | null>(null);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const data = await getMyPageProfile();
+        setProfile(data);
+      } catch (error) {
+        console.error('카운트 정보 조회 실패:', error);
+      }
+    };
+    fetchCounts();
+  }, []);
+
   return (
     // 전체 컨테이너 (ProfileBox와 동일한 반응형 및 테두리 스타일)
     <div className="mx-auto flex w-full max-w-[1090px] flex-col rounded-[20px] border-[1.5px] border-[#E8EEF2] bg-white">
@@ -25,7 +41,7 @@ const WorkLogList = () => {
           <div className="flex items-center gap-4">
             {/* 건수 텍스트 */}
             <span className="text-[16px] text-[#464A4D]">
-              총 <span className="font-bold text-[#17191A]">24</span>건
+              총 <span className="font-bold text-[#17191A]">{profile?.publishedCount || 0}</span>건
             </span>
             {/* 우측 화살표 (Hover 시 우측으로 살짝 이동) */}
             <img src={rightArrow} alt="우측 화살표" />
@@ -45,7 +61,7 @@ const WorkLogList = () => {
           <div className="flex items-center gap-4">
             {/* 건수 텍스트 */}
             <span className="text-[16px] text-[#464A4D]">
-              총 <span className="font-bold text-[#17191A]">4</span>건
+              총 <span className="font-bold text-[#17191A]">{profile?.draftCount || 0}</span>건
             </span>
             {/* 우측 화살표 */}
             <img src={rightArrow} alt="우측 화살표" />
