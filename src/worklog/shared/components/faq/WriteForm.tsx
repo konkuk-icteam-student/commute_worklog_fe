@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { ClipboardEvent, ChangeEvent, DragEvent } from 'react';
 import xIcon from './x.svg';
 
-// API Imports (경로는 실제 구조에 맞게 확인해주세요)
+// API Imports
 import { getCategories, type Category } from '@/worklog/shared/apis/categories/categories.api';
 import { recommendCategory } from '@/worklog/shared/apis/faq/faqai.api';
 import {
@@ -17,7 +17,6 @@ import {
 const labelStyle =
   'flex h-[36px] w-[80px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[15px] font-[700] text-[#17191A]';
 
-// 일반 텍스트 Input 컴포넌트
 const InputField = ({
   value,
   onChange,
@@ -48,7 +47,6 @@ const InputField = ({
   );
 };
 
-// 💡 노션 스타일 이미지 복붙 지원 Rich Text Editor (한글 IME 이슈 해결 버전)
 const RichTextEditor = ({
   value,
   onChange,
@@ -62,14 +60,12 @@ const RichTextEditor = ({
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
 
-  // 핵심 해결책: 외부 상태(value)와 에디터 내부 HTML이 다를 때만 동기화
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = value;
     }
   }, [value]);
 
-  // 텍스트 입력 시 HTML 추출하여 부모로 전달
   const handleInput = () => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
@@ -82,18 +78,15 @@ const RichTextEditor = ({
 
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf('image') !== -1) {
-        e.preventDefault(); // 기본 붙여넣기 방지
+        e.preventDefault();
         const file = items[i].getAsFile();
         if (!file) continue;
 
         const placeholderId = `uploading-${Date.now()}`;
-
-        // 💡 1. execCommand 대신 최신 Selection API 사용 (삭선 문제 해결!)
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0) {
           const range = selection.getRangeAt(0);
 
-          // 임시 로딩 div 생성
           const loadingDiv = document.createElement('div');
           loadingDiv.id = placeholderId;
           loadingDiv.style.color = '#3B82F6';
@@ -102,7 +95,6 @@ const RichTextEditor = ({
           loadingDiv.style.fontWeight = 'bold';
           loadingDiv.textContent = '⏳ 이미지 서버 업로드 중...';
 
-          // 커서 위치에 쏙 집어넣고, 커서를 그 뒤로 이동
           range.deleteContents();
           range.insertNode(loadingDiv);
           range.setStartAfter(loadingDiv);
@@ -110,16 +102,14 @@ const RichTextEditor = ({
           selection.removeAllRanges();
           selection.addRange(range);
 
-          handleInput(); // 즉시 UI 반영
+          handleInput();
         }
 
         try {
-          // 2. 서버에 진짜 이미지 업로드 (비동기 처리)
           const uploadRes = await uploadFaqImage(file);
           const realUrl = uploadRes.details?.imageUrl || uploadRes.details?.url;
 
           if (realUrl && editorRef.current) {
-            // 3. 업로드 완료 후, 아까 꽂아둔 임시 태그를 찾아 진짜 <img> 태그로 교체!
             const placeholderEl = editorRef.current.querySelector(`#${placeholderId}`);
             if (placeholderEl) {
               const imgNode = document.createElement('img');
@@ -130,20 +120,18 @@ const RichTextEditor = ({
               imgNode.style.margin = '8px 0';
 
               placeholderEl.replaceWith(imgNode);
-              handleInput(); // 최종 상태 업데이트
+              handleInput();
             }
           }
         } catch (error) {
           console.error('본문 이미지 업로드 실패:', error);
-
           if (editorRef.current) {
-            // 💡 2. querySelector 결과를 HTMLElement로 단언 (타입 에러 해결!)
             const placeholderEl = editorRef.current.querySelector(
               `#${placeholderId}`
             ) as HTMLElement;
             if (placeholderEl) {
               placeholderEl.innerHTML = '❌ 이미지 업로드 실패';
-              placeholderEl.style.color = 'red'; // 이제 빨간 줄이 뜨지 않습니다!
+              placeholderEl.style.color = 'red';
               handleInput();
             }
           }
@@ -166,7 +154,6 @@ const RichTextEditor = ({
         className="h-full w-full flex-1 text-[14px] outline-none"
         data-placeholder={placeholder}
       />
-      {/* CSS로 placeholder 구현 */}
       <style>{`
         [contenteditable]:empty:before {
           content: attr(data-placeholder);
@@ -178,7 +165,6 @@ const RichTextEditor = ({
   );
 };
 
-// AI 아이콘 (파란색 스파클 SVG)
 const SparkIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -197,7 +183,7 @@ const WriteForm = ({
   onCancel?: () => void;
   onSuccess?: () => void;
 }) => {
-  const isEditMode = !!initialData; // 초기 데이터가 있으면 수정 모드로 판단
+  const isEditMode = !!initialData;
 
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
@@ -206,14 +192,13 @@ const WriteForm = ({
     answer: initialData?.answer || '',
     etc: initialData?.etc || '',
     files: [] as File[],
+    existingFiles: initialData?.files || [], // 💡 수정 모드시 기존 파일 유지
   });
 
-  // 1. 분류 (카테고리) 관련 상태
   const [availableCategories, setAvailableCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // 초기 관련 FAQ 매핑
   const [relatedFaqs, setRelatedFaqs] = useState<{ id: number; title: string }[]>(
     initialData?.relatedFaqs?.map((f) => ({ id: f.faqId, title: f.title })) || []
   );
@@ -229,7 +214,6 @@ const WriteForm = ({
         const res = await getCategories();
         if (res.isSuccess) {
           setAvailableCategories(res.details.categories);
-          // 수정 모드일 경우: 기존 이름과 매칭하여 선택된 카테고리 복원
           if (initialData?.categoryNames) {
             const matched = res.details.categories.filter((c) =>
               initialData.categoryNames.includes(c.categoryName)
@@ -273,7 +257,6 @@ const WriteForm = ({
   };
 
   const handleAiRecommend = async () => {
-    /* 기존 코드 동일 생략 (글자 수 제한 방지) */
     if (!formData.title || !formData.content) return alert('제목과 내용을 입력해주세요.');
     setIsAiLoading(true);
     try {
@@ -293,7 +276,7 @@ const WriteForm = ({
         );
       }
     } catch (err) {
-      console.error('AI 추천 실패:', err); // 에러 해결
+      console.error('AI 추천 실패:', err);
       alert('AI 추천 중 오류가 발생했습니다.');
     } finally {
       setIsAiLoading(false);
@@ -309,9 +292,15 @@ const WriteForm = ({
     setIsSubmitting(true);
     try {
       const uploadedFileUrls: string[] = [];
+
+      // 💡 서버에서 어떤 키값으로 반환하든 모두 안전하게 추출
       for (const file of formData.files) {
         const fileRes = await uploadFaqFile(file);
-        if (fileRes.isSuccess && fileRes.details.url) uploadedFileUrls.push(fileRes.details.url);
+        const realUrl =
+          fileRes.details?.fileUrl || fileRes.details?.url || fileRes.details?.imageUrl;
+        if (fileRes.isSuccess && realUrl) {
+          uploadedFileUrls.push(realUrl);
+        }
       }
 
       const payload: FaqRequest = {
@@ -321,15 +310,15 @@ const WriteForm = ({
         content: formData.content,
         answer: formData.answer,
         etc: formData.etc,
-        fileUrls: uploadedFileUrls,
+        // 💡 기존 파일 URL(수정 시)과 새 파일 URL 합치기
+        fileUrls: [...formData.existingFiles.map((f) => f.url), ...uploadedFileUrls],
         relatedFaqIds: relatedFaqs.map((f) => f.id),
       };
 
-      // 💡 생성과 수정 분기 처리
       if (isEditMode) {
         await updateFaq(initialData.faqId, payload);
         alert('FAQ가 성공적으로 수정되었습니다!');
-        if (onCancel) onCancel(); // 수정 성공 후 상세보기로 복귀
+        if (onCancel) onCancel();
       } else {
         await createFaq(payload);
         alert('FAQ가 성공적으로 작성되었습니다!');
@@ -337,7 +326,7 @@ const WriteForm = ({
       setIsModalOpen(false);
       if (onSuccess) onSuccess();
     } catch (err) {
-      console.error('저장 중 오류:', err); // 에러 해결
+      console.error('저장 중 오류:', err);
       alert('저장 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
@@ -467,7 +456,7 @@ const WriteForm = ({
         />
       </div>
 
-      {/* 6. 연관 FAQ (💡 드래그 앤 드롭 존) */}
+      {/* 6. 연관 FAQ */}
       <div className="flex gap-4">
         <div className={labelStyle}>관련 FAQ</div>
         <div
@@ -514,21 +503,43 @@ const WriteForm = ({
         />
       </div>
 
-      {/* 8. 첨부파일 */}
+      {/* 💡 8. 첨부파일 등록 (기존파일 삭제 + 새 파일 추가 기능) */}
       <div className="flex flex-col gap-2 pt-2">
         <label className="flex w-fit cursor-pointer items-center gap-2 text-[#464A4D] hover:underline">
           <span>📎</span>
           <span className="text-[14px] font-medium">첨부파일 올리기</span>
           <input type="file" multiple className="hidden" onChange={handleFileChange} />
         </label>
-        {formData.files.length > 0 && (
+
+        {(formData.existingFiles.length > 0 || formData.files.length > 0) && (
           <div className="mt-2 flex flex-wrap gap-2">
+            {/* 기존 파일 렌더링 */}
+            {formData.existingFiles.map((file, idx) => (
+              <div
+                key={`exist-${idx}`}
+                className="flex items-center gap-2 rounded border border-[#E8EEF2] bg-white px-3 py-1.5 text-[13px] text-gray-700 shadow-sm"
+              >
+                <span className="max-w-[200px] truncate">{file.originalName}</span>
+                <button
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      existingFiles: prev.existingFiles.filter((_, i) => i !== idx),
+                    }))
+                  }
+                  className="text-gray-400 hover:text-red-500"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {/* 새 파일 렌더링 */}
             {formData.files.map((file, idx) => (
               <div
-                key={idx}
+                key={`new-${idx}`}
                 className="flex items-center gap-2 rounded bg-gray-100 px-3 py-1.5 text-[13px] text-gray-700"
               >
-                <span className="max-w-[200px] truncate">{file.name}</span>
+                <span className="max-w-[200px] truncate">{file.name} (새 항목)</span>
                 <button
                   onClick={() =>
                     setFormData((prev) => ({

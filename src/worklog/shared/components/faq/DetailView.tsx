@@ -10,15 +10,15 @@ const DetailView = ({
   faqId,
   updatedDate,
   onSuccess,
-  onRelatedClick, // 💡 [추가] 관련 FAQ 클릭 시 호출할 함수
+  onRelatedClick,
 }: {
   faqId?: number;
   updatedDate?: string;
   onSuccess?: () => void;
-  onRelatedClick?: (faqId: number) => void; // 💡 [추가] 타입 정의
+  onRelatedClick?: (faqId: number) => void;
 }) => {
   const [data, setData] = useState<FaqDetailResponse | null>(null);
-  const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
+  const [isEditing, setIsEditing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -140,7 +140,7 @@ const DetailView = ({
         />
       </div>
 
-      {/* 💡 5.5. 관련 FAQ (답변과 비고 사이) */}
+      {/* 5.5. 관련 FAQ (답변과 비고 사이) */}
       <div className="flex gap-4">
         <div className={labelStyle}>관련 FAQ</div>
         <div className="flex min-h-[36px] flex-1 flex-wrap items-center gap-2 px-2">
@@ -148,7 +148,7 @@ const DetailView = ({
             data.relatedFaqs.map((faq) => (
               <button
                 key={faq.faqId}
-                onClick={() => onRelatedClick && onRelatedClick(faq.faqId)} // 클릭 시 전달받은 함수 실행
+                onClick={() => onRelatedClick && onRelatedClick(faq.faqId)}
                 title={faq.title}
                 className="flex max-w-[250px] cursor-pointer items-center gap-1.5 rounded border border-[#E8EEF2] bg-white px-3 py-1.5 text-[13px] shadow-sm transition-colors hover:border-blue-400 hover:bg-blue-50"
               >
@@ -228,11 +228,24 @@ const DetailView = ({
         </div>
       </div>
 
-      {/* 첨부파일 확인 */}
-      {data.files?.length > 0 && (
-        <div className="flex w-fit items-center gap-2 rounded-[6px] border p-2 text-[#464A4D]">
-          <span>📎</span>
-          <span className="text-[14px]">첨부파일 {data.files.length}건</span>
+      {/* 💡 9. 첨부파일 목록 영역 */}
+      {data.files && data.files.length > 0 && (
+        <div className="flex gap-4">
+          <div className={labelStyle}>첨부파일</div>
+          <div className="flex flex-1 flex-col justify-center gap-1.5 px-2 py-1">
+            {data.files.map((file, idx) => (
+              <a
+                key={idx}
+                href={file.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-fit items-center gap-2 text-[14px] text-[#464A4D] transition-colors hover:text-blue-600 hover:underline"
+              >
+                <span>📎</span>
+                <span>{file.originalName || `첨부파일 ${idx + 1}`}</span>
+              </a>
+            ))}
+          </div>
         </div>
       )}
 
