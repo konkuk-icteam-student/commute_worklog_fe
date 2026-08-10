@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import v from '@/worklog/shared/assets/v.svg';
 import glasses from '@/worklog/shared/assets/glasses.svg';
-import Post from '@/worklog/shared/components/posting/Post';
+import ManagerCard from '@/worklog/shared/components/posting/ManagerCard';
 import ModalAddManager, {
   type ManagerData,
 } from '@/worklog/shared/components/modal_add_manager/ModalAddManager';
@@ -64,7 +64,7 @@ const Category = () => {
       <div className="flex h-full flex-col">
         {/* Title Section */}
         <section className="flex h-[180px] shrink-0 flex-col items-center justify-center border-b border-[#E8EEF2]">
-          <div className="flex w-full max-w-[1200px] flex-col gap-8 px-4">
+          <div className="flex w-full max-w-[1000px] flex-col gap-8 px-4">
             <h1 className="text-center text-[40px] font-bold">담당자</h1>
 
             <div className="flex items-center justify-center gap-3">
@@ -105,22 +105,25 @@ const Category = () => {
 
         {/* Contents Section */}
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1200px] px-4 py-4">
+          {/* 💡 max-w-[1000px] px-8 로 조정하여 상단과 라인 및 여백 맞춤 */}
+          <div className="mx-auto w-full max-w-[1000px] px-8 py-10">
             {managers && managers.length > 0 ? (
-              managers.map((manager) => (
-                <Post
-                  key={manager.managerId}
-                  managerId={manager.managerId}
-                  categoryName={manager.categoryName} // title -> categoryName (분류)
-                  managerName={manager.managerName} // name -> managerName (성함)
-                  organizationName={manager.organizationName} // department -> organizationName (소속)
-                  phonenum={manager.phonenum} // phone -> phonenum (번호)
-                  // 수정 모달을 위한 ID값들 전달
-                  organizationId={manager.organizationId}
-                  categoryId={manager.categoryId}
-                  onEditClick={openEditModal}
-                />
-              ))
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {managers.map((manager) => (
+                  <ManagerCard
+                    key={manager.managerId}
+                    managerId={manager.managerId}
+                    categoryName={manager.categoryName}
+                    managerName={manager.managerName}
+                    organizationName={manager.organizationName}
+                    phonenum={manager.phonenum}
+                    organizationId={manager.organizationId}
+                    categoryId={manager.categoryId}
+                    initialFavorite={manager.managerFavorite}
+                    onEditClick={openEditModal}
+                  />
+                ))}
+              </div>
             ) : (
               <div className="py-20 text-center text-[16px] text-gray-400">
                 조회된 내용이 없습니다.
