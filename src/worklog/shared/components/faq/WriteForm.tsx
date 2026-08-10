@@ -425,7 +425,7 @@ const WriteForm = ({
         />
       </div>
 
-      {/* ✨ 4.5. AI 카테고리 추천 영역 (내용과 답변 사이) */}
+      {/* 4.5. AI 카테고리 추천 영역 (내용과 답변 사이) */}
       <div className="flex gap-4">
         <div className="w-[80px] shrink-0" /> {/* 간격 맞추기용 빈 공간 */}
         <div className="flex flex-1 flex-col items-start gap-2">
