@@ -11,11 +11,13 @@ const DetailView = ({
   updatedDate,
   onSuccess,
   onRelatedClick,
+  isDraft = false,
 }: {
   faqId?: number;
   updatedDate?: string;
   onSuccess?: () => void;
   onRelatedClick?: (faqId: number) => void;
+  isDraft?: boolean;
 }) => {
   const [data, setData] = useState<FaqDetailResponse | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -82,6 +84,11 @@ const DetailView = ({
           {data.deletedFlag && (
             <span className="rounded bg-[#EEF2FF] px-2 py-1 text-[13px] font-bold text-[#4F46E5]">
               삭제됨
+            </span>
+          )}
+          {isDraft && (
+            <span className="rounded bg-[#FFF9E6] px-2 py-1 text-[13px] font-bold text-[#F59E0B]">
+              임시저장
             </span>
           )}
         </div>

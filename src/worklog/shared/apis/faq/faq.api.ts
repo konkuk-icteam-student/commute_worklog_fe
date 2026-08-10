@@ -191,3 +191,9 @@ export const uploadFaqFile = async (file: File): Promise<UploadResponse> => {
   });
   return response.data;
 };
+
+// FAQ 최초 임시저장
+export const createFaqDraft = async (data: FaqRequest): Promise<FaqSuccessResponse> => {
+  const response = await apiClient.post<FaqSuccessResponse>('/api/faq/draft', data);
+  return response.data;
+};

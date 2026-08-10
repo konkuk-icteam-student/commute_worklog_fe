@@ -72,27 +72,23 @@ export const getMyPageProfile = async (): Promise<MyPageProfile> => {
  * Path: /api/mypage/faqs
  * @param page 프론트엔드 기준 페이지 (1부터 시작)
  */
-export const getMyPagePublishedFaqs = async (page: number = 1): Promise<MyPageFaqList> => {
-  // 프론트(1-based) -> 서버(0-based) 변환
+export const getMyPagePublishedFaqs = async (
+  page: number = 1,
+  keyword?: string
+): Promise<MyPageFaqList> => {
   const serverPage = Math.max(0, page - 1);
-
   const response = await apiClient.get<MyPageFaqListResponse>('/api/mypage/faqs', {
-    params: { page: serverPage },
+    params: { page: serverPage, keyword: keyword || undefined }, // 💡 검색어 추가
   });
-
   if (!response.data.isSuccess || !response.data.details) {
     throw new Error(response.data.message || '작성 완료 목록을 불러오는데 실패했습니다.');
   }
-
   const details = response.data.details;
-
   return {
     ...details,
-    // 서버(0-based) -> 프론트(1-based) 변환
     currentPage: details.currentPage + 1,
-    // 데이터가 아예 없을 때 페이지가 0이 되는 것을 방지
     totalPages: details.totalPages === 0 ? 1 : details.totalPages,
-    faqs: details.faqs || [], // 안전 장치
+    faqs: details.faqs || [],
   };
 };
 
@@ -102,25 +98,22 @@ export const getMyPagePublishedFaqs = async (page: number = 1): Promise<MyPageFa
  * Path: /api/mypage/faqs/drafts
  * @param page 프론트엔드 기준 페이지 (1부터 시작)
  */
-export const getMyPageDraftFaqs = async (page: number = 1): Promise<MyPageFaqList> => {
-  // 프론트(1-based) -> 서버(0-based) 변환
+export const getMyPageDraftFaqs = async (
+  page: number = 1,
+  keyword?: string
+): Promise<MyPageFaqList> => {
   const serverPage = Math.max(0, page - 1);
-
   const response = await apiClient.get<MyPageFaqListResponse>('/api/mypage/faqs/drafts', {
-    params: { page: serverPage },
+    params: { page: serverPage, keyword: keyword || undefined }, // 💡 검색어 추가
   });
-
   if (!response.data.isSuccess || !response.data.details) {
     throw new Error(response.data.message || '임시저장 목록을 불러오는데 실패했습니다.');
   }
-
   const details = response.data.details;
-
   return {
     ...details,
-    // 서버(0-based) -> 프론트(1-based) 변환
     currentPage: details.currentPage + 1,
     totalPages: details.totalPages === 0 ? 1 : details.totalPages,
-    faqs: details.faqs || [], // 안전 장치
+    faqs: details.faqs || [],
   };
 };

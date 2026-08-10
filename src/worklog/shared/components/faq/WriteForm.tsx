@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { ClipboardEvent, ChangeEvent, DragEvent } from 'react';
 import xIcon from './x.svg';
-
 // API Imports
 import { getCategories, type Category } from '@/worklog/shared/apis/categories/categories.api';
 import { recommendCategory } from '@/worklog/shared/apis/faq/faqai.api';
@@ -10,6 +9,7 @@ import {
   updateFaq,
   uploadFaqFile,
   uploadFaqImage,
+  createFaqDraft,
   type FaqRequest,
   type FaqDetailResponse,
 } from '@/worklog/shared/apis/faq/faq.api';
@@ -207,6 +207,7 @@ const WriteForm = ({
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDrafting, setIsDrafting] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -280,6 +281,42 @@ const WriteForm = ({
       alert('AI 추천 중 오류가 발생했습니다.');
     } finally {
       setIsAiLoading(false);
+    }
+  };
+
+  const handleDraftSubmit = async () => {
+    setIsDrafting(true);
+    try {
+      const uploadedFileUrls: string[] = [];
+      for (const file of formData.files) {
+        const fileRes = await uploadFaqFile(file);
+        const realUrl =
+          fileRes.details?.fileUrl || fileRes.details?.url || fileRes.details?.imageUrl;
+        if (fileRes.isSuccess && realUrl) {
+          uploadedFileUrls.push(realUrl);
+        }
+      }
+
+      const payload: FaqRequest = {
+        title: formData.title,
+        complainantName: formData.complainantName,
+        categoryIds: selectedCategories.map((c) => c.categoryId),
+        content: formData.content,
+        answer: formData.answer,
+        etc: formData.etc,
+        fileUrls: [...formData.existingFiles.map((f) => f.url), ...uploadedFileUrls],
+        relatedFaqIds: relatedFaqs.map((f) => f.id),
+      };
+
+      await createFaqDraft(payload);
+      alert('임시저장이 완료되었습니다.');
+      if (onCancel) onCancel();
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error('임시저장 중 오류:', err);
+      alert('임시저장 중 오류가 발생했습니다.');
+    } finally {
+      setIsDrafting(false);
     }
   };
 
@@ -560,10 +597,10 @@ const WriteForm = ({
       {/* 하단 버튼 영역 */}
       <div className="mt-8 flex justify-end gap-3">
         <button
-          onClick={() => console.log('임시저장 기능 개발 중')}
+          onClick={handleDraftSubmit}
           className="rounded-[6px] border border-[#E8EEF2] px-6 py-2.5 text-[14px] font-bold text-[#464A4D] hover:bg-gray-50"
         >
-          임시 저장
+          {isDrafting ? '저장 중...' : '임시 저장'}
         </button>
         <button
           onClick={() => setIsModalOpen(true)}
