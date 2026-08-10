@@ -37,7 +37,7 @@ const Faq = () => {
     const newWidthPercentage = (e.clientX / window.innerWidth) * 100;
 
     // 최소 50% ~ 최대 60% 사이에서만 조절되도록 제한
-    if (newWidthPercentage >= 50 && newWidthPercentage <= 60) {
+    if (newWidthPercentage >= 33 && newWidthPercentage <= 60) {
       setLeftPanelWidth(newWidthPercentage);
     }
   }, []);
