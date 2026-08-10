@@ -75,11 +75,10 @@ const DetailView = ({
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-20 pt-4">
+    <div className="flex flex-col gap-6 pb-20">
       {/* 1. 제목 & 삭제 뱃지 */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <h1 className="text-[24px] font-bold text-[#17191A]">{data.title}</h1>
           {data.deletedFlag && (
             <span className="rounded bg-[#EEF2FF] px-2 py-1 text-[13px] font-bold text-[#4F46E5]">
               삭제됨

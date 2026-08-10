@@ -1,6 +1,4 @@
 import blueX from '../../assets/blueX.svg';
-import house from './house.svg';
-import rightArrow from '../../assets/rightarrow.svg';
 //import x from './x.svg'
 export interface TabData {
   id: string | number;
@@ -72,13 +70,7 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
         {/* 현재 활성화된 탭의 내용 표시 */}
         {activeTab ? (
           <div className="mt-8">
-            <div className="flex flex-row items-center gap-[5px]">
-              <img src={house} alt="집 아이콘" className="" />
-              <span className="text-[14px] font-[700] text-[#464A4D]">FAQ</span>
-              <img src={rightArrow} alt="오른쪽 화살표" />
-              <span className="text-[14px] font-[400] text-[#A9AFB2]">department</span>
-            </div>
-            <h2 className="color-[#17191A] mb-4 text-[32px] font-[700]">
+            <h2 className="color-[#17191A] text-[32px] font-[700]">
               {activeTab.title} {/* 여기서도 바로 activeTab 변수 사용 가능 */}
             </h2>
 
