@@ -16,7 +16,6 @@ interface SidePanelProps {
 }
 
 const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) => {
-  const activeTab = tabs.find((t) => t.id === activeTabId);
   return (
     <div className="flex h-full flex-col border-r border-[#E8EEF2] bg-white">
       {/* 1. 탭 영역 (사다리꼴 모양 구현) */}
@@ -52,10 +51,10 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
 
       {/* 2. 컨텐츠 영역 (탭에 따라 내용 바뀜) */}
       <div className="relative h-full flex-1 overflow-y-auto p-6">
-        {activeTab && (
+        {tabs.length > 0 && (
           <button
             onClick={() => onClose(activeTabId)}
-            className="absolute right-4 top-4 flex items-center justify-center transition-opacity hover:opacity-80"
+            className="absolute right-4 top-4 z-10 flex items-center justify-center transition-opacity hover:opacity-80"
             style={{
               width: '36px',
               height: '36px',
@@ -68,20 +67,20 @@ const SidePanel = ({ tabs, activeTabId, onTabClick, onClose }: SidePanelProps) =
         )}
 
         {/* 현재 활성화된 탭의 내용 표시 */}
-        {activeTab ? (
-          <div className="mt-8">
-            <h2 className="color-[#17191A] text-[32px] font-[700]">
-              {activeTab.title} {/* 여기서도 바로 activeTab 변수 사용 가능 */}
-            </h2>
+        {tabs.length > 0 ? (
+          tabs.map((tab) => (
+            <div key={tab.id} className={`mt-8 ${tab.id === activeTabId ? 'block' : 'hidden'}`}>
+              <h2 className="mb-4 text-[32px] font-[700] text-[#17191A]">{tab.title}</h2>
 
-            <div className="w-full">
-              {activeTab.content || (
-                <div className="flex h-[200px] w-full items-center justify-center rounded border border-dashed border-gray-300 bg-gray-50 text-gray-400">
-                  준비 중인 화면입니다.
-                </div>
-              )}
+              <div className="w-full">
+                {tab.content || (
+                  <div className="flex h-[200px] w-full items-center justify-center rounded border border-dashed border-gray-300 bg-gray-50 text-gray-400">
+                    준비 중인 화면입니다.
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          ))
         ) : (
           <div className="flex h-full items-center justify-center text-gray-400">
             선택된 탭이 없습니다.

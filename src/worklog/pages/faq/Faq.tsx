@@ -122,7 +122,12 @@ const Faq = () => {
       title: selectedPost.title,
       type: 'detail',
       content: (
-        <DetailView faqId={id} updatedDate={formattedDate} onSuccess={() => handleSuccess(id)} />
+        <DetailView
+          key={id}
+          faqId={id}
+          updatedDate={formattedDate}
+          onSuccess={() => handleSuccess(id)}
+        />
       ),
     };
     addTab(newTab);
