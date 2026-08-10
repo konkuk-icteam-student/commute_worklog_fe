@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { type DateRange } from 'react-day-picker';
 import Title from '@/worklog/shared/components/faq/Title';
 import SearchBar from '@/worklog/shared/components/faq/SearchBar';
 import SidePanel, { type TabData } from '@/worklog/shared/components/faq/SidePanel';
@@ -7,6 +8,11 @@ import DetailView from '@/worklog/shared/components/faq/DetailView';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout';
 import Pagination from '@/worklog/shared/components/faq/Pagination';
 import { getFaqList, type FaqListItem } from '@/worklog/shared/apis/faq/faq.api';
+import { getOrganizations } from '@/worklog/shared/apis/organization/Organization.api';
+import { getCategories } from '@/worklog/shared/apis/categories/categories.api';
+import type { Organization } from '@/worklog/shared/apis/organization/Organization.api';
+import type { Category } from '@/worklog/shared/apis/categories/categories.api';
+import { format } from 'date-fns';
 
 const Faq = () => {
   const [tabs, setTabs] = useState<TabData[]>([]);
@@ -18,9 +24,88 @@ const Faq = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // 💡 1. 필터링 및 검색 상태 관리
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
+  const [selectedCatId, setSelectedCatId] = useState<number | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  // 실시간 검색을 위한 상태 (입력값과 지연 적용값 분리)
+  const [keywordInput, setKeywordInput] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
+
   // 💡 [추가] 좌우 패널 크기 조절을 위한 상태 및 Ref
   const [leftPanelWidth, setLeftPanelWidth] = useState(55); // 초기값 55%
   const isDragging = useRef(false);
+
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        const orgRes = await getOrganizations();
+        if (orgRes.isSuccess) setOrganizations(orgRes.details.organizations);
+      } catch (e) {
+        console.error(e);
+      }
+
+      try {
+        const catRes = await getCategories();
+        if (catRes.isSuccess) setCategories(catRes.details.categories);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchDropdownData();
+  }, []);
+
+  // 💡 3. 검색어 디바운스 처리 (타이핑 후 0.3초 대기 시 실제 검색어 적용)
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedKeyword(keywordInput);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [keywordInput]);
+
+  // 필터 조건이 바뀌면 페이지를 1로 리셋
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedKeyword, selectedOrgId, selectedCatId, dateRange]);
+
+  // 💡 4. API 목록 조회 로직
+  useEffect(() => {
+    const fetchList = async () => {
+      try {
+        const startDate = dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : undefined;
+        const endDate = dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : undefined;
+
+        const res = await getFaqList({
+          page: currentPage,
+          keyword: debouncedKeyword || undefined,
+          organizationId: selectedOrgId || undefined,
+          categoryId: selectedCatId || undefined,
+          searchScope: 'TITLE', // 제목 검색 전용
+          startDate,
+          endDate,
+        });
+        setPosts(res.faqs);
+        setTotalPages(res.totalPages);
+        setTotalElements(res.faqs.length); // 또는 res 메타데이터 활용
+      } catch (error) {
+        console.error('FAQ 목록 조회 실패:', error);
+      }
+    };
+    fetchList();
+  }, [currentPage, refreshTrigger, debouncedKeyword, selectedOrgId, selectedCatId, dateRange]);
+
+  const handleReset = () => {
+    setKeywordInput('');
+    setDebouncedKeyword('');
+    setSelectedOrgId(null);
+    setSelectedCatId(null);
+    setDateRange(undefined);
+    setCurrentPage(1);
+  };
 
   // 💡 [추가] 마우스 이벤트 핸들러
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -37,7 +122,7 @@ const Faq = () => {
     const newWidthPercentage = (e.clientX / window.innerWidth) * 100;
 
     // 최소 50% ~ 최대 60% 사이에서만 조절되도록 제한
-    if (newWidthPercentage >= 50 && newWidthPercentage <= 60) {
+    if (newWidthPercentage >= 33 && newWidthPercentage <= 60) {
       setLeftPanelWidth(newWidthPercentage);
     }
   }, []);
@@ -122,7 +207,13 @@ const Faq = () => {
       title: selectedPost.title,
       type: 'detail',
       content: (
-        <DetailView faqId={id} updatedDate={formattedDate} onSuccess={() => handleSuccess(id)} />
+        <DetailView
+          key={id}
+          faqId={id}
+          updatedDate={formattedDate}
+          onSuccess={() => handleSuccess(id)}
+          onRelatedClick={handleItemClick}
+        />
       ),
     };
     addTab(newTab);
@@ -181,9 +272,19 @@ const Faq = () => {
 
         {/* === [우측] 메인 컨텐츠 영역 === */}
         <div className="flex h-full flex-1 flex-col overflow-hidden bg-white">
-          <div className="scrollbar-hide w-full shrink-0 overflow-x-auto border-b border-[#E8EEF2]">
-            <Title />
-          </div>
+          <Title
+            keywordInput={keywordInput}
+            setKeywordInput={setKeywordInput}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            onReset={handleReset}
+            organizations={organizations}
+            categories={categories}
+            selectedOrgId={selectedOrgId}
+            setSelectedOrgId={setSelectedOrgId}
+            selectedCatId={selectedCatId}
+            setSelectedCatId={setSelectedCatId}
+          />
 
           <div className="flex-1 overflow-y-auto px-6 py-6">
             <div className="mx-auto w-full max-w-[1200px]">
@@ -213,18 +314,28 @@ const Faq = () => {
                     id={post.faqId}
                     title={post.title}
                     date={post.updatedDate ? post.updatedDate.substring(0, 10) : ''}
+                    keyword={debouncedKeyword}
+                    deletedFlag={post.deletedFlag} // 💡 추가! 삭제된 게시글 회색 태그 처리
                     onClick={handleItemClick}
                   />
                 </div>
               ))}
 
-              <div className="mt-8 pb-4">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
+              {posts.length === 0 && (
+                <div className="py-20 text-center text-[16px] text-gray-400">
+                  검색 결과가 없습니다.
+                </div>
+              )}
+
+              {posts.length > 0 && (
+                <div className="mt-8 pb-4">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
