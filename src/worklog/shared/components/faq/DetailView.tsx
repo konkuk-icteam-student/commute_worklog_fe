@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getFaqDetail, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api';
+import { getFaqDetail, deleteFaq, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api'; // 💡 deleteFaq 추가
 import WriteForm from './WriteForm';
 
-// 공통 라벨 스타일 (WriteForm과 동일)
 const labelStyle =
   'flex h-[36px] w-[71px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[16px] font-[700] text-[#17191A]';
 
@@ -12,16 +11,25 @@ const DetailView = ({
   onSuccess,
   onRelatedClick,
   isDraft = false,
+  isModalMode = false,
+  showDeleteBtn = false,
 }: {
   faqId?: number;
   updatedDate?: string;
   onSuccess?: () => void;
   onRelatedClick?: (faqId: number) => void;
   isDraft?: boolean;
+  isModalMode?: boolean;
+  showDeleteBtn?: boolean;
 }) => {
   const [data, setData] = useState<FaqDetailResponse | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // 💡 [추가] 삭제 관련 상태
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const [selectedDate, setSelectedDate] = useState<string>(
     updatedDate || new Date().toISOString().split('T')[0]
@@ -48,7 +56,24 @@ const DetailView = ({
       }
     };
     fetchDetail();
-  }, [faqId, selectedDate]);
+  }, [faqId, selectedDate, refreshTrigger]); // 💡 refreshTrigger 추가
+
+  // 💡 [추가] 삭제 핸들러
+  const handleDelete = async () => {
+    if (!faqId) return;
+    setIsDeleting(true);
+    try {
+      await deleteFaq(faqId);
+      alert('업무일지가 성공적으로 삭제되었습니다.');
+      setIsDeleteModalOpen(false);
+      if (onSuccess) onSuccess(); // 부모 컴포넌트(WorklogModal)가 화면을 전환하도록 호출
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      alert('삭제 중 오류가 발생했습니다.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (errorMsg) {
     return (
@@ -62,7 +87,14 @@ const DetailView = ({
 
   if (isEditing) {
     return (
-      <WriteForm initialData={data} onCancel={() => setIsEditing(false)} onSuccess={onSuccess} />
+      <WriteForm
+        initialData={data}
+        onCancel={() => setIsEditing(false)}
+        onSuccess={() => {
+          setIsEditing(false);
+          setRefreshTrigger((prev) => prev + 1);
+        }}
+      />
     );
   }
 
@@ -78,23 +110,47 @@ const DetailView = ({
 
   return (
     <div className="flex flex-col gap-6 pb-20">
-      {/* 1. 제목 & 삭제 뱃지 */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3">
-          {data.deletedFlag && (
-            <span className="rounded bg-[#EEF2FF] px-2 py-1 text-[13px] font-bold text-[#4F46E5]">
-              삭제됨
-            </span>
-          )}
-          {isDraft && (
-            <span className="rounded bg-[#FFF9E6] px-2 py-1 text-[13px] font-bold text-[#F59E0B]">
-              임시저장
-            </span>
-          )}
+      {/* 💡 1. 상단 타이틀 & 태그 영역 (모달 뷰와 사이드패널 뷰 분기) */}
+      {isModalMode ? (
+        <div className="mb-2 flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-[14px] font-medium text-[#8C9499]">
+            <span>🏠 FAQ</span>
+            <span>&gt;</span>
+            <span>{data.categoryNames?.[0] || '분류 없음'}</span>
+          </div>
+          <div className="mt-1 flex items-center gap-4">
+            <h1 className="text-[32px] font-bold text-[#17191A]">{data.title}</h1>
+            {data.deletedFlag && (
+              <span className="flex h-[32px] items-center justify-center rounded-[8px] bg-[#EEF2FF] px-4 text-[15px] font-bold text-[#4F46E5]">
+                삭제됨
+              </span>
+            )}
+            {isDraft && (
+              <span className="flex h-[32px] items-center justify-center rounded-[8px] bg-[#FFF9E6] px-4 text-[15px] font-bold text-[#F59E0B]">
+                임시저장
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            {data.deletedFlag && (
+              <span className="rounded bg-[#EEF2FF] px-2 py-1 text-[13px] font-bold text-[#4F46E5]">
+                삭제됨
+              </span>
+            )}
+            {isDraft && (
+              <span className="rounded bg-[#FFF9E6] px-2 py-1 text-[13px] font-bold text-[#F59E0B]">
+                임시저장
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
-      <hr className="border-[#E8EEF2]" />
+      {/* 구분선 (모달 모드일 땐 상단에 타이틀이 있으므로 숨기거나 유지) */}
+      {!isModalMode && <hr className="border-[#E8EEF2]" />}
 
       {/* 2. 민원인 */}
       <div className="flex gap-4">
@@ -147,7 +203,7 @@ const DetailView = ({
         />
       </div>
 
-      {/* 5.5. 관련 FAQ (답변과 비고 사이) */}
+      {/* 5.5. 관련 FAQ */}
       <div className="flex gap-4">
         <div className={labelStyle}>관련 FAQ</div>
         <div className="flex min-h-[36px] flex-1 flex-wrap items-center gap-2 px-2">
@@ -177,17 +233,15 @@ const DetailView = ({
         </div>
       )}
 
-      {/* 7. 수정 이력 (타임라인 UI) */}
+      {/* 7. 수정 이력 */}
       <div className="flex gap-4">
         <div className={labelStyle}>수정</div>
         <div className="relative ml-2 flex flex-col gap-5 border-l-2 border-[#E8EEF2] py-2">
           {historyList.map((item, idx) => {
             const isActive = item.date === activeDate;
-
             return (
               <div key={idx} className="relative flex items-center pl-4 text-[15px]">
                 <div className="absolute -left-[5px] h-[8px] w-[8px] rounded-full bg-[#8C9499]" />
-
                 {item.type === 'deleted' ? (
                   <span className="text-[16px] text-[#8C9499]">{item.date} (삭제)</span>
                 ) : isActive ? (
@@ -235,7 +289,7 @@ const DetailView = ({
         </div>
       </div>
 
-      {/* 💡 9. 첨부파일 목록 영역 */}
+      {/* 9. 첨부파일 */}
       {data.files && data.files.length > 0 && (
         <div className="flex gap-4">
           <div className={labelStyle}>첨부파일</div>
@@ -256,15 +310,53 @@ const DetailView = ({
         </div>
       )}
 
-      {/* 수정하기 버튼 */}
-      <div className="mt-8 flex justify-end">
-        <button
-          onClick={() => setIsEditing(true)}
-          className="rounded-[6px] border border-[#E8EEF2] px-6 py-2.5 text-[14px] font-bold text-[#464A4D] transition-colors hover:bg-gray-50"
-        >
-          수정하기
-        </button>
-      </div>
+      {/* 💡 10. 수정/삭제 버튼 영역 (삭제된 게시글은 숨김 처리) */}
+      {!data.deletedFlag && (
+        <div className="mt-8 flex justify-end gap-3">
+          {showDeleteBtn && (
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="rounded-[6px] border border-red-200 bg-white px-6 py-2.5 text-[14px] font-bold text-red-500 transition-colors hover:bg-red-50"
+            >
+              삭제하기
+            </button>
+          )}
+          <button
+            onClick={() => setIsEditing(true)}
+            className="rounded-[6px] border border-[#E8EEF2] bg-white px-6 py-2.5 text-[14px] font-bold text-[#464A4D] transition-colors hover:bg-gray-50"
+          >
+            수정하기
+          </button>
+        </div>
+      )}
+
+      {/* 💡 삭제 확인 모달 */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+          <div className="flex w-[320px] flex-col items-center gap-6 rounded-[16px] bg-white p-6 shadow-xl">
+            <h3 className="text-[18px] font-bold text-[#17191A]">업무일지를 삭제하시겠습니까?</h3>
+            <p className="text-center text-[14px] text-[#8C9499]">
+              삭제된 업무일지는 목록에서 '삭제됨' 상태로 표시됩니다.
+            </p>
+            <div className="flex w-full gap-3">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="flex-1 rounded-[8px] bg-gray-100 py-2.5 text-[14px] font-bold text-[#464A4D] hover:bg-gray-200"
+              >
+                아니오
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex flex-1 items-center justify-center rounded-[8px] bg-red-500 py-2.5 text-[14px] font-bold text-white hover:bg-red-600"
+              >
+                {isDeleting ? '삭제 중...' : '예'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

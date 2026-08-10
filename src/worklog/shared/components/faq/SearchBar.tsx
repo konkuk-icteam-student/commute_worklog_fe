@@ -3,16 +3,22 @@ interface SearchBarProps {
   title: string;
   date: string;
   keyword?: string;
+  deletedFlag?: boolean; // 💡 [추가] 삭제 여부 Props
   onClick: (id: number) => void;
 }
 
-const SearchBar = ({ id, title, date, keyword = '', onClick }: SearchBarProps) => {
+const SearchBar = ({
+  id,
+  title,
+  date,
+  keyword = '',
+  deletedFlag = false,
+  onClick,
+}: SearchBarProps) => {
   const formattedDate = date ? date.substring(0, 10) : '';
 
   const renderHighlightedTitle = () => {
     if (!keyword.trim()) return title;
-
-    // 대소문자 구분 없이 검색어를 기준으로 텍스트 분할
     const parts = title.split(new RegExp(`(${keyword})`, 'gi'));
     return (
       <span>
@@ -37,9 +43,18 @@ const SearchBar = ({ id, title, date, keyword = '', onClick }: SearchBarProps) =
       <span className="flex-1 truncate pl-[20px] text-[16px] font-[400] text-[#464A4D]">
         {renderHighlightedTitle()}
       </span>
-      <span className="whitespace-nowrap pr-[10px] text-[16px] font-[400] text-[#A9AFB2]">
-        {formattedDate}
-      </span>
+
+      {/* 💡 날짜와 삭제됨 뱃지를 하나로 묶음 */}
+      <div className="flex shrink-0 items-center gap-3 pr-[10px]">
+        {deletedFlag && (
+          <span className="rounded bg-[#F4F6F8] px-2 py-0.5 text-[12px] font-bold text-[#8C9499]">
+            삭제됨
+          </span>
+        )}
+        <span className="whitespace-nowrap text-[16px] font-[400] text-[#A9AFB2]">
+          {formattedDate}
+        </span>
+      </div>
     </div>
   );
 };

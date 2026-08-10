@@ -314,7 +314,8 @@ const Faq = () => {
                     id={post.faqId}
                     title={post.title}
                     date={post.updatedDate ? post.updatedDate.substring(0, 10) : ''}
-                    keyword={debouncedKeyword} // 파란색 강조를 위해 키워드 전달
+                    keyword={debouncedKeyword}
+                    deletedFlag={post.deletedFlag} // 💡 추가! 삭제된 게시글 회색 태그 처리
                     onClick={handleItemClick}
                   />
                 </div>
