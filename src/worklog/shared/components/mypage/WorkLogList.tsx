@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getMyPageProfile, type MyPageProfile } from '../../apis/mypage/mypage.api';
 import Mylog from './mylog.svg';
 import Draftlist from './draftlist.svg';
@@ -16,17 +16,27 @@ const WorkLogList = () => {
     type: 'published',
   });
 
-  useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        const data = await getMyPageProfile();
-        setProfile(data);
-      } catch (error) {
-        console.error('카운트 정보 조회 실패:', error);
-      }
-    };
-    fetchCounts();
+  // 💡 1. 데이터를 불러오는 함수를 밖으로 빼서 재사용할 수 있게 만듭니다.
+  const fetchCounts = useCallback(async () => {
+    try {
+      const data = await getMyPageProfile();
+      setProfile(data);
+    } catch (error) {
+      console.error('카운트 정보 조회 실패:', error);
+    }
   }, []);
+
+  // 💡 2. 컴포넌트가 처음 마운트될 때 카운트 조회
+  useEffect(() => {
+    fetchCounts();
+  }, [fetchCounts]);
+
+  // 💡 3. 핵심! 모달이 닫힐 때(isOpen이 false가 될 때) 카운트를 다시 불러오도록 설정합니다.
+  useEffect(() => {
+    if (!modalConfig.isOpen) {
+      fetchCounts();
+    }
+  }, [modalConfig.isOpen, fetchCounts]);
 
   return (
     <div className="mx-auto flex w-full max-w-[1090px] flex-col rounded-[20px] border-[1.5px] border-[#E8EEF2] bg-white">

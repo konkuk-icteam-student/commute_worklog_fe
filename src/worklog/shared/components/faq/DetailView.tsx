@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getFaqDetail, deleteFaq, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api'; // 💡 deleteFaq 추가
+import { getFaqDetail, deleteFaq, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api';
 import WriteForm from './WriteForm';
 
+// 공통 라벨 스타일 (WriteForm과 동일)
 const labelStyle =
   'flex h-[36px] w-[71px] shrink-0 items-center justify-center rounded-[6px] border border-[#E8EEF2] text-[16px] font-[700] text-[#17191A]';
 
@@ -26,8 +27,9 @@ const DetailView = ({
   const [isEditing, setIsEditing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // 💡 [추가] 삭제 관련 상태
+  // 삭제 관련 상태
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] = useState(false); // 💡 [추가] 삭제 완료 모달 상태
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -56,17 +58,16 @@ const DetailView = ({
       }
     };
     fetchDetail();
-  }, [faqId, selectedDate, refreshTrigger]); // 💡 refreshTrigger 추가
+  }, [faqId, selectedDate, refreshTrigger]);
 
-  // 💡 [추가] 삭제 핸들러
+  // 삭제 핸들러
   const handleDelete = async () => {
     if (!faqId) return;
     setIsDeleting(true);
     try {
       await deleteFaq(faqId);
-      alert('업무일지가 성공적으로 삭제되었습니다.');
-      setIsDeleteModalOpen(false);
-      if (onSuccess) onSuccess(); // 부모 컴포넌트(WorklogModal)가 화면을 전환하도록 호출
+      setIsDeleteModalOpen(false); // 1. 확인 모달 닫기
+      setIsDeleteSuccessModalOpen(true); // 💡 2. 알림창 대신 완료 커스텀 모달 띄우기
     } catch (error) {
       console.error('삭제 실패:', error);
       alert('삭제 중 오류가 발생했습니다.');
@@ -110,7 +111,7 @@ const DetailView = ({
 
   return (
     <div className="flex flex-col gap-6 pb-20">
-      {/* 💡 1. 상단 타이틀 & 태그 영역 (모달 뷰와 사이드패널 뷰 분기) */}
+      {/* 1. 상단 타이틀 & 태그 영역 */}
       {isModalMode ? (
         <div className="mb-2 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[14px] font-medium text-[#8C9499]">
@@ -149,7 +150,7 @@ const DetailView = ({
         </div>
       )}
 
-      {/* 구분선 (모달 모드일 땐 상단에 타이틀이 있으므로 숨기거나 유지) */}
+      {/* 구분선 */}
       {!isModalMode && <hr className="border-[#E8EEF2]" />}
 
       {/* 2. 민원인 */}
@@ -233,15 +234,17 @@ const DetailView = ({
         </div>
       )}
 
-      {/* 7. 수정 이력 */}
+      {/* 7. 수정 이력 (타임라인 UI) */}
       <div className="flex gap-4">
         <div className={labelStyle}>수정</div>
         <div className="relative ml-2 flex flex-col gap-5 border-l-2 border-[#E8EEF2] py-2">
           {historyList.map((item, idx) => {
             const isActive = item.date === activeDate;
+
             return (
               <div key={idx} className="relative flex items-center pl-4 text-[15px]">
                 <div className="absolute -left-[5px] h-[8px] w-[8px] rounded-full bg-[#8C9499]" />
+
                 {item.type === 'deleted' ? (
                   <span className="text-[16px] text-[#8C9499]">{item.date} (삭제)</span>
                 ) : isActive ? (
@@ -310,7 +313,7 @@ const DetailView = ({
         </div>
       )}
 
-      {/* 💡 10. 수정/삭제 버튼 영역 (삭제된 게시글은 숨김 처리) */}
+      {/* 10. 수정/삭제 버튼 영역 */}
       {!data.deletedFlag && (
         <div className="mt-8 flex justify-end gap-3">
           {showDeleteBtn && (
@@ -330,7 +333,7 @@ const DetailView = ({
         </div>
       )}
 
-      {/* 💡 삭제 확인 모달 */}
+      {/* 삭제 확인 모달 */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
           <div className="flex w-[320px] flex-col items-center gap-6 rounded-[16px] bg-white p-6 shadow-xl">
@@ -352,6 +355,29 @@ const DetailView = ({
                 className="flex flex-1 items-center justify-center rounded-[8px] bg-red-500 py-2.5 text-[14px] font-bold text-white hover:bg-red-600"
               >
                 {isDeleting ? '삭제 중...' : '예'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 💡 [추가] 삭제 성공 완료 모달 */}
+      {isDeleteSuccessModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+          <div className="flex w-[320px] flex-col items-center gap-6 rounded-[16px] bg-white p-6 shadow-xl">
+            <h3 className="text-[18px] font-bold text-[#17191A]">삭제 완료</h3>
+            <p className="text-center text-[14px] text-[#8C9499]">
+              업무일지가 성공적으로 삭제되었습니다.
+            </p>
+            <div className="flex w-full">
+              <button
+                onClick={() => {
+                  setIsDeleteSuccessModalOpen(false);
+                  if (onSuccess) onSuccess(); // 확인을 누를 때 목록 화면으로 복귀!
+                }}
+                className="flex w-full items-center justify-center rounded-[8px] bg-[#3B82F6] py-2.5 text-[14px] font-bold text-white hover:bg-blue-600"
+              >
+                확인
               </button>
             </div>
           </div>
