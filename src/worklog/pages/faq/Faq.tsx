@@ -212,6 +212,7 @@ const Faq = () => {
           faqId={id}
           updatedDate={formattedDate}
           onSuccess={() => handleSuccess(id)}
+          onRelatedClick={handleItemClick}
         />
       ),
     };

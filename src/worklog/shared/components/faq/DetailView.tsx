@@ -10,10 +10,12 @@ const DetailView = ({
   faqId,
   updatedDate,
   onSuccess,
+  onRelatedClick, // 💡 [추가] 관련 FAQ 클릭 시 호출할 함수
 }: {
   faqId?: number;
   updatedDate?: string;
   onSuccess?: () => void;
+  onRelatedClick?: (faqId: number) => void; // 💡 [추가] 타입 정의
 }) => {
   const [data, setData] = useState<FaqDetailResponse | null>(null);
   const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
@@ -31,7 +33,6 @@ const DetailView = ({
     if (!faqId) return;
     const fetchDetail = async () => {
       try {
-        // 💡 핵심 2. targetDate 대신 상태값인 selectedDate를 파라미터로 전송!
         const res = await getFaqDetail(faqId, selectedDate);
         setData(res);
         setErrorMsg('');
@@ -45,7 +46,7 @@ const DetailView = ({
       }
     };
     fetchDetail();
-  }, [faqId, selectedDate]); // selectedDate가 바뀔 때마다 API 재호출!
+  }, [faqId, selectedDate]);
 
   if (errorMsg) {
     return (
@@ -57,13 +58,12 @@ const DetailView = ({
 
   if (!data) return <div className="p-10 text-center text-gray-500">로딩 중...</div>;
 
-  // 💡 수정 모드일 때 WriteForm 렌더링 (취소 콜백 전달)
   if (isEditing) {
     return (
       <WriteForm initialData={data} onCancel={() => setIsEditing(false)} onSuccess={onSuccess} />
     );
   }
-  // 💡 타임라인 데이터 구성 (삭제일 + 수정일 병합 및 내림차순 정렬)
+
   const historyList = [];
   if (data.deletedAt) historyList.push({ date: data.deletedAt, type: 'deleted' });
   data.editedDates?.forEach((d) => historyList.push({ date: d, type: 'edited' }));
@@ -140,6 +140,28 @@ const DetailView = ({
         />
       </div>
 
+      {/* 💡 5.5. 관련 FAQ (답변과 비고 사이) */}
+      <div className="flex gap-4">
+        <div className={labelStyle}>관련 FAQ</div>
+        <div className="flex min-h-[36px] flex-1 flex-wrap items-center gap-2 px-2">
+          {data.relatedFaqs && data.relatedFaqs.length > 0 ? (
+            data.relatedFaqs.map((faq) => (
+              <button
+                key={faq.faqId}
+                onClick={() => onRelatedClick && onRelatedClick(faq.faqId)} // 클릭 시 전달받은 함수 실행
+                title={faq.title}
+                className="flex max-w-[250px] cursor-pointer items-center gap-1.5 rounded border border-[#E8EEF2] bg-white px-3 py-1.5 text-[13px] shadow-sm transition-colors hover:border-blue-400 hover:bg-blue-50"
+              >
+                <span className="shrink-0 font-bold text-blue-600">#{faq.faqId}</span>
+                <span className="truncate font-medium text-[#464A4D]">{faq.title}</span>
+              </button>
+            ))
+          ) : (
+            <span className="text-[14px] text-[#8C9499]">등록된 관련 FAQ가 없습니다.</span>
+          )}
+        </div>
+      </div>
+
       {/* 6. 비고 */}
       {data.etc && (
         <div className="flex gap-4">
@@ -153,7 +175,6 @@ const DetailView = ({
         <div className={labelStyle}>수정</div>
         <div className="relative ml-2 flex flex-col gap-5 border-l-2 border-[#E8EEF2] py-2">
           {historyList.map((item, idx) => {
-            // 핵심 4. activeDate와 비교하여 현재 보고 있는 날짜 표시
             const isActive = item.date === activeDate;
 
             return (
@@ -163,12 +184,10 @@ const DetailView = ({
                 {item.type === 'deleted' ? (
                   <span className="text-[16px] text-[#8C9499]">{item.date} (삭제)</span>
                 ) : isActive ? (
-                  // 현재 보고 있는 날짜 (클릭 X, 파란색 유지)
                   <span className="text-[16px] font-bold text-blue-600 underline underline-offset-4">
                     {item.date}
                   </span>
                 ) : (
-                  // 핵심 5. 클릭 시 setSelectedDate를 호출하여 API 재요청 트리거!
                   <span
                     onClick={() => setSelectedDate(item.date)}
                     className="cursor-pointer text-[16px] font-bold text-[#464A4D] underline underline-offset-4 hover:text-blue-500"
@@ -186,7 +205,6 @@ const DetailView = ({
       <div className="flex gap-4">
         <div className={labelStyle}>담당자</div>
         <div className="flex flex-1 flex-col justify-center px-2">
-          {/* 현재 담당자 */}
           <div className="flex flex-wrap gap-2 pt-1">
             {data.currentManagers?.map((mgr, i) => (
               <span key={i} className="text-[14px] text-[#17191A]">
@@ -194,7 +212,6 @@ const DetailView = ({
               </span>
             ))}
           </div>
-          {/* 과거 담당자 */}
           {data.pastManagers?.length > 0 && (
             <div className="mt-2 text-[12px] text-[#8C9499]">
               *작성 당시 담당자와 현재 담당자가 다릅니다. 현재 담당자는 아래와 같습니다.
