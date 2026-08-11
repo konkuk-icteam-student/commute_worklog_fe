@@ -239,9 +239,9 @@ const Category = () => {
             {/* 💡 필터링된 배열(filteredManagers)을 순회합니다 */}
             {filteredManagers.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredManagers.map((manager) => (
+                {filteredManagers.map((manager, index) => (
                   <ManagerCard
-                    key={manager.managerId}
+                    key={`${manager.managerId}-${index}`}
                     managerId={manager.managerId}
                     categoryName={manager.categoryName}
                     managerName={manager.managerName}
