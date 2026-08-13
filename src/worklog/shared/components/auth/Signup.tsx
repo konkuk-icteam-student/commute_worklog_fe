@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import {
   sendVerificationCode,
   verifyCode,
@@ -46,6 +47,27 @@ const Signup = () => {
   const [pwMessage, setPwMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(
     null
   );
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [alertAction, setAlertAction] = useState<(() => void) | null>(null);
+
+  const openAlertModal = (message: string, onConfirm?: () => void) => {
+    setAlertMessage(message);
+    setAlertAction(() => onConfirm ?? null);
+    setIsAlertModalOpen(true);
+  };
+
+  const handleCloseAlertModal = () => {
+    setIsAlertModalOpen(false);
+    setAlertMessage('');
+    setAlertAction(null);
+  };
+
+  const handleConfirmAlertModal = () => {
+    const action = alertAction;
+    handleCloseAlertModal();
+    action?.();
+  };
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -141,28 +163,26 @@ const Signup = () => {
         try {
           const loginResponse = await login({ email, password });
           if (loginResponse.isSuccess) {
-            alert('회원가입이 완료되었습니다.');
-            window.location.reload();
+            openAlertModal('회원가입이 완료되었습니다.', () => window.location.reload());
           } else {
-            alert(
-              '회원가입은 완료되었으나 자동 로그인에 실패했습니다. 로그인 페이지로 이동합니다.'
+            openAlertModal(
+              '회원가입은 완료되었으나 자동 로그인에 실패했습니다. 로그인 페이지로 이동합니다.',
+              () => navigate(0)
             );
-            navigate(0);
           }
         } catch (loginError) {
           console.error('Auto Login Failed', loginError);
-          alert('회원가입 완료. 로그인 해주세요.');
-          window.location.reload();
+          openAlertModal('회원가입 완료. 로그인 해주세요.', () => window.location.reload());
         }
       } else {
-        alert(regResponse.message || '회원가입 실패');
+        openAlertModal(regResponse.message || '회원가입 실패');
       }
     } catch (error) {
       // [수정]
       console.error(error);
       const err = error as AxiosError<{ message: string }>;
       const msg = err.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
-      alert(msg);
+      openAlertModal(msg);
     }
   };
 
@@ -365,6 +385,13 @@ const Signup = () => {
       >
         가입하기
       </button>
+
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={handleCloseAlertModal}
+        onConfirm={handleConfirmAlertModal}
+      />
     </div>
   );
 };

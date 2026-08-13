@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import glasses from '@/worklog/shared/assets/glasses.svg';
 import Post2 from '@/worklog/shared/components/posting/Post2';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout';
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import DeleteConfirmationModal from '@/worklog/shared/components/modal/DeleteConfirmationModal';
 
 // [Import] Task(Category) API
@@ -21,6 +22,13 @@ const Task = () => {
   // 모달 상태 (실패 모달 없음)
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+
+  const openAlertModal = (message: string) => {
+    setAlertMessage(message);
+    setIsAlertModalOpen(true);
+  };
 
   // 2. 초기 데이터 조회 (GET)
   const fetchCategories = async () => {
@@ -50,7 +58,7 @@ const Task = () => {
     console.log('🖱️ [Action] 추가하기 버튼 클릭 / 입력값:', inputValue);
 
     if (!inputValue.trim()) {
-      alert('분류 이름을 입력해주세요.');
+      openAlertModal('분류 이름을 입력해주세요.');
       return;
     }
 
@@ -67,9 +75,9 @@ const Task = () => {
       console.error('❌ [API Error] 분류 등록 실패:', error);
       const err = error as AxiosError;
       if (err.response?.status === 409) {
-        alert('이미 존재하는 분류 이름입니다.');
+        openAlertModal('이미 존재하는 분류 이름입니다.');
       } else {
-        alert('등록 중 오류가 발생했습니다.');
+        openAlertModal('등록 중 오류가 발생했습니다.');
       }
     }
   };
@@ -97,13 +105,13 @@ const Task = () => {
         await fetchCategories(); // 목록 갱신
       } else {
         console.warn('⚠️ [API Warning] 삭제 실패 (서버 메시지):', response.message);
-        alert(response.message || '삭제에 실패했습니다.');
         setIsConfirmModalOpen(false);
+        openAlertModal(response.message || '삭제에 실패했습니다.');
       }
     } catch (error) {
       console.error('❌ [API Error] 삭제 요청 실패:', error);
-      alert('삭제 중 오류가 발생했습니다.');
       setIsConfirmModalOpen(false);
+      openAlertModal('삭제 중 오류가 발생했습니다.');
     }
   };
 
@@ -172,6 +180,11 @@ const Task = () => {
         targetType="분류를" // [설정] 분류 삭제 멘트 적용
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleDeleteConfirm}
+      />
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={() => setIsAlertModalOpen(false)}
       />
     </MainLayout>
   );

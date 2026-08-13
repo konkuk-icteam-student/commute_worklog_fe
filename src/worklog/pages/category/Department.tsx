@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Post2 from '@/worklog/shared/components/posting/Post2';
 import MainLayout from '@/worklog/shared/components/layout/MainLayout'; // MainLayout import
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import DeleteConfirmationModal from '@/worklog/shared/components/modal/DeleteConfirmationModal';
 import DeleteFailureModal from '@/worklog/shared/components/modal/DeleteFailureModal';
 import {
@@ -18,6 +19,13 @@ const Department = () => {
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null); // 삭제할 대상 정보
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+
+  const openAlertModal = (message: string) => {
+    setAlertMessage(message);
+    setIsAlertModalOpen(true);
+  };
 
   // 2. 초기 데이터 조회 (GET)
   const fetchOrganizations = async () => {
@@ -39,7 +47,7 @@ const Department = () => {
   const handleAddOrganization = async () => {
     console.log('🖱️ [Action] 추가하기 버튼 클릭 / 입력값:', inputValue);
     if (!inputValue.trim()) {
-      alert('소속 이름을 입력해주세요.');
+      openAlertModal('소속 이름을 입력해주세요.');
       return;
     }
 
@@ -55,7 +63,7 @@ const Department = () => {
       await fetchOrganizations(); // 목록 새로고침
     } catch (error) {
       console.error('소속 등록 실패:', error);
-      alert('등록 중 오류가 발생했습니다.');
+      openAlertModal('등록 중 오류가 발생했습니다.');
     }
   };
 
@@ -158,6 +166,12 @@ const Department = () => {
 
       {/* 2. 삭제 실패 모달 */}
       <DeleteFailureModal isOpen={isFailModalOpen} onClose={() => setIsFailModalOpen(false)} />
+
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={() => setIsAlertModalOpen(false)}
+      />
     </MainLayout>
   );
 };

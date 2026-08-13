@@ -3,6 +3,7 @@ import star_empty from '@/worklog/shared/assets/star_empty.svg';
 import star_filled from '@/worklog/shared/assets/star_filled.svg';
 import copy from '@/worklog/shared/assets/copy.svg';
 import pencil from '@/worklog/shared/assets/pencil.svg'; // 요청하신 연필 아이콘
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import { toggleFavorite } from '@/worklog/shared/apis/manager/manager.api';
 
 export interface ManagerEditData {
@@ -37,6 +38,13 @@ const ManagerCard = ({
   onEditClick,
 }: ManagerCardProps) => {
   const [isStarred, setIsStarred] = useState(initialFavorite);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+
+  const openAlertModal = (message: string) => {
+    setAlertMessage(message);
+    setIsAlertModalOpen(true);
+  };
 
   // 즐겨찾기 토글 (API 연동)
   const handleToggleStar = async () => {
@@ -48,7 +56,7 @@ const ManagerCard = ({
     } catch (error) {
       console.error('즐겨찾기 변경 실패:', error);
       setIsStarred(!newStatus); // 실패 시 원상복구
-      alert('즐겨찾기 상태를 변경하지 못했습니다.');
+      openAlertModal('즐겨찾기 상태를 변경하지 못했습니다.');
     }
   };
 
@@ -65,7 +73,7 @@ const ManagerCard = ({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(phonenum);
-      alert('전화번호가 클립보드에 복사되었습니다.');
+      openAlertModal('전화번호가 클립보드에 복사되었습니다.');
     } catch (err) {
       console.error('복사 실패:', err);
     }
@@ -117,6 +125,11 @@ const ManagerCard = ({
           />
         </button>
       </div>
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={() => setIsAlertModalOpen(false)}
+      />
     </div>
   );
 };

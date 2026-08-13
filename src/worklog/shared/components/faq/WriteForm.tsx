@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { ClipboardEvent, ChangeEvent, DragEvent } from 'react';
 import xIcon from './x.svg';
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 // API Imports
 import { getCategories, type Category } from '@/worklog/shared/apis/categories/categories.api';
 import { recommendCategory } from '@/worklog/shared/apis/faq/faqai.api';
@@ -51,11 +52,13 @@ const RichTextEditor = ({
   value,
   onChange,
   placeholder,
+  onAlert,
   minHeight = '120px',
 }: {
   value: string;
   onChange: (val: string) => void;
   placeholder?: string;
+  onAlert?: (message: string) => void;
   minHeight?: string;
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -135,7 +138,7 @@ const RichTextEditor = ({
               handleInput();
             }
           }
-          alert('이미지 업로드 중 오류가 발생했습니다.');
+          onAlert?.('이미지 업로드 중 오류가 발생했습니다.');
         }
       }
     }
@@ -208,6 +211,27 @@ const WriteForm = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [alertAction, setAlertAction] = useState<(() => void) | null>(null);
+
+  const openAlertModal = (message: string, onConfirm?: () => void) => {
+    setAlertMessage(message);
+    setAlertAction(() => onConfirm ?? null);
+    setIsAlertModalOpen(true);
+  };
+
+  const handleCloseAlertModal = () => {
+    setIsAlertModalOpen(false);
+    setAlertMessage('');
+    setAlertAction(null);
+  };
+
+  const handleConfirmAlertModal = () => {
+    const action = alertAction;
+    handleCloseAlertModal();
+    action?.();
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -258,7 +282,10 @@ const WriteForm = ({
   };
 
   const handleAiRecommend = async () => {
-    if (!formData.title || !formData.content) return alert('제목과 내용을 입력해주세요.');
+    if (!formData.title || !formData.content) {
+      openAlertModal('제목과 내용을 입력해주세요.');
+      return;
+    }
     setIsAiLoading(true);
     try {
       const res = await recommendCategory({
@@ -278,7 +305,7 @@ const WriteForm = ({
       }
     } catch (err) {
       console.error('AI 추천 실패:', err);
-      alert('AI 추천 중 오류가 발생했습니다.');
+      openAlertModal('AI 추천 중 오류가 발생했습니다.');
     } finally {
       setIsAiLoading(false);
     }
@@ -309,12 +336,13 @@ const WriteForm = ({
       };
 
       await createFaqDraft(payload);
-      alert('임시저장이 완료되었습니다.');
-      if (onCancel) onCancel();
-      if (onSuccess) onSuccess();
+      openAlertModal('임시저장이 완료되었습니다.', () => {
+        onCancel?.();
+        onSuccess?.();
+      });
     } catch (err) {
       console.error('임시저장 중 오류:', err);
-      alert('임시저장 중 오류가 발생했습니다.');
+      openAlertModal('임시저장 중 오류가 발생했습니다.');
     } finally {
       setIsDrafting(false);
     }
@@ -322,8 +350,8 @@ const WriteForm = ({
 
   const handleConfirmSubmit = async () => {
     if (!formData.title || !formData.answer) {
-      alert('제목과 답변은 필수입니다.');
       setIsModalOpen(false);
+      openAlertModal('제목과 답변은 필수입니다.');
       return;
     }
     setIsSubmitting(true);
@@ -354,17 +382,22 @@ const WriteForm = ({
 
       if (isEditMode) {
         await updateFaq(initialData.faqId, payload);
-        alert('FAQ가 성공적으로 수정되었습니다!');
-        if (onCancel) onCancel();
+        setIsModalOpen(false);
+        openAlertModal('FAQ가 성공적으로 수정되었습니다!', () => {
+          onCancel?.();
+          onSuccess?.();
+        });
       } else {
         await createFaq(payload);
-        alert('FAQ가 성공적으로 작성되었습니다!');
+        setIsModalOpen(false);
+        openAlertModal('FAQ가 성공적으로 작성되었습니다!', () => {
+          onSuccess?.();
+        });
       }
-      setIsModalOpen(false);
-      if (onSuccess) onSuccess();
     } catch (err) {
       console.error('저장 중 오류:', err);
-      alert('저장 중 오류가 발생했습니다.');
+      setIsModalOpen(false);
+      openAlertModal('저장 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
@@ -447,6 +480,7 @@ const WriteForm = ({
           value={formData.content}
           onChange={(val) => handleFieldChange('content', val)}
           placeholder="질문 내용을 입력하세요. (이미지 복사+붙여넣기 가능)"
+          onAlert={openAlertModal}
           minHeight="150px"
         />
       </div>
@@ -489,6 +523,7 @@ const WriteForm = ({
           value={formData.answer}
           onChange={(val) => handleFieldChange('answer', val)}
           placeholder="답변을 작성하세요. (이미지 복사+붙여넣기 가능)"
+          onAlert={openAlertModal}
           minHeight="250px"
         />
       </div>
@@ -637,6 +672,12 @@ const WriteForm = ({
           </div>
         </div>
       )}
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={handleCloseAlertModal}
+        onConfirm={handleConfirmAlertModal}
+      />
     </div>
   );
 };

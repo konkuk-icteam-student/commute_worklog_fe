@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import blueX from '@/worklog/shared/assets/blueX.svg';
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import DeleteConfirmationModal from '@/worklog/shared/components/modal/DeleteConfirmationModal';
 
 // API import
@@ -47,6 +48,27 @@ const ModalAddManager = ({
 
   // 삭제 확인 모달 상태
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [alertAction, setAlertAction] = useState<(() => void) | null>(null);
+
+  const openAlertModal = (message: string, onConfirm?: () => void) => {
+    setAlertMessage(message);
+    setAlertAction(() => onConfirm ?? null);
+    setIsAlertModalOpen(true);
+  };
+
+  const handleCloseAlertModal = () => {
+    setIsAlertModalOpen(false);
+    setAlertMessage('');
+    setAlertAction(null);
+  };
+
+  const handleConfirmAlertModal = () => {
+    const action = alertAction;
+    handleCloseAlertModal();
+    action?.();
+  };
 
   // 초기화 (모달 열릴 때)
   useEffect(() => {
@@ -92,7 +114,7 @@ const ModalAddManager = ({
   const handleSubmit = async () => {
     // 유효성 검사
     if (!formData.name || !formData.organizationId || !formData.categoryId || !formData.phone) {
-      alert('모든 필드를 입력해주세요.');
+      openAlertModal('모든 필드를 입력해주세요.');
       return;
     }
 
@@ -113,16 +135,15 @@ const ModalAddManager = ({
           onSuccess?.(); // 부모 목록 갱신
           onClose(); // 모달 닫기
         } else {
-          alert('등록 실패: ' + response.message);
+          openAlertModal('등록 실패: ' + response.message);
         }
       } catch (error) {
         console.error('❌ 등록 오류:', error);
-        alert('등록 중 오류가 발생했습니다.');
+        openAlertModal('등록 중 오류가 발생했습니다.');
       }
     } else {
       // 수정 (API 없음 -> 알림만)
-      alert('수정 기능은 아직 구현되지 않았습니다.');
-      onClose();
+      openAlertModal('수정 기능은 아직 구현되지 않았습니다.', onClose);
     }
   };
 
@@ -145,11 +166,11 @@ const ModalAddManager = ({
         onSuccess?.(); // 부모 목록 갱신
         onClose(); // 메인 모달 닫기
       } else {
-        alert('삭제 실패: ' + response.message);
+        openAlertModal('삭제 실패: ' + response.message);
       }
     } catch (error) {
       console.error('❌ 삭제 오류:', error);
-      alert('삭제 중 오류가 발생했습니다. 담당/분류 관련 담당자가 존재하는지 확인해주십시오.');
+      openAlertModal('삭제 중 오류가 발생했습니다. 담당/분류 관련 담당자가 존재하는지 확인해주십시오.');
     }
   };
 
@@ -289,6 +310,13 @@ const ModalAddManager = ({
         targetType="담당자를" // "담당자를 삭제하시겠습니까?"
         onClose={() => setIsDeleteConfirmOpen(false)}
         onConfirm={handleRealDelete}
+      />
+
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={handleCloseAlertModal}
+        onConfirm={handleConfirmAlertModal}
       />
     </>
   );
