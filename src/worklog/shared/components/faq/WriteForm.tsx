@@ -281,6 +281,32 @@ const WriteForm = ({
     }
   };
 
+  const checkFormEmpty = () => {
+    // 에디터의 HTML 태그와 공백(&nbsp;)을 제거하고 순수 텍스트만 남김
+    const isContentEmpty =
+      formData.content
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/gi, '')
+        .trim() === '';
+    const isAnswerEmpty =
+      formData.answer
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/gi, '')
+        .trim() === '';
+
+    return (
+      !formData.title.trim() &&
+      !formData.complainantName.trim() &&
+      isContentEmpty &&
+      isAnswerEmpty &&
+      !formData.etc.trim() &&
+      selectedCategories.length === 0 &&
+      relatedFaqs.length === 0 &&
+      formData.files.length === 0 &&
+      formData.existingFiles.length === 0
+    );
+  };
+
   const handleAiRecommend = async () => {
     if (!formData.title || !formData.content) {
       openAlertModal('제목과 내용을 입력해주세요.');
@@ -312,6 +338,11 @@ const WriteForm = ({
   };
 
   const handleDraftSubmit = async () => {
+    if (checkFormEmpty()) {
+      openAlertModal('입력된 내용이 전혀 없습니다.\n저장할 내용을 최소 한 글자 이상 작성해주세요.');
+      return;
+    }
+
     setIsDrafting(true);
     try {
       const uploadedFileUrls: string[] = [];
@@ -346,6 +377,26 @@ const WriteForm = ({
     } finally {
       setIsDrafting(false);
     }
+  };
+
+  const handleOpenConfirmModal = () => {
+    if (checkFormEmpty()) {
+      openAlertModal('입력된 내용이 전혀 없습니다.\n업무일지 내용을 작성해주세요.');
+      return;
+    }
+
+    const isAnswerEmpty =
+      formData.answer
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/gi, '')
+        .trim() === '';
+
+    if (!formData.title.trim() || isAnswerEmpty) {
+      openAlertModal('제목과 답변은 필수 입력 항목입니다.\n빈칸 없이 작성 후 다시 시도해주세요.');
+      return;
+    }
+
+    setIsModalOpen(true);
   };
 
   const handleConfirmSubmit = async () => {
@@ -638,7 +689,7 @@ const WriteForm = ({
           {isDrafting ? '저장 중...' : '임시 저장'}
         </button>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpenConfirmModal}
           className="rounded-[6px] bg-[#3B82F6] px-6 py-2.5 text-[14px] font-bold text-white transition-colors hover:bg-blue-600"
         >
           작성완료
