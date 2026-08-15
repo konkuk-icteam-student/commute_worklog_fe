@@ -1,20 +1,18 @@
-import { Navigate } from 'react-router-dom';
-import { isLoggedIn } from '../utils/tokenManager';
+import { Navigate, Outlet } from 'react-router-dom';
+import { isLoggedIn } from '../utils/tokenManager'; //[cite: 28]
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-/**
- * 인증이 필요한 라우트를 보호하는 컴포넌트
- * - 로그인되지 않은 경우 /auth 페이지로 리다이렉트
- */
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (!isLoggedIn()) {
-    return <Navigate to="/auth" replace />;
+    //[cite: 28]
+    return <Navigate to="/" replace />; // 미로그인 시 루트(/)로 이동 (루트에서 <Auth /> 렌더링)
   }
 
-  return <>{children}</>;
+  // children이 전달되면 children을, 없으면 중첩 라우트 렌더링을 위해 <Outlet />을 반환
+  return children ? <>{children}</> : <Outlet />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRoute; //[cite: 28]

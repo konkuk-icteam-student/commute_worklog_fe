@@ -2,6 +2,7 @@ import { useState } from 'react';
 import star_empty from '@/worklog/shared/assets/star_empty.svg';
 import star_filled from '@/worklog/shared/assets/star_filled.svg';
 import copy from '@/worklog/shared/assets/copy.svg';
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import graypencil from '@/worklog/shared/assets/graypencil.svg';
 
 export interface ManagerEditData {
@@ -34,6 +35,13 @@ const Post = ({
   onEditClick,
 }: PostProps) => {
   const [isStarred, setIsStarred] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+
+  const openAlertModal = (message: string) => {
+    setAlertMessage(message);
+    setIsAlertModalOpen(true);
+  };
 
   const toggleStar = () => {
     setIsStarred((prev) => !prev);
@@ -52,7 +60,7 @@ const Post = ({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(phonenum);
-      alert('전화번호가 클립보드에 복사되었습니다.');
+      openAlertModal('전화번호가 클립보드에 복사되었습니다.');
     } catch (err) {
       console.error('복사 실패:', err);
     }
@@ -102,6 +110,11 @@ const Post = ({
           </button>
         </div>
       </div>
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={() => setIsAlertModalOpen(false)}
+      />
     </div>
   );
 };

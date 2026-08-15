@@ -22,8 +22,13 @@ import Department from '@/worklog/pages/category/Department';
 import Task from '@/worklog/pages/category/Task';
 import Mypage from '@/worklog/pages/mypage/Mypage';
 import ProtectedRoute from '@/shared/components/layout/ProtectedRoute';
+import RootRoute from '@/shared/router/RootRoute';
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootRoute />,
+  },
   // 로그인 없이 접근 가능한 공개(Public) 라우트
   {
     path: '/login',
@@ -53,7 +58,7 @@ const router = createBrowserRouter([
       { path: '/manager/qr', element: <ManagerQRPage /> },
       { path: '/manager/task', element: <ManagerTaskPage /> },
       { path: '/worklog/category/manager', element: <Category /> },
-      { path: '/', element: <Faq /> },
+      { path: '/worklog/faq', element: <Faq /> },
       { path: '/branch', element: <Home /> },
       { path: '/worklog/category/department', element: <Department /> },
       { path: '/worklog/category/task', element: <Task /> },

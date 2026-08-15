@@ -35,7 +35,7 @@ const Login = () => {
         localStorage.setItem('userName', userName ?? '');
         localStorage.setItem('roleCode', roleCode ?? '');
 
-        navigate('/', {
+        navigate('/worklog/faq', {
           state: {
             userName: userName ?? '',
             roleCode: roleCode ?? '',

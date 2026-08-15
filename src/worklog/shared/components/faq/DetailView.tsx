@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getFaqDetail, deleteFaq, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api';
+import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import WriteForm from './WriteForm';
 
 // 공통 라벨 스타일 (WriteForm과 동일)
@@ -32,6 +33,13 @@ const DetailView = ({
   const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] = useState(false); // 💡 [추가] 삭제 완료 모달 상태
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+
+  const openAlertModal = (message: string) => {
+    setAlertMessage(message);
+    setIsAlertModalOpen(true);
+  };
 
   const [selectedDate, setSelectedDate] = useState<string>(
     updatedDate || new Date().toISOString().split('T')[0]
@@ -70,7 +78,7 @@ const DetailView = ({
       setIsDeleteSuccessModalOpen(true); // 💡 2. 알림창 대신 완료 커스텀 모달 띄우기
     } catch (error) {
       console.error('삭제 실패:', error);
-      alert('삭제 중 오류가 발생했습니다.');
+      openAlertModal('삭제 중 오류가 발생했습니다.');
     } finally {
       setIsDeleting(false);
     }
@@ -383,6 +391,12 @@ const DetailView = ({
           </div>
         </div>
       )}
+
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        message={alertMessage}
+        onClose={() => setIsAlertModalOpen(false)}
+      />
     </div>
   );
 };
