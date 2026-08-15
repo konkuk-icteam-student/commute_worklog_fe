@@ -170,7 +170,9 @@ const ModalAddManager = ({
       }
     } catch (error) {
       console.error('❌ 삭제 오류:', error);
-      openAlertModal('삭제 중 오류가 발생했습니다. 담당/분류 관련 담당자가 존재하는지 확인해주십시오.');
+      openAlertModal(
+        '삭제 중 오류가 발생했습니다. 담당/분류 관련 담당자가 존재하는지 확인해주십시오.'
+      );
     }
   };
 
