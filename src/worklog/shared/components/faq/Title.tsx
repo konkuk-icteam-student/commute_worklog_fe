@@ -13,13 +13,14 @@ interface TitleProps {
   dateRange: DateRange | undefined;
   setDateRange: (range: DateRange | undefined) => void;
   onReset: () => void;
-  // 소속 및 분류 관련 Props
   organizations: Organization[];
   categories: Category[];
   selectedOrgId: number | null;
   setSelectedOrgId: (id: number | null) => void;
   selectedCatId: number | null;
   setSelectedCatId: (id: number | null) => void;
+  isAiSearchActive: boolean;
+  setIsAiSearchActive: (val: boolean) => void;
 }
 
 const Title = ({
@@ -34,26 +35,23 @@ const Title = ({
   setSelectedOrgId,
   selectedCatId,
   setSelectedCatId,
+  isAiSearchActive,
+  setIsAiSearchActive,
 }: TitleProps) => {
-  // 드롭다운 열림/닫힘 상태
   const [isOrgOpen, setIsOrgOpen] = useState(false);
   const [isCatOpen, setIsCatOpen] = useState(false);
 
-  // 현재 선택된 소속/분류 이름 찾기
   const selectedOrgName =
     organizations.find((o) => o.organizationId === selectedOrgId)?.organizationName || '소속';
   const selectedCatName =
     categories.find((c) => c.categoryId === selectedCatId)?.categoryName || '분류';
 
   return (
-    // 💡 overflow-x-auto를 제거하여 DatePicker 달력 팝업이 잘리지 않도록 합니다.
     <section className="flex min-h-[180px] shrink-0 flex-col items-center justify-center border-b border-[#E8EEF2] py-6">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-4">
         {/* Main Title */}
         <h1 className="text-center text-[40px] font-bold">자주 하는 질문</h1>
 
-        {/* Controls: Dropdowns & Search */}
-        {/* 💡 화면이 좁아지면 자연스럽게 밑으로 내려가도록 flex-wrap 적용 */}
         <div className="flex flex-wrap items-center justify-center gap-3">
           {/* 소속 Dropdown */}
           <div className="relative shrink-0">
@@ -149,11 +147,48 @@ const Title = ({
             )}
           </div>
 
+          {/* 💡 [변경] 테두리 걷어낸 순수 텍스트 + 토글 스위치 UI */}
+          <div
+            onClick={() => setIsAiSearchActive(!isAiSearchActive)}
+            className="flex shrink-0 cursor-pointer items-center gap-2 px-2"
+            title="의미 기반 AI 검색 활성화"
+          >
+            <span
+              className={`text-[15px] font-bold transition-colors ${
+                isAiSearchActive ? 'text-blue-600' : 'text-[#8C9499]'
+              }`}
+            >
+              ✨ AI 검색
+            </span>
+            {/* 토글 스위치 모양 */}
+            <div
+              className={`relative inline-flex h-[24px] w-[44px] items-center rounded-full transition-colors duration-300 ${
+                isAiSearchActive ? 'bg-[#3B82F6]' : 'bg-[#D1D5DB]'
+              }`}
+            >
+              <span
+                className={`inline-block h-[18px] w-[18px] transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
+                  isAiSearchActive ? 'translate-x-[22px]' : 'translate-x-[3px]'
+                }`}
+              />
+            </div>
+          </div>
+
           {/* Search Bar (실시간 입력) */}
-          <div className="flex h-[48px] w-[300px] shrink-0 items-center gap-2 rounded-[24px] border border-[#E8EEF2] px-4 focus-within:border-blue-400 sm:w-[480px]">
+          <div
+            className={`flex h-[48px] w-[300px] shrink-0 items-center gap-2 rounded-[24px] border px-4 transition-colors sm:w-[350px] lg:w-[480px] ${
+              isAiSearchActive
+                ? 'border-blue-400 bg-white'
+                : 'border-[#E8EEF2] focus-within:border-blue-400'
+            }`}
+          >
             <input
               type="text"
-              placeholder="검색어를 입력하세요 (입력 시 자동 검색)"
+              placeholder={
+                isAiSearchActive
+                  ? '의미 기반으로 검색합니다'
+                  : '검색어를 입력하세요 (입력 시 제목 기반 자동 검색)'
+              }
               value={keywordInput}
               onChange={(e) => setKeywordInput(e.target.value)}
               className="h-full w-full bg-transparent text-[16px] outline-none placeholder:text-[#8C9499]"
