@@ -130,12 +130,11 @@ export const getFaqDetail = async (faqId: number, date: string): Promise<FaqDeta
     params: { date },
   });
 
-  // 💡 서버에서 실패했다고 보내거나 details가 없으면 에러를 던져서 UI에서 처리하게 합니다.
+  // 서버에서 실패했다고 보내거나 details가 없으면 에러를 던져서 UI에서 처리하게 합니다.
   if (!response.data.isSuccess || !response.data.details) {
     throw new Error(response.data.message || '상세 조회에 실패했습니다.');
   }
 
-  // 💡 알맹이만 쏙 빼서 리턴!
   return response.data.details;
 };
 
@@ -196,4 +195,15 @@ export const uploadFaqFile = async (file: File): Promise<UploadResponse> => {
 export const createFaqDraft = async (data: FaqRequest): Promise<FaqSuccessResponse> => {
   const response = await apiClient.post<FaqSuccessResponse>('/api/faq/draft', data);
   return response.data;
+};
+
+// 임시저장 FAQ 조회
+export const getFaqDraftDetail = async (faqId: number): Promise<FaqDetailResponse> => {
+  const response = await apiClient.get<FaqDetailServerResponse>(`/api/faq/${faqId}/draft`);
+
+  if (!response.data.isSuccess || !response.data.details) {
+    throw new Error(response.data.message || '임시저장 상세 조회에 실패했습니다.');
+  }
+
+  return response.data.details;
 };

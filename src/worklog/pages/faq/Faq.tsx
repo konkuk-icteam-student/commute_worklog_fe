@@ -10,6 +10,7 @@ import Pagination from '@/worklog/shared/components/faq/Pagination';
 import { getFaqList, type FaqListItem } from '@/worklog/shared/apis/faq/faq.api';
 import { getOrganizations } from '@/worklog/shared/apis/organization/Organization.api';
 import { getCategories } from '@/worklog/shared/apis/categories/categories.api';
+import { searchFaqAi } from '@/worklog/shared/apis/faq/faqai.api';
 import type { Organization } from '@/worklog/shared/apis/organization/Organization.api';
 import type { Category } from '@/worklog/shared/apis/categories/categories.api';
 import { format } from 'date-fns';
@@ -35,6 +36,7 @@ const Faq = () => {
   // 실시간 검색을 위한 상태 (입력값과 지연 적용값 분리)
   const [keywordInput, setKeywordInput] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
+  const [isAiSearchActive, setIsAiSearchActive] = useState(false);
 
   // 💡 [추가] 좌우 패널 크기 조절을 위한 상태 및 Ref
   const [leftPanelWidth, setLeftPanelWidth] = useState(55); // 초기값 55%
@@ -70,7 +72,7 @@ const Faq = () => {
   // 필터 조건이 바뀌면 페이지를 1로 리셋
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedKeyword, selectedOrgId, selectedCatId, dateRange]);
+  }, [debouncedKeyword, selectedOrgId, selectedCatId, dateRange, isAiSearchActive]);
 
   // 💡 4. API 목록 조회 로직
   useEffect(() => {
@@ -79,24 +81,51 @@ const Faq = () => {
         const startDate = dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : undefined;
         const endDate = dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : undefined;
 
-        const res = await getFaqList({
-          page: currentPage,
-          keyword: debouncedKeyword || undefined,
-          organizationId: selectedOrgId || undefined,
-          categoryId: selectedCatId || undefined,
-          searchScope: 'TITLE', // 제목 검색 전용
-          startDate,
-          endDate,
-        });
-        setPosts(res.faqs);
-        setTotalPages(res.totalPages);
-        setTotalElements(res.faqs.length); // 또는 res 메타데이터 활용
+        if (isAiSearchActive) {
+          // AI 검색 API 호출
+          const res = await searchFaqAi({
+            page: Math.max(0, currentPage - 1), // 서버 기준 0-based 보정
+            keyword: debouncedKeyword || undefined,
+            organizationId: selectedOrgId || undefined,
+            categoryId: selectedCatId || undefined,
+            startDate,
+            endDate,
+          });
+
+          if (res.isSuccess) {
+            setPosts(res.details.faqs || []);
+            setTotalPages(res.details.totalPages === 0 ? 1 : res.details.totalPages);
+            setTotalElements(res.details.totalElements || res.details.faqs.length);
+          }
+        } else {
+          // 기존 일반 검색 API 호출
+          const res = await getFaqList({
+            page: currentPage,
+            keyword: debouncedKeyword || undefined,
+            organizationId: selectedOrgId || undefined,
+            categoryId: selectedCatId || undefined,
+            searchScope: 'TITLE',
+            startDate,
+            endDate,
+          });
+          setPosts(res.faqs);
+          setTotalPages(res.totalPages);
+          setTotalElements(res.faqs.length);
+        }
       } catch (error) {
         console.error('FAQ 목록 조회 실패:', error);
       }
     };
     fetchList();
-  }, [currentPage, refreshTrigger, debouncedKeyword, selectedOrgId, selectedCatId, dateRange]);
+  }, [
+    currentPage,
+    refreshTrigger,
+    debouncedKeyword,
+    selectedOrgId,
+    selectedCatId,
+    dateRange,
+    isAiSearchActive,
+  ]);
 
   const handleReset = () => {
     setKeywordInput('');
@@ -107,7 +136,7 @@ const Faq = () => {
     setCurrentPage(1);
   };
 
-  // 💡 [추가] 마우스 이벤트 핸들러
+  // 마우스 이벤트 핸들러
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     isDragging.current = true;
@@ -284,6 +313,8 @@ const Faq = () => {
             setSelectedOrgId={setSelectedOrgId}
             selectedCatId={selectedCatId}
             setSelectedCatId={setSelectedCatId}
+            isAiSearchActive={isAiSearchActive}
+            setIsAiSearchActive={setIsAiSearchActive}
           />
 
           <div className="flex-1 overflow-y-auto px-6 py-6">
@@ -315,7 +346,7 @@ const Faq = () => {
                     title={post.title}
                     date={post.updatedDate ? post.updatedDate.substring(0, 10) : ''}
                     keyword={debouncedKeyword}
-                    deletedFlag={post.deletedFlag} // 💡 추가! 삭제된 게시글 회색 태그 처리
+                    deletedFlag={post.deletedFlag} // 삭제된 게시글 회색 태그 처리
                     onClick={handleItemClick}
                   />
                 </div>

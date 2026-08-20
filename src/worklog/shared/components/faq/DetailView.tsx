@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
-import { getFaqDetail, deleteFaq, type FaqDetailResponse } from '@/worklog/shared/apis/faq/faq.api';
+import {
+  getFaqDetail,
+  getFaqDraftDetail,
+  deleteFaq,
+  type FaqDetailResponse,
+} from '@/worklog/shared/apis/faq/faq.api';
 import AlertModal from '@/worklog/shared/components/modal/AlertModal';
 import WriteForm from './WriteForm';
 
@@ -53,7 +58,10 @@ const DetailView = ({
     if (!faqId) return;
     const fetchDetail = async () => {
       try {
-        const res = await getFaqDetail(faqId, selectedDate);
+        const res = isDraft
+          ? await getFaqDraftDetail(faqId)
+          : await getFaqDetail(faqId, selectedDate);
+
         setData(res);
         setErrorMsg('');
       } catch (err) {
@@ -66,7 +74,7 @@ const DetailView = ({
       }
     };
     fetchDetail();
-  }, [faqId, selectedDate, refreshTrigger]);
+  }, [faqId, selectedDate, refreshTrigger, isDraft]);
 
   // 삭제 핸들러
   const handleDelete = async () => {
@@ -116,6 +124,8 @@ const DetailView = ({
   if (!historyList.some((h) => h.date === selectedDate) && historyList.length > 0) {
     activeDate = historyList[0].date;
   }
+
+  const shouldShowActionButtons = !data.deletedFlag || isDraft;
 
   return (
     <div className="flex flex-col gap-6 pb-20">
@@ -322,9 +332,10 @@ const DetailView = ({
       )}
 
       {/* 10. 수정/삭제 버튼 영역 */}
-      {!data.deletedFlag && (
+      {shouldShowActionButtons && (
         <div className="mt-8 flex justify-end gap-3">
-          {showDeleteBtn && (
+          {/* showDeleteBtn이 켜져 있거나, 혹은 임시저장 탭(isDraft)일 때는 언제나 삭제하기가 표시됩니다! */}
+          {(showDeleteBtn || isDraft) && (
             <button
               onClick={() => setIsDeleteModalOpen(true)}
               className="rounded-[6px] border border-red-200 bg-white px-6 py-2.5 text-[14px] font-bold text-red-500 transition-colors hover:bg-red-50"

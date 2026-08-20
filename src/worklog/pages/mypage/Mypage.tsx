@@ -6,9 +6,9 @@ const Mypage = () => {
   return (
     <main className="min-h-screen bg-white">
       <MainLayout showPencil={false}>
-        <div className="flex h-full flex-1 flex-col gap-[34px] overflow-hidden bg-white">
+        <div className="flex h-full flex-1 flex-col gap-[34px] overflow-y-auto bg-white pb-10">
           {/* Main Title */}
-          <h1 className="flex h-[127px] items-center justify-center border-b border-[#E8EEF2] text-center text-[40px] font-bold">
+          <h1 className="flex h-[127px] items-center justify-center text-center text-[40px] font-bold">
             마이 페이지
           </h1>
           <ProfileBox />

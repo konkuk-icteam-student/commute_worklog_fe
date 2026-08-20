@@ -50,6 +50,17 @@ const Nav = ({ isOpen }: NavProps) => {
             </span>
           </div>
           <div className="flex flex-col">
+            <span className="text-[18px] font-[700] text-[#464A4D]">AI</span>
+            <span
+              className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"
+              onClick={() => {
+                navigate('/worklog/chat');
+              }}
+            >
+              AI 챗봇
+            </span>
+          </div>
+          <div className="flex flex-col">
             <span className="text-[18px] font-[700] text-[#464A4D]">설정</span>
             <span
               className="cursor-pointer text-[16px] font-[400] text-[#464A4D]"

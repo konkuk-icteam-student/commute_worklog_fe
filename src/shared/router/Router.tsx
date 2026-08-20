@@ -23,6 +23,7 @@ import Task from '@/worklog/pages/category/Task';
 import Mypage from '@/worklog/pages/mypage/Mypage';
 import ProtectedRoute from '@/shared/components/layout/ProtectedRoute';
 import RootRoute from '@/shared/router/RootRoute';
+import Chat from '@/worklog/pages/chat/Chat';
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
       { path: '/worklog/category/department', element: <Department /> },
       { path: '/worklog/category/task', element: <Task /> },
       { path: '/worklog/mypage', element: <Mypage /> },
+      { path: '/worklog/chat', element: <Chat /> },
     ],
   },
 ]);
