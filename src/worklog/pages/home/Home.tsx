@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from 'react-router-dom'; // [추가] useLocation
-import Header from '@/worklog/shared/components/header/Header';
 
 import CommuteLogo from './logo1.svg';
 import WorklogLogo from './logo2.svg';
@@ -31,8 +30,6 @@ const Home = () => {
 
   return (
     <main className="min-h-screen bg-white">
-      <Header />
-
       <section className="flex flex-col items-center justify-center border-b border-[#E8EEF2] py-10">
         <div className="flex w-full max-w-[1200px] flex-col items-center gap-8 px-4">
           <h1 className="text-center text-[40px] font-bold text-black">정보운영팀</h1>
